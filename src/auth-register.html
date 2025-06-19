@@ -1,0 +1,79 @@
+{% set title = 'Registro' %}
+
+{% extends 'src/layouts/auth.html' %}
+{% block content %}
+<div class="row h-100" style="background-image: url('assets/static/images/samples/fondeverde.avif'); background-size: cover; background-position: center;">
+    <div class="col-lg-4 col-10 mx-auto">
+        <div id="auth-left" class="p-4 mt-5" style="background-color: rgba(255, 255, 255, 0.9); border-radius: 10px;">
+            <div class="auth-logo mb-3 text-center">
+                <a href="index.html"><img src="assets/static/images/logo/logo.svg" alt="Logo" style="width: 200px;"></a>
+            </div>
+            <h3 class="auth-title text-center" style="font-size: 1.4rem; margin-bottom: 0.5rem;">Registro</h3>
+            <p class="auth-subtitle text-center" style="font-size: 0.9rem;">Ingrese sus datos para registrarse en nuestro sitio web.</p>
+
+            <form onsubmit="handleRegister(event)">
+                <div class="form-group position-relative mb-3">
+                    <input id="emailInput" type="email" class="form-control form-control-sm" placeholder="Correo electrónico" required style="font-size: 0.8rem;">
+                    <div class="form-control-icon"><i class="bi bi-envelope"></i></div>
+                </div>
+                <div class="form-group position-relative mb-3">
+                    <input id="usernameInput" type="text" class="form-control form-control-sm" placeholder="Nombre de usuario" required style="font-size: 0.8rem;">
+                    <div class="form-control-icon"><i class="bi bi-person"></i></div>
+                </div>
+                <div class="form-group position-relative mb-3">
+                    <input id="passwordInput" type="password" class="form-control form-control-sm" placeholder="Contraseña" required style="font-size: 0.8rem;">
+                    <div class="form-control-icon"><i class="bi bi-shield-lock"></i></div>
+                </div>
+                <div class="form-group position-relative mb-3">
+                    <input id="confirmPasswordInput" type="password" class="form-control form-control-sm" placeholder="Confirmar contraseña" required style="font-size: 0.8rem;">
+                    <div class="form-control-icon"><i class="bi bi-shield-lock"></i></div>
+                </div>
+                <button type="submit" class="btn btn-primary btn-sm w-100" style="font-size: 0.8rem;">Registrarse</button>
+            </form>
+
+            <div class="text-center mt-4" style="font-size: 0.8rem;">
+                <p class="text-gray-600">¿Ya tienes una cuenta? <a href="auth-login.html" class="font-bold">Inicia sesión</a>.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- AHORA EL SCRIPT VA AQUÍ DENTRO -->
+<script>
+    function handleRegister(event) {
+        event.preventDefault();
+
+        const email = document.getElementById('emailInput').value;
+        const username = document.getElementById('usernameInput').value;
+        const password = document.getElementById('passwordInput').value;
+        const confirmPassword = document.getElementById('confirmPasswordInput').value;
+
+        if (password !== confirmPassword) {
+            alert('Las contraseñas no coinciden.');
+            return;
+        }
+
+        fetch('http://localhost:3000/api/register', {
+            method: 'POST',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ email, username, password })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Registro exitoso. Ahora puedes iniciar sesión.');
+                window.location.href = '/auth-login.html';
+            } else {
+                alert(data.message || 'Error al registrar el usuario.');
+            }
+        })
+        .catch(err => {
+            console.error('Error en el registro:', err);
+            alert('Error de servidor.');
+        });
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,345 @@
+{% set title = 'Dashboard' %} 
+{% set filename = 'index.html' %}
+
+{% extends 'src/layouts/master.html' %}
+
+{% block styles %}
+<link rel="stylesheet" href="/assets/scss/iconly.scss">
+<style>
+    .page-content {
+        min-height: 100vh;
+        padding: 0; 
+        margin: 0; 
+    }
+
+    .row {
+        margin: 0; 
+        padding: 0; 
+    }
+
+    .card {
+        height: 100%;
+        margin-bottom: 20px; 
+        padding: 20px;
+        border: 1px solid #e0e0e0;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .dashboard-header, .stats-section, .graphs-section {
+        margin-bottom: 30px;
+    }
+
+    /* Diseño de la grilla */
+    .dashboard-header {
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
+    }
+
+    .stat-card {
+        flex: 1;
+        min-width: 220px;
+        margin-right: 20px;
+        margin-bottom: 20px;
+    }
+
+    .stat-card h6 {
+        font-size: 1rem;
+        font-weight: 600;
+        margin-bottom: 5px;
+    }
+
+    .stat-card h6.font-extrabold {
+        font-size: 1.5rem;
+    }
+
+    /* Secciones de los gráficos */
+    .chart-container {
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    .chart-card {
+        flex: 1;
+        min-width: 300px;
+        margin-right: 20px;
+        margin-bottom: 20px;
+    }
+
+    #doughnut, #evolucion, #doughnut-category, #doughnut-subcategory, #line-area-chart {
+        height: 250px;
+    }
+
+    /* Estilo de los botones */
+    .category-buttons {
+        display: flex;
+        justify-content: flex-start; /* Cambiado a flex-start para alinear a la izquierda */
+        margin-bottom: 15px;
+    }
+
+    .category-button {
+        padding: 8px 20px;
+        background-color: #f8f9fa;
+        border: none;
+        border-radius: 20px;
+        font-size: 0.875rem;
+        cursor: pointer;
+        margin-right: 10px; /* Mantiene el espacio entre los botones */
+        transition: background-color 0.3s ease;
+    }
+
+    .category-button.active {
+        background-color: #007bff;
+        color: white;
+    }
+
+    .category-button:hover {
+        background-color: #007bff;
+        color: white;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+    <h3>Emisiones Totales</h3>
+</div>
+
+<div class="page-content">
+    <!-- Sección de encabezado con estadísticas -->
+    <section class="dashboard-header">
+        <div class="stat-card card">
+            <h6>Emisiones Totales</h6>
+            <h6 class="font-extrabold">97.05 kg CO2e</h6>
+        </div>
+
+        <div class="stat-card card">
+            <h6>Emisiones por empleado</h6>
+            <h6 class="font-extrabold">Datos insuficientes</h6>
+        </div>
+
+        <div class="stat-card card">
+            <h6>Emisiones por actividad</h6>
+            <h6 class="font-extrabold">0 kg CO2e</h6>
+        </div>
+    </section>
+
+    <!-- Gráfico de evolución vs periodo anterior -->
+    <section class="card graphs-section">
+        <h4>Evolución vs periodo anterior</h4>
+        <div id="line-area-chart"></div>
+    </section>
+
+    <!-- Botones para cambiar las categorías (Alcance, Categoría, Edificio) -->
+    <div class="category-buttons">
+        <button class="category-button active" data-category="alcance">Alcance</button>
+        <button class="category-button" data-category="categoria">Categoría</button>
+        <button class="category-button" data-category="edificio">Edificio</button>
+    </div>
+
+    <!-- Emisiones por Alcance -->
+    <section class="chart-container">
+        <div class="chart-card card">
+            <h4>Emisiones por alcance</h4>
+            <div id="doughnut"></div>
+        </div>
+
+        <div class="chart-card card">
+            <h4>Evolución mensual por alcance</h4>
+            <div id="evolucion"></div>
+        </div>
+    </section>
+
+    <!-- Emisiones por Categoría y Subcategoría -->
+    <div class="category-buttons">
+        <button class="category-button active" data-category="all">Todos</button>
+        <button class="category-button" data-category="alcance1">Alcance 1</button>
+        <button class="category-button" data-category="alcance2">Alcance 2</button>
+        <button class="category-button" data-category="alcance3">Alcance 3</button>
+    </div>
+
+    <section class="chart-container">
+        <div class="chart-card card">
+            <h4>Emisiones por categoría</h4>
+            <div id="doughnut-category"></div>
+        </div>
+
+        <div class="chart-card card">
+            <h4>Emisiones por subcategoría</h4>
+            <div id="doughnut-subcategory"></div>
+        </div>
+    </section>
+</div>
+{% endblock %}
+
+{% block js %}
+<script src="assets/extensions/apexcharts/apexcharts.min.js"></script>
+<script>
+    // Datos para los gráficos que dependen de botones
+    var data = {
+        'alcance': {
+            doughnut: [2.84, 67.16, 5],
+            area: [31, 40, 28, 51, 42, 109, 100]
+        },
+        'categoria': {
+            doughnut: [50, 30, 20],
+            area: [50, 60, 70, 80, 90, 100, 110]
+        },
+        'edificio': {
+            doughnut: [70, 20, 10],
+            area: [10, 20, 30, 40, 50, 60, 70]
+        }
+    };
+
+    var doughnutChart, areaChart, evolucionChart;
+
+    function renderCharts(category) {
+        // Gráfico Doughnut para "Emisiones por alcance"
+        var doughnutOptions = {
+            chart: {
+                type: 'donut',
+                height: 300
+            },
+            series: data[category].doughnut,
+            labels: ['Alcance 1', 'Alcance 2', 'Alcance 3'],
+            colors: ['#00E396', '#FF4560', '#008FFB']
+        };
+        if (doughnutChart) {
+            doughnutChart.updateOptions(doughnutOptions);
+        } else {
+            doughnutChart = new ApexCharts(document.querySelector("#doughnut"), doughnutOptions);
+            doughnutChart.render();
+        }
+
+        // Gráfico de Área para "Evolución mensual por alcance"
+        var areaOptions = {
+            chart: {
+                type: 'area',
+                height: 300
+            },
+            series: [{
+                name: 'Alcance 1',
+                data: data[category].area
+            }],
+            xaxis: {
+                categories: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul']
+            }
+        };
+        if (areaChart) {
+            areaChart.updateOptions(areaOptions);
+        } else {
+            areaChart = new ApexCharts(document.querySelector("#area"), areaOptions);
+            areaChart.render();
+        }
+
+        if (evolucionChart) {
+            evolucionChart.updateOptions(areaOptions);
+        } else {
+            evolucionChart = new ApexCharts(document.querySelector("#evolucion"), areaOptions);
+            evolucionChart.render();
+        }
+    }
+
+    // Inicializar con la categoría "Alcance"
+    renderCharts('alcance');
+    
+    // Cambiar la categoría al hacer clic en los botones
+    document.querySelectorAll('.category-button').forEach(button => {
+        button.addEventListener('click', function() {
+            document.querySelectorAll('.category-button').forEach(btn => btn.classList.remove('active'));
+            this.classList.add('active');
+            var category = this.getAttribute('data-category');
+            renderCharts(category);
+        });
+    });
+
+    // Gráfico "Line Area Chart" independiente
+    var lineAreaOptions = {
+        chart: {
+            type: 'area',
+            height: 300
+        },
+        series: [{
+            name: 'Datos de evolución',
+            data: [10, 90, 30, 40, 50, 60, 30, 100]
+        }],
+        xaxis: {
+            categories: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul']
+        }
+    };
+
+    var lineAreaChart = new ApexCharts(document.querySelector("#line-area-chart"), lineAreaOptions);
+    lineAreaChart.render();
+
+    // Datos adicionales para "Emisiones por categoría" y "Emisiones por subcategoría"
+    var dataCategory = {
+        'all': {
+            doughnutCategory: [0.81, 20, 10, 30],
+            doughnutSubcategory: [0.81, 0, 0, 0, 0, 0]
+        },
+        'alcance1': {
+            doughnutCategory: [0.81, 5, 5, 0],
+            doughnutSubcategory: [0.81, 0, 0, 0, 0, 0]
+        },
+        'alcance2': {
+            doughnutCategory: [0, 2, 6, 0],
+            doughnutSubcategory: [5, 0, 6, 3, 0, 34]
+        },
+        'alcance3': {
+            doughnutCategory: [40, 1, 10, 30],
+            doughnutSubcategory: [10, 0, 30, 9, 0, 50]
+        }
+    };
+
+    var doughnutCategoryChart, doughnutSubcategoryChart;
+
+    function renderNewCharts(category) {
+        // Gráfico Doughnut para "Emisiones por categoría"
+        var doughnutCategoryOptions = {
+            chart: {
+                type: 'donut',
+                height: 300
+            },
+            series: dataCategory[category].doughnutCategory,
+            labels: ['Transporte', 'Maquinaria Móvil', 'Emisiones Fugitivas', 'Instalaciones Fijas'],
+            colors: ['#A0A0A0', '#00E396', '#775DD0', '#008FFB']
+        };
+        if (doughnutCategoryChart) {
+            doughnutCategoryChart.updateOptions(doughnutCategoryOptions);
+        } else {
+            doughnutCategoryChart = new ApexCharts(document.querySelector("#doughnut-category"), doughnutCategoryOptions);
+            doughnutCategoryChart.render();
+        }
+
+        // Gráfico Doughnut para "Emisiones por subcategoría"
+        var doughnutSubcategoryOptions = {
+            chart: {
+                type: 'donut',
+                height: 300
+            },
+            series: dataCategory[category].doughnutSubcategory,
+            labels: ['Transporte Terrestre', 'Maquinaria Forestal', 'Transporte Ferroviario', 'Aire Acondicionado y Refrigeración', 'Fugas de Gas Natural', 'Otros'],
+            colors: ['#00E396', '#FEB019', '#FF4560', '#775DD0', '#546E7A', '#D3D3D3']
+        };
+        if (doughnutSubcategoryChart) {
+            doughnutSubcategoryChart.updateOptions(doughnutSubcategoryOptions);
+        } else {
+            doughnutSubcategoryChart = new ApexCharts(document.querySelector("#doughnut-subcategory"), doughnutSubcategoryOptions);
+            doughnutSubcategoryChart.render();
+        }
+    }
+
+    // Inicializar con el alcance "Todos"
+    renderNewCharts('all');
+
+    // Cambiar la categoría al hacer clic en los botones
+    document.querySelectorAll('.category-button').forEach(button => {
+        button.addEventListener('click', function() {
+            document.querySelectorAll('.category-button').forEach(btn => btn.classList.remove('active'));
+            this.classList.add('active');
+            var category = this.getAttribute('data-category');
+            renderNewCharts(category);
+        });
+    });
+</script>
+{% endblock %} 

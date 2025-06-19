@@ -1,0 +1,111 @@
+[
+  {
+    "name": "Medicion",
+    "isTitle": true
+  },
+  {
+    "name": "Inicio",
+    "url": "index.html",
+    "icon": "house"
+  },
+  {
+    "name": "Dashboard",
+    "key": "component",
+    "icon": "pie-chart",
+    "submenu": [
+      {
+        "name": "Resumen",
+        "url": "Resumen.html"
+      },
+      {
+        "name": "Alcances",
+        "url": "Alcances.html"
+      },
+      {
+        "name": "Edificios",
+        "url": "Edificios.html"
+      },
+      {
+        "name": "Vehiculos",
+        "url": "component-badge.html"
+      },
+      {
+        "name": "Consumos",
+        "url": "component-breadcrumb.html"
+      }
+    ]
+  },
+  {
+    "name": "Reco. de Datos",
+    "key": "component",
+    "icon": "upload",
+    "submenu": [
+      {
+        "name": "Edificios",
+        "url": "Edificios_sub.html"
+      },
+      {
+        "name": "Vehiculos",
+        "url": "en_construccion.html"
+      },
+      {
+        "name": "Empleados",
+        "url": "en_construccion.html"
+      },
+      {
+        "name": "Viajes de Negocios",
+        "url": "en_construccion.html"
+      },
+      {
+        "name": "Proveedores",
+        "url": "en_construccion.html"
+      },
+      {
+        "name": "Importacion en masa",
+        "url": "en_construccion.html"
+      }
+    ]
+  },
+  {
+    "name": "Configuracion",
+    "isTitle": true
+  },
+  {
+    "name": "Cuenta",
+    "key": "Account",
+    "icon": "person-circle",
+    "submenu": [
+      {
+        "name": "Perfil",
+        "url": "account-profile.html"
+      },
+      {
+        "name": "Compañia",
+        "url": "company.html"
+      },
+      {
+        "name": "Seguridad",
+        "url": "account-security.html"
+      }
+    ]
+  },
+  {
+    "name": "Authentication",
+    "key": "auth",
+    "icon": "person-badge-fill",
+    "submenu": [
+      {
+        "name": "Login",
+        "url": "auth-login.html"
+      },
+      {
+        "name": "Register",
+        "url": "auth-register.html"
+      },
+      {
+        "name": "Forgot Password",
+        "url": "auth-forgot-password.html"
+      }
+    ]
+  }
+]

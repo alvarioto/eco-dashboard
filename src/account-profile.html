@@ -1,0 +1,51 @@
+{% set title = 'Perfil de usuario' %}
+{% set filename = 'account-profile.html' %}
+
+{% extends 'src/layouts/master.html' %}
+{% block content %}
+
+<div class="page-heading">
+    <div class="page-title">
+        <h3>Perfil de usuario</h3>
+        <p class="text-subtitle text-muted">Edita tus datos personales y credenciales</p>
+    </div>
+
+    <section class="section">
+        <div class="row">
+            <div class="col-12 col-md-6"> <!-- solo media pantalla -->
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Información de la cuenta</h5>
+                        <p class="text-muted small">Puedes actualizar tu email, contraseña y otros datos personales</p>
+                    </div>
+                    <div class="card-body">
+                        <form id="userProfileForm">
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Correo electrónico</label>
+                                <input type="email" id="email" class="form-control form-control-sm" placeholder="Tu email">
+                            </div>
+                            <div class="mb-3">
+                                <label for="password" class="form-label">Contraseña</label>
+                                <input type="password" id="password" class="form-control form-control-sm" placeholder="********">
+                            </div>
+                            <div class="mb-3">
+                                <label for="fullName" class="form-label">Nombre completo</label>
+                                <input type="text" id="fullName" class="form-control form-control-sm" placeholder="Tu nombre completo">
+                            </div>
+                            <div class="mb-3">
+                                <label for="phone" class="form-label">Teléfono</label>
+                                <input type="text" id="phone" class="form-control form-control-sm" placeholder="Número de teléfono">
+                            </div>
+
+                            <div class="text-end mt-4">
+                                <button type="submit" class="btn btn-primary btn-sm">Guardar cambios</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+{% endblock %}

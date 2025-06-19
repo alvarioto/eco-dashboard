@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Página en Construcción</title>
+    <!-- Bootstrap 5.3.2 CSS -->
+    <link href="bootstrap-5.3.2-dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Asegurarnos de que el fondo se muestre correctamente */
+        body, html {
+            height: 100%;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+        .bg {
+            background-image: url('assets/static/images/samples/fondeverde.avif');
+            height: 100%; 
+            background-position: center;
+            background-size: cover;
+            position: relative;
+        }
+        .overlay {
+            background-color: rgba(0, 0, 0, 0.5); /* Un filtro oscuro para que el texto sea legible */
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        /* Ajustes para el logo */
+        .logo {
+            width: 300px;
+            margin-bottom: 20px;
+        }
+        .message {
+            color: rgb(168, 245, 178);
+            font-size: 1.5rem;
+            font-weight: 400;
+            font-family: monospace;
+            text-align: center;
+            margin-top: 20px;
+        }
+        /* Estilo para el botón de flecha */
+        .back-button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+        }
+        .back-button a {
+            color: white;
+            text-decoration: none;
+            font-size: 1.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="bg">
+        <!-- Botón de volver al inicio -->
+        <div class="back-button">
+            <a href="index.html">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-arrow-left" viewBox="0 0 16 16">
+                  <path fill-rule="evenodd" d="M15 8a.5.5 0 0 1-.5.5H2.707l5.147 5.146a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 1 1 .708.708L2.707 7.5H14.5A.5.5 0 0 1 15 8z"/>
+                </svg>
+            </a>
+        </div>
+
+        <div class="overlay">
+            <!-- Logo con la nueva ruta proporcionada -->
+            <img src="assets/static/images/logo/logo.svg" alt="Logo Consultoría Ambiental" class="logo">
+            <!-- Mensaje de construcción -->
+            <div class="message">
+                <h1>Nuestra página está en construcción</h1>
+                <p>¡Estaremos de vuelta pronto!</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5.3.2 JS Bundle with Popper -->
+    <script src="bootstrap-5.3.2-dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

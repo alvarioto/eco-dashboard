@@ -1,0 +1,1078 @@
+{% set title = 'Dashboard de Consumo' %}
+{% set filename = 'dashboard-consumo.html' %}
+
+{% extends 'src/layouts/master.html' %}
+
+{% block styles %}
+<style>
+    .page-content {
+        padding: 20px;
+        position: relative;
+    }
+
+    /* Estilos para el botón del modal en la esquina superior derecha */
+    .modal-btn-container {
+        display: flex;
+        justify-content: flex-end;
+        margin-bottom: 20px;
+    }
+
+    .modal-btn {
+        background-color: #004e60;
+        color: white;
+        padding: 10px 15px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 12px;
+        border: none;
+    }
+
+    /* Ajustes de las tarjetas */
+    .card-group {
+        display: flex;
+        gap: 10px;
+        justify-content: space-between;
+        margin-bottom: 20px;
+        flex-wrap: nowrap;
+    }
+
+    .card {
+        flex: 1;
+        padding: 8px;
+        border-radius: 8px;
+        background-color: #fff;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        border: 1px solid #e0e0e0;
+        font-size: 10px;  /* Reducir tamaño del texto */
+        width: 130px;  /* Ancho fijo */
+        height: 100px;  /* Altura ajustada */
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .card-info {
+        font-size: 12px;  /* Ajustar tamaño del texto para que se vea bien */
+        color: #004e60;
+        font-weight: bold;
+    }
+
+    .card-extra {
+        font-size: 10px;
+        color: #6c757d;
+        margin-top: 5px;
+        white-space: nowrap;
+    }
+
+    /* Estilos para el gráfico */
+    .chart-container {
+        width: 100%;
+        margin-bottom: 20px;
+    }
+
+    canvas {
+        max-height: 300px;  /* Reducir altura del gráfico */
+    }
+
+    /* Estilos para la tabla */
+    .table-container {
+        margin-top: 20px;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        background-color: #fff;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    table th, table td {
+        padding: 12px;
+        border-bottom: 1px solid #e0e0e0;
+        text-align: left;
+        font-size: 12px;
+    }
+
+    table th {
+        background-color: #f5f5f5;
+        font-weight: bold;
+    }
+
+    table tr:last-child td {
+        border-bottom: none;
+    }
+
+    .label {
+        background-color: #f9b56a;
+        color: white;
+        border-radius: 5px;
+        padding: 2px 8px;
+        font-size: 10px;
+    }
+
+    .green-label {
+        background-color: #6cd3bd;
+    }
+
+    /* Paginación */
+    .pagination {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 10px;
+    }
+
+    .pagination select {
+        padding: 5px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+    }
+
+    /* Estilos del modal */
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        justify-content: center;
+        align-items: center;
+    }
+
+    .modal-content {
+        background-color: white;
+        padding: 20px;
+        border-radius: 8px;
+        width: 60%;
+        max-width: 900px;
+        position: relative;
+    }
+
+    .modal-content h2 {
+        margin-bottom: 20px;
+        font-size: 18px;
+        font-weight: bold;
+    }
+
+    .modal-content button {
+        background-color: #004e60;
+        color: white;
+        padding: 10px 15px;
+        border-radius: 5px;
+        border: none;
+        cursor: pointer;
+        font-size: 12px;
+    }
+
+    .modal-close {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        font-size: 18px;
+        cursor: pointer;
+        color: #000;
+    }
+
+    .modal-visible {
+        display: flex;
+    }
+
+    /* Estilos del formulario en el modal */
+    .modal-form {
+        display: flex;
+        gap: 20px;
+    }
+
+    .form-left {
+        flex: 1;
+        text-align: center;
+        border: 1px dashed #e0e0e0;
+        padding: 20px;
+        border-radius: 8px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+    }
+
+    .form-left input {
+        display: none;
+    }
+
+    .form-left label {
+        padding: 10px 20px;
+        background-color: #f5f5f5;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 12px;
+        border: 1px solid #ccc;
+    }
+
+    .form-right {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .form-group label {
+        font-size: 12px;
+        margin-bottom: 5px;
+    }
+
+    .form-group select,
+    .form-group input {
+        padding: 8px;
+        font-size: 12px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+
+    .switch {
+        display: flex;
+        align-items: center;
+        font-size: 12px;
+        gap: 10px;
+    }
+
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="landing-page" id="resultadoLanding" style="display:none;">
+    <h1>Resultado del Cálculo de Huella de Carbono</h1>
+    <p id="resultadoHuella"></p>
+    <button onclick="cerrarLandingPage()">Volver al Dashboard</button>
+</div>
+<div class="page-content">
+    <!-- Div para el botón del modal en la parte superior derecha -->
+    <div class="modal-btn-container">
+        <button class="modal-btn" id="openModalBtn">Añadir Consumo</button>
+    </div>
+
+    <!-- Card Group -->
+    <div class="card-group">
+        <div class="card">
+            <div class="card-info">2 consumos</div>
+        </div>
+        <div class="card">
+            <div class="card-info">2 consumos</div>
+            <div class="card-extra">5 meses sin consumo</div>
+        </div>
+    </div>
+
+    <!-- Gráfico de barras -->
+    <div class="chart-container">
+        <canvas id="consumoChart"></canvas>
+    </div>
+
+    <!-- Tabla de Consumos -->
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Tipo</th>
+                    <th>Concepto</th>
+                    <th>Edificio</th>
+                    <th>Fecha de inicio</th>
+                    <th>Fecha de fin</th>
+                    <th>Consumo</th>
+                    <th>Emisiones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><span class="label">Electricidad</span></td>
+                    <td>Iberdrola servicios energéticos SAU</td>
+                    <td>La Lonja Tech</td>
+                    <td>01/05/2024</td>
+                    <td>01/06/2024</td>
+                    <td>1 kWh</td>
+                    <td><span class="label green-label">0 emisiones</span></td>
+                </tr>
+                <tr>
+                    <td><span class="label">Electricidad</span></td>
+                    <td>Integración europea de energía SAU</td>
+                    <td>La Lonja Tech</td>
+                    <td>01/03/2024</td>
+                    <td>31/03/2024</td>
+                    <td>371,55 kWh</td>
+                    <td>96,23 kg CO₂e</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Paginación -->
+    <div class="pagination">
+        <label for="resultsPerPage">1 de </label>
+        <select id="resultsPerPage">
+            <option value="15">15</option>
+        </select>
+        <label> sobre 2 resultados</label>
+    </div>
+
+    <!-- Modal para añadir consumo -->
+    <div class="modal-overlay" id="modalOverlay">
+        <div class="modal-content">
+            <span class="modal-close" id="closeModalBtn">&times;</span>
+            <h2>Añadir consumo</h2>
+            <div class="modal-form">
+                <!-- Parte izquierda: arrastrar archivo -->
+                <div class="form-left">
+                    <input type="file" id="fileUpload">
+                    <label for="fileUpload">Elija un fichero o arrástrelo aquí</label>
+                    <p>IMAGE/PNG, IMAGE/GIF, IMAGE/JPEG, APPLICATION/PDF</p>
+                </div>
+
+                <!-- Parte derecha: formulario dinámico basado en el tipo -->
+                <div class="form-right">
+                    <div class="form-group">
+                        <label for="tipo">Tipo *</label>
+                        <select id="tipo" name="tipo" onchange="mostrarFormulario()">
+                            <option value="electricidad">Electricidad</option>
+                            <option value="energiaGenerada">Energía Generada</option>
+                            <option value="combustion">Combustión</option>
+                            <option value="recargaGas">Recarga gas</option>
+                            <option value="agua">Agua</option>
+                            <option value="residuos">Residuos</option>
+                            <option value="otrasEnergias">Otras energías</option>
+                        </select>
+                    </div>
+
+                    <!-- Formulario para Electricidad -->
+                    <div class="formulario-consumo" id="formElectricidad">
+                        <div class="form-group">
+                            <label for="edificio">Edificio *</label>
+                            <select id="edificio">
+                                <option>--</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="fechas">Fecha de inicio y fin *</label>
+                            <input type="text" id="fechas" placeholder="dd/mm/aaaa → dd/mm/aaaa">
+                        </div>
+                        <div class="form-group">
+                            <label for="costeTotal">Coste total</label>
+                            <div class="coste-total-container">
+                                <input type="number" id="costeTotal" placeholder="--" step="0.01">
+                                <select id="moneda">
+                                    <option value="EUR">EUR (€)</option>
+                                    <option value="USD">USD ($)</option>
+                                    <option value="GBP">GBP (£)</option>
+                                    <option value="JPY">JPY (¥)</option>
+                                    <option value="CHF">CHF</option>
+                                    <option value="CAD">CAD</option>
+                                    <option value="AUD">AUD</option>
+                                    <option value="CNY">CNY</option>
+                                    <option value="INR">INR</option>
+                                    <!-- Añade más monedas con sus iniciales -->
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="proveedor">Proveedor *</label>
+                            <select id="proveedor">
+                                <option>--</option>
+                                <option>ENERGY BY COGEN . (R2-337)</option>
+                                <option>ENERGY PLUS IBERIA. (R2-984)</option>
+                                <option>ENERGY STROM XXI SL (R2-479)</option>
+                                <option>ENERGYA VM GESTION DE ENERGÍA (R2-241)</option>
+                                <option>ENERGYSAVE PROJECTS S.L (R2-554)</option>
+                                <option>ENERPLUS ENERGIA, S.A. (R2-550)</option>
+                                <option>ENERXIA GALEGA MAIS SLU (R2-543)</option>
+                                <option>ENGIE ESPAÑA (R2-117)</option>
+                                <option>ENI PLENITUDE IBERIA. (R2-506)</option>
+                                <option>ENSTROGA. (R2-597)</option>
+                                <option>EPRESA ENERGÍA S.A. (R2-155)</option>
+                                <option>ESCANDINAVA DE ELECTRICIDAD (R2-288)</option>
+                                <option>ESTABANELL IMPULSA, S.A.U. (R2-013)</option>
+                                <option>ESTRATEGIAS ELÉCTRICAS INTEGRALES, S.A. (R2-534)</option>
+                                <option>FACTOR ENERGÍA ESPAÑA, S.A. (R2-242)</option>
+                                <option>FACTOR ENERGÍA, S.A. (R2-109)</option>
+                                <option>FENIE ENERGIA, S.A. (R2-403)</option>
+                                <option>FOENER ENERGÍA (R2-483)</option>
+                                <option>FORCES ELÈCTRIQUES D'ANDORRA (FEDA) (R2-425)</option>
+                                <option>FORTIA ENERGIA S.L. (R2-267)</option>
+                                <option>FORZA VILALTA GREEN ENERGY. (R2-719)</option>
+                                <option>FOX ENERGÍA S.A (R2-583)</option>
+                                <option>GABA COMERCIALIZADORA DE ELECTRICIDAD (R2-918)</option>
+                                <option>GALP ENERGÍA ESPAÑA, S.A.U. (R2-417)</option>
+                                <option>GAS NATURAL COMERCIALIZADORA SA (R2-140)</option>
+                                <option>GASELEC DIVERSIFICACIÓN S.L. (R2-060)</option>
+                                <option>GASILUZ ECO ENERCIA S.L. (R2-811)</option>
+                                <option>GEO ALTERNATIVA S.L. (R2-603)</option>
+                                <option>GEOATLANTER SA (R2-265)</option>
+                                <option>GERENTA ENERGÍA (R2-677)</option>
+                                <option>GESTERNOVA, S.A (R2-269)</option>
+                                <option>GESTINER INGENIEROS. (R2-392)</option>
+                                <option>GLOBAL BIOSFERA PROTEC S.L (R2-536)</option>
+                                <option>GLOBELIGHT ENERGY S.L (R2-732)</option>
+                                <option>GNERA ENERGIA Y TECNOLOGIA. (R2-450)</option>
+                                <option>GOIENER S.COOP (R2-460)</option>
+                                <option>GURBTEC ENERGIA. (R2-860)</option>
+                                <option>HANWHA ENERGY RETAIL SPAIN SL (R2-795)</option>
+                                <option>HELIOELEC ENERGIA ELECTRICA. (R2-736)</option>
+                                <option>HIDROELÉCTRICA DEL VALIRA. (R2-018)</option>
+                                <option>HIDROELÉCTRICA EL CARMEN ENERGÍA (R2-368)</option>
+                                <option>HOLALUZ-CLIDOM, S.A (R2-408)</option>
+                                <option>IBERDROLA CLIENTES, S.A.U. (R2-515)</option>
+                                <option>IBERDROLA ENERGÍA ESPAÑA, S.A.U (R2-516)</option>
+                                <option>IBERDROLA SERVICIOS ENERGETICOS, S.A.U. (R2-726)</option>
+                                <option>IMPERIUM LUMEN, S.A. (R2-932)</option>
+                                <option>IM3 ENERGIA SL (R2-514)</option>
+                                <option>INDEXO ENERGIA SL (R2-470)</option>
+                                <option>INER ENERGIA CASTILLA LA MANCHA SL (R2-459)</option>
+                                <option>INER EUSKADI. (R2-837)</option>
+                                <option>INGEBAU SOLUCIONES DE MEDIDA. (R2-770)</option>
+                                <option>INTEGRACIÓN EUROPEA DE ENERGIA, S.A.U. (R2-469)</option>
+                                <option>INTELIGENCIA PARA EL AHORRO ENERGÉTICO. (R2-678)</option>
+                                <option>IRIS ENERGÍA EFICIENTE S.A. (R2-744)</option>
+                                <option>JUAN ENERGY. (R2-821)</option>
+                                <option>KILOWATIOS VERDES S.L. (R2-653)</option>
+                                <option>KISHOA. (R2-689)</option>
+                                <option>LA CORRIENTE SOCIEDAD COOPERATIVA (R2-769)</option>
+                                <option>LA UNIÓN ELECTRO INDUSTRIAL (R2-102)</option>
+                                <option>LABOR SOLIS COMERCIALIZADORA DE ENERGIA. (R2-946)</option>
+                                <option>LONJAS TECNOLOGÍA, S.A. (R2-367)</option>
+                                <option>LOVE ENERGY. (R2-826)</option>
+                                <option>LUZ SOLIDARIA INCLUSIVA. (R2-933)</option>
+                                <option>LUZ SOLIDARIA S.L. (R2-783)</option>
+                                <option>LUZÍA ENERGÍA (R2-755)</option>
+                                <option>LUZY ENERGIA RENOVABLE. (R2-940)</option>
+                                <option>MASQLUZ 2020. (R2-823)</option>
+                                <option>MEGARA ENERGIA SOC. COOP (R2-629)</option>
+                                <option>MET ENERGIA ESPAÑA, S.A (R2-909)</option>
+                                <option>MINAI SERVICIOS ENERGÉTICOS S.L. (R2-806)</option>
+                                <option>MY ENERGIA ONER S.L (R2-509)</option>
+                                <option>NABALIA ENERGIA 2000 S.A (R2-608)</option>
+                                <option>NATURGY CLIENTES, S.A.U. (R2-911)</option>
+                                <option>NATURGY IBERIA, S.A. (R2-142)</option>
+                                <option>NATURGY RENOVABLESU. (R2-696)</option>
+                                <option>NEOELECTRA ENERGIA (R2-601)</option>
+                                <option>NEXUS ENERGIA SA (R2-161)</option>
+                                <option>NOSA ENERXIA SCG (R2-582)</option>
+                                <option>NUEVA COMERCIALIZADORA ESPAÑOLA SL (R2-478)</option>
+                                <option>OCTOPUS ENERGY ESPAÑA (R2-760)</option>
+                                <option>OK TU ENERGIA VERDE. (R2-844)</option>
+                                <option>ON DEMAND FACILITIES, SLU (R2-402)</option>
+                                <option>PASIÓN ENERGÍA. (R2-866)</option>
+                                <option>PEPEENERGY. (R2-565)</option>
+                                <option>PETRONIEVES ENERGIA 1. (R2-497)</option>
+                                <option>PLENA ENERGIA RENOVABLE. (R2-767)</option>
+                                <option>POTENZIA COMERCIALIZADORA SL (R2-654)</option>
+                                <option>PROT ENERGIA COMERCIALIZACION (R2-581)</option>
+                                <option>RECICLAJES ECOLOGICOS NAGINI. (R2-856)</option>
+                                <option>RELUZCA ENERGÍA, S..L. (R2-859)</option>
+                                <option>REPSOL COMERCIALIZADORA DE ELECTRICIDAD Y GAS (R2-243)</option>
+                                <option>RESPIRA ENERGÍA ESPAÑA. (R2-674)</option>
+                                <option>RESPIRA ENERGIA MEDITERRANIA, S.A. (R2-397)</option>
+                                <option>REUS SERVEIS MUNICIPALS, S.A. (R2-938)</option>
+                                <option>ROFEICA ENERGIA, S.A (R2-545)</option>
+                                <option>RONDA OESTE ENERGÍA (R2-594)</option>
+                                <option>SAMPOL INGENIERIA Y OBRAS SA (R2-421)</option>
+                                <option>SERVIGAS S XXI SA (R2-546)</option>
+                                <option>SHELL ENERGY TRADING LIMITED (R2-317)</option>
+                                <option>SHELL ESPAÑA, S.A (R2-143)</option>
+                                <option>SISTEMAS URBANOS DE ENERGÍAS RENOVABLES S.L. (R2-704)</option>
+                                <option>SOCIEDAD ARAGONESA DE COMERCIALIZACION DE ENERGIA S.L. (R2-817)</option>
+                                <option>SOLABRIA S.COOP. - ENERPLUS S.C. (R2-613)</option>
+                                <option>SOLAR EAAS. (R2-876)</option>
+                                <option>SOLARPACK ENERGY. (R2-885)</option>
+                                <option>SOLTEC GREEN ENERGY. (R2-986)</option>
+                                <option>SOM ENERGIA SCCL (R2-415)</option>
+                                <option>STIN S.A (R2-638)</option>
+                                <option>SWAP ENERGIA SA (R2-620)</option>
+                                <option>SYDER COMERCIALIZADORA VERDE SL</option>
+                            </select>
+                                <option>--</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="origen">Origen de la energía</label>
+                            <select id="origen">
+                                <option>No renovable</option>
+                                <option>Renovable</option>
+                                <option>Congeneracion de alta Eficiencia</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="cantidad">Cantidad *</label>
+                            <input type="text" id="cantidad" placeholder="Kilovatio hora (kWh)">
+                        </div>
+                    </div>
+
+                    <!-- Formulario para Energía Generada -->
+                    <div class="formulario-consumo" id="formEnergiaGenerada" style="display:none;">
+                        <div class="form-group">
+                            <label for="edificio">Edificio *</label>
+                            <select id="edificio">
+                                <option>--</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="fechas">Fecha de inicio y fin *</label>
+                            <input type="text" id="fechas" placeholder="dd/mm/aaaa → dd/mm/aaaa">
+                        </div>
+                        <div class="form-group">
+                            <label for="costeTotal">Coste total</label>
+                            <div class="coste-total-container">
+                                <input type="number" id="costeTotal" placeholder="--" step="0.01">
+                                <select id="moneda">
+                                    <option value="EUR">EUR (€)</option>
+                                    <option value="USD">USD ($)</option>
+                                    <option value="GBP">GBP (£)</option>
+                                    <option value="JPY">JPY (¥)</option>
+                                    <option value="CHF">CHF</option>
+                                    <option value="CAD">CAD</option>
+                                    <option value="AUD">AUD</option>
+                                    <option value="CNY">CNY</option>
+                                    <option value="INR">INR</option>
+                                    <!-- Añade más monedas con sus iniciales -->
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Formulario para Combustión -->
+                    <div class="formulario-consumo" id="formCombustion" style="display:none;">
+                        <div class="form-group">
+                            <label for="edificio">Edificio *</label>
+                            <select id="edificio">
+                                <option>--</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="fechas">Fecha de inicio y fin *</label>
+                            <input type="text" id="fechas" placeholder="dd/mm/aaaa → dd/mm/aaaa">
+                        </div>
+                        <div class="form-group">
+                            <label for="costeTotal">Coste total</label>
+                            <div class="coste-total-container">
+                                <input type="number" id="costeTotal" placeholder="--" step="0.01">
+                                <select id="moneda">
+                                    <option value="EUR">EUR (€)</option>
+                                    <option value="USD">USD ($)</option>
+                                    <option value="GBP">GBP (£)</option>
+                                    <option value="JPY">JPY (¥)</option>
+                                    <option value="CHF">CHF</option>
+                                    <option value="CAD">CAD</option>
+                                    <option value="AUD">AUD</option>
+                                    <option value="CNY">CNY</option>
+                                    <option value="INR">INR</option>
+                                    <!-- Añade más monedas con sus iniciales -->
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="combustible">Combustible *</label>
+                            <select id="combustible">
+                                <option value="biogas">Biogás (kg)</option>
+                                <option value="biomasa_astillas">Biomasa astillas (kg)</option>
+                                <option value="biomasa_cascara">Biomasa cáscara f. secos (kg)</option>
+                                <option value="biomasa_hueso_aceituna">Biomasa hueso aceituna (kg)</option>
+                                <option value="biomasa_madera">Biomasa madera (kg)</option>
+                                <option value="biomasa_pellets">Biomasa pellets (kg)</option>
+                                <option value="biomasa_serrines_virutas">Biomasa serrines virutas (kg)</option>
+                                <option value="carbon_vegetal">Carbón vegetal (kg)</option>
+                                <option value="coque_carbon">Coque de carbón (kg)</option>
+                                <option value="coque_petroleo">Coque de petróleo (kg)</option>
+                                <option value="fueloil">Fuelóleo (l)</option>
+                                <option value="gas_butano">Gas butano (kg)</option>
+                                <option value="gasoil_b">Gasóleo B (l)</option>
+                                <option value="gasoil_c">Gasóleo C (l)</option>
+                                <option value="gas_manufacturado">Gas manufacturado (kg)</option>
+                                <option value="gas_natural">Gas natural (kWhPCS)</option>
+                                <option value="gas_propano">Gas propano (kg)</option>
+                                <option value="hulla_antracita">Hulla y antracita (kg)</option>
+                                <option value="hullas_subituminosas">Hullas subituminosas (kg)</option>
+                                <option value="queroseno">Queroseno (l)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Formulario para Recarga de Gas -->
+                    <div class="formulario-consumo" id="formRecargaGas" style="display:none;">
+                        <div class="form-group">
+                            <label for="edificio">Edificio *</label>
+                            <select id="edificio">
+                                <option>--</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="fechas">Fecha de inicio y fin *</label>
+                            <div class="date-range-container">
+                                <input type="text" id="fechas" placeholder="dd/mm/aaaa → dd/mm/aaaa" readonly>
+                                <span class="calendar-icon"><i class="fas fa-calendar-alt"></i></span>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="costeTotal">Coste total</label>
+                            <div class="coste-total-container">
+                                <input type="number" id="costeTotal" placeholder="--" step="0.01">
+                                <select id="moneda">
+                                    <option value="EUR">EUR (€)</option>
+                                    <option value="USD">USD ($)</option>
+                                    <option value="GBP">GBP (£)</option>
+                                    <option value="JPY">JPY (¥)</option>
+                                    <option value="CHF">CHF</option>
+                                    <option value="CAD">CAD</option>
+                                    <option value="AUD">AUD</option>
+                                    <option value="CNY">CNY</option>
+                                    <option value="INR">INR</option>
+                                    <!-- Añade más monedas con sus iniciales -->
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="gas">Gas *</label>
+                            <select id="gas">
+                                <option value="HFC-23">HFC-23</option>
+                                <option value="HFC-32">HFC-32</option>
+                                <option value="HFC-41">HFC-41</option>
+                                <option value="HFC-125">HFC-125</option>
+                                <option value="HFC-134">HFC-134</option>
+                                <option value="HFC-134a">HFC-134a</option>
+                                <option value="HFC-143">HFC-143</option>
+                                <option value="HFC-143a">HFC-143a</option>
+                                <option value="HFC-152">HFC-152</option>
+                                <option value="HFC-152a">HFC-152a</option>
+                                <option value="HFC-161">HFC-161</option>
+                                <option value="HFC-227ea">HFC-227ea</option>
+                                <option value="HFC-236cb">HFC-236cb</option>
+                                <option value="HFC-236ea">HFC-236ea</option>
+                                <option value="HFC-236fa">HFC-236fa</option>
+                                <option value="HFC-245ca">HFC-245ca</option>
+                                <option value="HFC-245fa">HFC-245fa</option>
+                                <option value="HFC-365mfc">HFC-365mfc</option>
+                                <option value="HCFC-22">HCFC-22</option>
+                                <option value="HFC-43-10mee">HFC-43-10mee</option>
+                                <option value="R-404A">R-404A</option>
+                                <option value="R-407A">R-407A</option>
+                                <option value="R-407B">R-407B</option>
+                                <option value="R-407C">R-407C</option>
+                                <option value="R-407F">R-407F</option>
+                                <option value="R-410A">R-410A</option>
+                                <option value="R-410B">R-410B</option>
+                                <option value="R-413A">R-413A</option>
+                                <option value="R-417A">R-417A</option>
+                                <option value="R-417B">R-417B</option>
+                                <option value="R-422A">R-422A</option>
+                                <option value="R-422D">R-422D</option>
+                                <option value="R-424A">R-424A</option>
+                                <option value="R-426A">R-426A</option>
+                                <option value="R-427A">R-427A</option>
+                                <option value="R-428A">R-428A</option>
+                                <option value="R-434A">R-434A</option>
+                                <option value="R-437A">R-437A</option>
+                                <option value="R-438A">R-438A</option>
+                                <option value="R-442A">R-442A</option>
+                                <option value="R-449A">R-449A</option>
+                                <option value="R-452A">R-452A</option>
+                                <option value="R-453A">R-453A</option>
+                                <option value="R-507A">R-507A</option>
+                                <option value="CO2">CO₂</option>
+                                <option value="CH4">CH₄</option>
+                                <option value="N2O">N₂O</option>
+                                <option value="SF6">SF₆</option>
+                                <option value="NF3">NF₃</option>
+                                <option value="HCFE-235da2">HCFE-235da2</option>
+                                <option value="HFE-236ea2">HFE-236ea2</option>
+                                <option value="HFE-347mmz1">HFE-347mmz1</option>
+                                <option value="PFC-14">Perfluoromethane (PFC-14)</option>
+                                <option value="PFC-116">C₂F₆ (PFC-116)</option>
+                                <option value="PFC-218">C₃F₈ (PFC-218)</option>
+                                <option value="PFC-318">Perfluorocyclobutane (PFC-318)</option>
+                                <option value="PFC-3-1-10">Perfluorobutane (PFC-3-1-10)</option>
+                                <option value="PFC-4-1-12">Perfluoropentane (PFC-4-1-12)</option>
+                                <option value="PFC-5-1-14">Perfluorohexane (PFC-5-1-14)</option>
+                                <option value="PFC-9-1-18">PFC-9-1-18</option>
+                                <option value="Perfluorocyclopropane">Perfluorocyclopropane</option>
+                                <option value="Otros">Otros</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="cantidad">Cantidad *</label>
+                            <input type="text" id="cantidad" placeholder="Kilogramo (kg)">
+                        </div>
+                    </div>
+
+                    <!-- Formulario para Agua -->
+                    <div class="formulario-consumo" id="formAgua" style="display:none;">
+                        <div class="form-group">
+                            <label for="edificio">Edificio *</label>
+                            <select id="edificio">
+                                <option>--</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="fechas">Fecha de inicio y fin *</label>
+                            <input type="text" id="fechas" placeholder="dd/mm/aaaa → dd/mm/aaaa">
+                        </div>
+                        <div class="form-group">
+                            <label for="costeTotal">Coste total</label>
+                            <div class="coste-total-container">
+                                <input type="number" id="costeTotal" placeholder="--" step="0.01">
+                                <select id="moneda">
+                                    <option value="EUR">EUR (€)</option>
+                                    <option value="USD">USD ($)</option>
+                                    <option value="GBP">GBP (£)</option>
+                                    <option value="JPY">JPY (¥)</option>
+                                    <option value="CHF">CHF</option>
+                                    <option value="CAD">CAD</option>
+                                    <option value="AUD">AUD</option>
+                                    <option value="CNY">CNY</option>
+                                    <option value="INR">INR</option>
+                                    <!-- Añade más monedas con sus iniciales -->
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="cantidad">Cantidad *</label>
+                            <input type="text" id="cantidad" placeholder="Metros cúbicos (m3)">
+                        </div>
+                        <div class="form-group">
+                            <label for="fuente">Fuente</label>
+                            <select id="fuente">
+                                <option>--</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Formulario para Residuos -->
+                    <div class="formulario-consumo" id="formResiduos" style="display:none;">
+                        <div class="form-group">
+                            <label for="edificio">Edificio *</label>
+                            <select id="edificio">
+                                <option>--</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="fechas">Fecha de inicio y fin *</label>
+                            <input type="text" id="fechas" placeholder="dd/mm/aaaa → dd/mm/aaaa">
+                        </div>
+                        <div class="form-group">
+                            <label for="costeTotal">Coste total</label>
+                            <div class="coste-total-container">
+                                <input type="number" id="costeTotal" placeholder="--" step="0.01">
+                                <select id="moneda">
+                                    <option value="EUR">EUR (€)</option>
+                                    <option value="USD">USD ($)</option>
+                                    <option value="GBP">GBP (£)</option>
+                                    <option value="JPY">JPY (¥)</option>
+                                    <option value="CHF">CHF</option>
+                                    <option value="CAD">CAD</option>
+                                    <option value="AUD">AUD</option>
+                                    <option value="CNY">CNY</option>
+                                    <option value="INR">INR</option>
+                                    <!-- Añade más monedas con sus iniciales -->
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="tipoResiduos">Tipo de residuos *</label>
+                            <select id="tipoResiduos">
+                                <option>--</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="eliminacionResiduos">Método de eliminación de residuos *</label>
+                            <select id="eliminacionResiduos">
+                                <option>--</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="cantidad">Cantidad *</label>
+                            <input type="text" id="cantidad" placeholder="Kilogramo (kg)">
+                        </div>
+                    </div>
+
+                    <!-- Formulario para Otras Energías -->
+                    <div class="formulario-consumo" id="formOtrasEnergias" style="display:none;">
+                        <div class="form-group">
+                            <label for="edificio">Edificio *</label>
+                            <select id="edificio">
+                                <option>--</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="fechas">Fecha de inicio y fin *</label>
+                            <input type="text" id="fechas" placeholder="dd/mm/aaaa → dd/mm/aaaa">
+                        </div>
+                        <div class="form-group">
+                            <label for="costeTotal">Coste total</label>
+                            <div class="coste-total-container">
+                                <input type="number" id="costeTotal" placeholder="--" step="0.01">
+                                <select id="moneda">
+                                    <option value="EUR">EUR (€)</option>
+                                    <option value="USD">USD ($)</option>
+                                    <option value="GBP">GBP (£)</option>
+                                    <option value="JPY">JPY (¥)</option>
+                                    <option value="CHF">CHF</option>
+                                    <option value="CAD">CAD</option>
+                                    <option value="AUD">AUD</option>
+                                    <option value="CNY">CNY</option>
+                                    <option value="INR">INR</option>
+                                    <!-- Añade más monedas con sus iniciales -->
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="combustible">Combustible *</label>
+                            <select id="combustible">
+                                <option>--</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="emision">Factor de emisión *</label>
+                            <input type="text" id="emision" placeholder="Factor de emisión">
+                        </div>
+                        <div class="form-group">
+                            <label for="cantidad">Cantidad *</label>
+                            <input type="text" id="cantidad" placeholder="Kilovatio hora (kWh)">
+                        </div>
+                    </div>
+             <!-- Área para mostrar el resultado del cálculo -->
+                    <div id="resultadoModalContent" style="display:none;">
+                        <p id="resultadoHuellaModal"></p>
+                        <button id="verLandingBtn">Ver Informe Completo</button>
+                    </div>
+
+                    <button id="calcularBtn">Calcular</button>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+
+</div>
+
+<!-- Script para generar el gráfico con Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const ctx = document.getElementById('consumoChart').getContext('2d');
+    const consumoChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+            datasets: [{
+                label: 'Consumo (kWh)',
+                data: [0, 0, 371.55, 0, 32, 1, 0, 0, 0, 0, 0, 0],
+                backgroundColor: '#f9b56a',
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+
+    // Script para controlar la apertura y cierre del modal
+    const openModalBtn = document.getElementById('openModalBtn');
+    const closeModalBtn = document.getElementById('closeModalBtn');
+    const modalOverlay = document.getElementById('modalOverlay');
+
+    openModalBtn.addEventListener('click', () => {
+        modalOverlay.classList.add('modal-visible');
+    });
+
+    closeModalBtn.addEventListener('click', () => {
+        modalOverlay.classList.remove('modal-visible');
+    });
+
+    window.addEventListener('click', (e) => {
+        if (e.target === modalOverlay) {
+            modalOverlay.classList.remove('modal-visible');
+        }
+    });
+
+    // Función para mostrar el formulario adecuado
+    function mostrarFormulario() {
+        const tipo = document.getElementById("tipo").value;
+        const formularios = document.querySelectorAll(".formulario-consumo");
+        formularios.forEach(formulario => formulario.style.display = "none");
+
+        document.getElementById(`form${capitalizeFirstLetter(tipo)}`).style.display = "block";
+    }
+
+    function capitalizeFirstLetter(string) {
+        return string.charAt(0).toUpperCase() + string.slice(1);
+    }
+
+    document.addEventListener('DOMContentLoaded', mostrarFormulario);
+</script>
+<script>
+    // Factores de emisión (simulando la carga desde los archivos JSON proporcionados)
+    const factoresEmisionAlcance1 = {
+        "Gasóleo C (l)": {
+            "2007": 2.721,
+            "2008": 2.721,
+            "2023": 2.721,
+        },
+        "Gas natural (kWhPCS)": {
+            "2007": 0.182,
+            "2008": 0.183,
+            "2023": 0.182,
+        },
+    };
+
+    const factoresEmisionAlcance2 = {
+        "IBERDROLA ENERGÍA ESPAÑA, S.A.U (R2-516)": 0.259,
+        "INTEGRACIÓN EUROPEA DE ENERGIA, S.A.U. (R2-469)": 0.096,
+    };
+
+    const factoresEmisionAlcance3 = {
+        "Transporte": {
+            "Gasóleo (km)": {
+                "Turismos (M1)": {
+                    "2023": 0.174,
+                },
+                "Camiones (N2, N3)": {
+                    "2023": 0.772,
+                }
+            }
+        }
+    };
+
+    // Función para mostrar el resultado en el modal
+    function mostrarResultadoEnModal(mensaje) {
+        const resultadoHuellaModal = document.getElementById('resultadoHuellaModal');
+        resultadoHuellaModal.textContent = mensaje;
+        document.getElementById('resultadoModalContent').style.display = 'block';
+    }
+
+    // Funciones de cálculo de huella de carbono
+    function calcularHuellaAlcance1() {
+        const tipo = document.getElementById("combustible").value;
+        const cantidad = parseFloat(document.getElementById("cantidad").value);
+        const year = "2023"; // Año por defecto para simplificar
+
+        if (factoresEmisionAlcance1[tipo] && factoresEmisionAlcance1[tipo][year]) {
+            const factorEmision = factoresEmisionAlcance1[tipo][year];
+            const huellaCarbono = cantidad * factorEmision;
+            mostrarResultadoEnModal(`La huella de carbono para el Alcance 1 es: ${huellaCarbono.toFixed(2)} kg CO2e`);
+        } else {
+            mostrarResultadoEnModal("Tipo de combustible o año no encontrado en los factores de emisión");
+        }
+    }
+
+    function calcularHuellaAlcance2() {
+        const comercializadora = document.getElementById("proveedor").value;
+        const consumo = parseFloat(document.getElementById("cantidad").value);
+
+        if (factoresEmisionAlcance2[comercializadora]) {
+            const factorEmision = factoresEmisionAlcance2[comercializadora];
+            const huellaCarbono = consumo * factorEmision;
+            mostrarResultadoEnModal(`La huella de carbono para el Alcance 2 es: ${huellaCarbono.toFixed(2)} kg CO2e`);
+        } else {
+            mostrarResultadoEnModal("Comercializadora no encontrada en los factores de emisión");
+        }
+    }
+
+    function calcularHuellaAlcance3() {
+        const tipoTransporte = document.getElementById("tipoTransporte").value;
+        const tipoVehiculo = document.getElementById("tipoVehiculo").value;
+        const distancia = parseFloat(document.getElementById("distanciaRecorrida").value);
+        const year = "2023"; // Año por defecto para simplificar
+
+        if (factoresEmisionAlcance3[tipoTransporte] && factoresEmisionAlcance3[tipoTransporte][tipoVehiculo] && factoresEmisionAlcance3[tipoTransporte][tipoVehiculo][year]) {
+            const factorEmision = factoresEmisionAlcance3[tipoTransporte][tipoVehiculo][year];
+            const huellaCarbono = distancia * factorEmision;
+            mostrarResultadoEnModal(`La huella de carbono para el Alcance 3 es: ${huellaCarbono.toFixed(2)} kg CO2e`);
+        } else {
+            mostrarResultadoEnModal("Tipo de transporte, vehículo o año no encontrado en los factores de emisión");
+        }
+    }
+
+    // Evento para el botón de cálculo en el modal
+    document.getElementById('calcularBtn').addEventListener('click', function() {
+        const tipo = document.getElementById('tipo').value;
+        if (tipo === 'combustion') {
+            calcularHuellaAlcance1();
+        } else if (tipo === 'electricidad') {
+            calcularHuellaAlcance2();
+        } else if (tipo === 'transporte') {
+            calcularHuellaAlcance3();
+        } else {
+            mostrarResultadoEnModal('Tipo no soportado para el cálculo de huella de carbono');
+        }
+    });
+
+    // Evento para abrir la landing page con el informe desde el modal
+    document.getElementById('verLandingBtn').addEventListener('click', function() {
+        const resultadoMensaje = document.getElementById('resultadoHuellaModal').textContent;
+        abrirLandingPage(resultadoMensaje);
+    });
+
+    // Función para abrir la landing page con el resultado
+    function abrirLandingPage(mensaje) {
+        const newWindow = window.open("", "_blank");
+        newWindow.document.write(`
+            <html>
+                <head>
+                    <title>Resultado del Cálculo de Huella de Carbono</title>
+                    <style>
+                        body {
+                            font-family: Arial, sans-serif;
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                            height: 100vh;
+                            margin: 0;
+                            background-color: #f0f0f0;
+                        }
+                        .result-container {
+                            background-color: #fff;
+                            padding: 20px;
+                            border-radius: 8px;
+                            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                            text-align: center;
+                        }
+                        h1 {
+                            color: #004e60;
+                        }
+                        button {
+                            background-color: #004e60;
+                            color: white;
+                            padding: 10px 15px;
+                            border-radius: 5px;
+                            border: none;
+                            cursor: pointer;
+                            font-size: 16px;
+                            margin-top: 20px;
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="result-container">
+                        <h1>Resultado del Cálculo de Huella de Carbono</h1>
+                        <p>${mensaje}</p>
+                        <button onclick="window.close()">Cerrar</button>
+                    </div>
+                </body>
+            </html>
+        `);
+    }
+
+    // Evento para cerrar el modal del resultado
+    document.getElementById('cerrarModalBtn').addEventListener('click', function() {
+        document.getElementById('resultadoModalContent').style.display = 'none';
+    });
+</script>
+
+{% endblock %}

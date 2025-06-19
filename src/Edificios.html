@@ -1,0 +1,296 @@
+{% set title = 'Emisiones por tipo de consumo' %}
+{% set filename = 'emisiones-tipo-consumo.html' %}
+
+{% extends 'src/layouts/master.html' %}
+
+{% block styles %}
+<link rel="stylesheet" href="/assets/scss/iconly.scss">
+<style>
+    .page-content {
+        padding: 20px;
+    }
+
+    .row {
+        display: flex;
+        gap: 15px;
+        justify-content: space-between;
+        align-items: stretch;
+        flex-wrap: wrap;
+    }
+
+    .card {
+        padding: 10px;
+        border-radius: 8px;
+        box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        background-color: #fff;
+        border: 1px solid #e0e0e0;
+        flex: 1 1 30%;
+        min-width: 250px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        overflow: hidden;
+    }
+
+    .card-dark {
+        background-color: #004e60;
+        color: white;
+        font-size: 14px;
+        font-weight: bold;
+        line-height: 1.2;
+    }
+
+    .card-header {
+        font-weight: bold;
+        font-size: 12px;
+        margin-bottom: 5px;
+    }
+
+    .card-body {
+        font-size: 12px;
+    }
+
+    .btn-employee {
+        background-color: #004e60;
+        color: white;
+        border: none;
+        padding: 6px 10px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 10px;
+    }
+
+    .small-text {
+        font-size: 10px;
+        font-weight: normal;
+        color: #6c757d;
+    }
+
+    /* Estilo para los gráficos */
+    .chart-container {
+        display: flex;
+        gap: 10px;
+        justify-content: space-between;
+        flex-wrap: wrap;
+    }
+
+    .chart-card {
+        width: 48%;
+        padding: 10px;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        background-color: white;
+        text-align: center;
+    }
+
+    .chart-header {
+        font-size: 12px;
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+
+    canvas {
+        max-width: 100%;
+        max-height: 200px;
+    }
+
+    /* Estilo del título central */
+    .section-title {
+        width: 100%;
+        text-align: center;
+        font-size: 16px;
+        font-weight: bold;
+        margin: 20px 0;
+    }
+
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-content">
+    <div class="row">
+        <!-- Emisiones totales -->
+        <div class="card card-dark">
+            <div>Emisiones totales <br> 96,23 kg CO₂e</div>
+        </div>
+
+        <!-- Emisiones por empleado -->
+        <div class="card">
+            <div class="card-header">Emisiones por empleado</div>
+            <div class="card-body">
+                <p class="small-text">Datos insuficientes</p>
+                <button class="btn-employee">Añadir número de empleados</button>
+            </div>
+        </div>
+
+        <!-- Emisiones por actividad -->
+        <div class="card">
+            <div class="card-header">Emisiones por actividad</div>
+            <div class="card-body">
+                <p>0 kg CO₂e</p>
+                <p class="small-text">0% vs el periodo anterior</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gráficos -->
+    <div class="chart-container">
+        <!-- Emisiones por edificio -->
+        <div class="chart-card">
+            <div class="chart-header">Emisiones por edificio</div>
+            <canvas id="emisionesEdificio"></canvas>
+        </div>
+
+        <!-- Evolución mensual por edificio -->
+        <div class="chart-card">
+            <div class="chart-header">Evolución mensual por edificio</div>
+            <canvas id="evolucionMensualEdificio"></canvas>
+        </div>
+    </div>
+
+    <!-- Título central -->
+    <div class="section-title">
+        Emisiones por tipo de consumo
+    </div>
+
+    <!-- Nueva sección de "Emisiones por tipo de consumo" -->
+    <div class="chart-container">
+        <!-- Emisiones por tipo de consumo -->
+        <div class="chart-card">
+            <div class="chart-header">Emisiones por tipo de consumo</div>
+            <canvas id="emisionesConsumo"></canvas>
+        </div>
+
+        <!-- Evolución mensual por tipo de consumo -->
+        <div class="chart-card">
+            <div class="chart-header">Evolución por tipo de consumo</div>
+            <canvas id="evolucionMensualConsumo"></canvas>
+        </div>
+    </div>
+</div>
+
+<!-- Script para generar los gráficos con Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    // Gráfico de anillo: Emisiones por edificio
+    const ctx1 = document.getElementById('emisionesEdificio').getContext('2d');
+    const emisionesEdificio = new Chart(ctx1, {
+        type: 'doughnut',
+        data: {
+            labels: ['La Lonja Tech'],
+            datasets: [{
+                label: 'Emisiones por edificio',
+                data: [100],
+                backgroundColor: ['#6cd3bd'],
+                hoverOffset: 4
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'right',
+                }
+            }
+        }
+    });
+
+    // Gráfico de línea: Evolución mensual por edificio
+    const ctx2 = document.getElementById('evolucionMensualEdificio').getContext('2d');
+    const evolucionMensualEdificio = new Chart(ctx2, {
+        type: 'line',
+        data: {
+            labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+            datasets: [{
+                label: 'La Lonja Tech',
+                data: [10, 80, 96, 20, 30, 40, 30, 0, 0, 0, 20, 10],
+                borderColor: '#6cd3bd',
+                backgroundColor: 'rgba(108, 211, 189, 0.2)',
+                fill: true
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                x: {
+                    beginAtZero: true
+                },
+                y: {
+                    beginAtZero: true,
+                    max: 100
+                }
+            },
+            plugins: {
+                legend: {
+                    position: 'top',
+                }
+            }
+        }
+    });
+
+    // Gráfico de anillo: Emisiones por tipo de consumo
+    const ctx3 = document.getElementById('emisionesConsumo').getContext('2d');
+    const emisionesConsumo = new Chart(ctx3, {
+        type: 'doughnut',
+        data: {
+            labels: ['Electricidad', 'Energía Generada', 'Combustión', 'Recarga gas', 'Agua', 'Residuos', 'Otras energías'],
+            datasets: [{
+                label: 'Emisiones por tipo de consumo',
+                data: [50, 50, 30, 10, 70, 0, 25],
+                backgroundColor: ['#f9b56a', '#f75d7c', '#e6e6e6', '#91c7a1', '#70a1d7', '#f39c6b', '#b7d28d'],
+                hoverOffset: 4
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'right',
+                }
+            }
+        }
+    });
+
+    // Gráfico de línea: Evolución mensual por tipo de consumo
+    const ctx4 = document.getElementById('evolucionMensualConsumo').getContext('2d');
+    const evolucionMensualConsumo = new Chart(ctx4, {
+        type: 'line',
+        data: {
+            labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'],
+            datasets: [{
+                label: 'Electricidad',
+                data: [0, 50, 50, 0, 40, 10, 0, 60, 0, 0, 0, 0],
+                borderColor: '#f9b56a',
+                backgroundColor: 'rgba(249, 181, 106, 0.2)',
+                fill: true
+            }, {
+                label: 'Energía Generada',
+                data: [0, 50, 50, 0,30, 0, 0, 20, 10, 0, 0, 0],
+                borderColor: '#f75d7c',
+                backgroundColor: 'rgba(247, 93, 124, 0.2)',
+                fill: true
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                x: {
+                    beginAtZero: true
+                },
+                y: {
+                    beginAtZero: true,
+                    max: 100
+                }
+            },
+            plugins: {
+                legend: {
+                    position: 'top',
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}
+
