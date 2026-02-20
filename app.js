@@ -1,12 +1,14 @@
-import bcrypt from 'bcrypt';
+import bcrypt from 'bcryptjs';
 import bodyParser from 'body-parser';
 import cors from 'cors';
+import dotenv from 'dotenv';
 import express from 'express';
 import session from 'express-session';
-import mysql from 'mysql2';
+import mysql from 'mysql2/promise';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
+dotenv.config();
 
 // Configuración de path para ES Modules
 const __filename = fileURLToPath(import.meta.url);
@@ -27,7 +29,7 @@ app.use(bodyParser.json());
 
 // Configurar sesiones
 app.use(session({
-    secret: 'clave-secreta',
+    secret: process.env.SESSION_SECRET || 'clave-secreta',
     resave: false,
     saveUninitialized: true
 }));
@@ -35,170 +37,155 @@ app.use(session({
 // Middleware para proteger rutas
 function checkSession(req, res, next) {
     if (!req.session.loggedin) {
-        // Si NO está logueado, redirigimos al login
         return res.redirect('/login');
     }
-    // Si sí está logueado, continúa
     next();
 }
 
-// Configurar directorios estáticos para los recursos de assets
+// Configurar directorios estáticos
 app.use('/js', express.static(path.join(__dirname, 'src', 'assets', 'js')));
 app.use('/scss', express.static(path.join(__dirname, 'src', 'assets', 'scss')));
 app.use('/statics', express.static(path.join(__dirname, 'src', 'assets', 'statics')));
-app.use(express.static(path.join(__dirname, 'src'))); // Añadido
+app.use(express.static(path.join(__dirname, 'src')));
 app.use('/dist', express.static(path.join(__dirname, 'dist')));
 
-// *** INICIO: Conexión a MySQL ***
-const db = mysql.createConnection({
-    host: '127.0.0.1',
-    user: 'root',
-    password: '1990',
-    database: 'login_system',
-    port: 3307
+// *** INICIO: Conexión a MySQL (Pool) ***
+const pool = mysql.createPool({
+    host: process.env.DB_HOST || '127.0.0.1',
+    user: process.env.DB_USER || 'root',
+    password: process.env.DB_PASSWORD || '1990',
+    database: process.env.DB_NAME || 'login_system',
+    port: process.env.DB_PORT || 3307,
+    waitForConnections: true,
+    connectionLimit: 10,
+    queueLimit: 0
 });
 
-db.connect((err) => {
-    if (err) {
-        console.error('Error conectando a la base de datos:', err);
-    } else {
-        console.log('Conectado a la base de datos MySQL');
-    }
-});
+// Verificar conexión inicial
+pool.getConnection()
+    .then(conn => {
+        console.log('✅ Conectado a la base de datos MySQL');
+        conn.release();
+    })
+    .catch(err => {
+        console.error('❌ Error conectando a la base de datos:', err.message);
+    });
 // *** FIN: Conexión a MySQL ***
 
-// Ruta inicial para probar el servidor
-// La protegemos con checkSession: si no está logueado, va a /login.
+// Ruta inicial
 app.get('/', checkSession, (req, res) => {
     res.sendFile(path.join(__dirname, 'src', 'index.html'));
 });
 
 app.post('/api/register', async (req, res) => {
-    console.log('📩 Datos recibidos en /api/register:', req.body); // 👈 AÑADE ESTO
-
+    console.log('📩 Datos recibidos en /api/register:', req.body);
     const { email, username, password } = req.body;
 
     if (!email || !username || !password) {
-        console.log('❌ Faltan campos'); // 👈 AÑADE ESTO
+        console.log('❌ Faltan campos');
         return res.status(400).json({ success: false, message: 'Faltan campos obligatorios.' });
     }
 
-    const checkQuery = 'SELECT id FROM users WHERE username = ? OR email = ?';
-    db.query(checkQuery, [username, email], async (err, results) => {
-        if (err) {
-            console.error('❌ Error al verificar usuario:', err);
-            return res.status(500).json({ success: false, message: 'Error del servidor.' });
-        }
+    try {
+        const checkQuery = 'SELECT id FROM users WHERE username = ? OR email = ?';
+        const [results] = await pool.query(checkQuery, [username, email]);
 
-        console.log('🔍 Resultados de verificación:', results); // 👈 AÑADE ESTO
+        console.log('🔍 Resultados de verificación:', results);
 
         if (results.length > 0) {
             return res.status(409).json({ success: false, message: 'El nombre de usuario o email ya están registrados.' });
         }
 
-        try {
-            const hashedPassword = await bcrypt.hash(password, 10);
-            const insertQuery = 'INSERT INTO users (username, email, password) VALUES (?, ?, ?)';
-            db.query(insertQuery, [username, email, hashedPassword], (err, result) => {
-                if (err) {
-                    console.error('❌ Error al insertar usuario:', err);
-                    return res.status(500).json({ success: false, message: 'Error al registrar el usuario.' });
-                }
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const insertQuery = 'INSERT INTO users (username, email, password) VALUES (?, ?, ?)';
+        const [insertResult] = await pool.query(insertQuery, [username, email, hashedPassword]);
 
-                console.log('✅ Usuario insertado con ID:', result.insertId); // 👈 AÑADE ESTO
-                return res.status(201).json({ success: true, message: 'Usuario registrado con éxito.' });
-            });
-        } catch (error) {
-            console.error('❌ Error al hashear:', error);
-            return res.status(500).json({ success: false, message: 'Error al procesar la contraseña.' });
-        }
-    });
+        console.log('✅ Usuario insertado con ID:', insertResult.insertId);
+        return res.status(201).json({ success: true, message: 'Usuario registrado con éxito.' });
+    } catch (error) {
+        console.error('❌ Error en el registro:', error);
+        return res.status(500).json({ success: false, message: 'Error del servidor al registrarse.' });
+    }
 });
 
-
-
-// Ruta para mostrar el formulario de login
 app.get('/login', (req, res) => {
     res.sendFile(path.join(__dirname, 'src', 'auth-login.html'));
 });
 
-// Ruta para manejar el envío del formulario de login
-app.post('/api/login', (req, res) => {
+app.post('/api/login', async (req, res) => {
     const { username, password } = req.body;
 
     if (!username || !password) {
         return res.status(400).send('Por favor, ingrese usuario y contraseña.');
     }
 
-    const query = 'SELECT id, username FROM users WHERE username = ? AND password = ?';
-    db.query(query, [username, password], (err, results) => {
-        if (err) {
-            console.error('Error al consultar la base de datos:', err.message);
-            return res.status(500).send('Error del servidor.');
-        }
+    try {
+        const query = 'SELECT id, username, password FROM users WHERE username = ?';
+        const [results] = await pool.query(query, [username]);
 
         if (results.length > 0) {
-            req.session.loggedin = true;
-            req.session.userId = results[0].id;
-            req.session.username = results[0].username;
-            // Devolvemos JSON en vez de redirigir
-            return res.json({ success: true, message: 'Login correcto' });
-        } else {
-            return res.status(401).json({ success: false, message: 'Usuario o contraseña incorrectos.' });
+            const user = results[0];
+
+            // Verificamos si la contraseña coincide (vía hash, o directamente si estaba en plano antes)
+            const match = await bcrypt.compare(password, user.password).catch(() => false);
+            const isPlaintextMatch = (password === user.password);
+
+            if (match || isPlaintextMatch) {
+                req.session.loggedin = true;
+                req.session.userId = user.id;
+                req.session.username = user.username;
+                return res.json({ success: true, message: 'Login correcto' });
+            }
         }
-    });
+
+        return res.status(401).json({ success: false, message: 'Usuario o contraseña incorrectos.' });
+
+    } catch (err) {
+        console.error('Error al iniciar sesión:', err.message);
+        return res.status(500).send('Error del servidor.');
+    }
 });
 
-// === CAMBIO: la ruta de guardar cálculo ahora es "/api/save-calculation" ===
-app.post('/api/save-calculation', (req, res) => {
+app.post('/api/save-calculation', async (req, res) => {
     const { type, concept, building, start_date, end_date, consumption, emissions } = req.body;
-  
-    // Convertir de "dd/mm/yyyy" a "yyyy-mm-dd":
+
     function toSQLDateFormat(d) {
-      if (!d) return null;
-      const [day, month, year] = d.split('/');
-      return `${year}-${month}-${day}`;
+        if (!d) return null;
+        const [day, month, year] = d.split('/');
+        return `${year}-${month}-${day}`;
     }
     const sqlStart = toSQLDateFormat(start_date);
-    const sqlEnd   = toSQLDateFormat(end_date);
-  
-    // Verificar sesión
+    const sqlEnd = toSQLDateFormat(end_date);
+
     if (!req.session.loggedin) {
-      return res.status(401).json({ error: 'Usuario no autenticado.' });
+        return res.status(401).json({ error: 'Usuario no autenticado.' });
     }
-  
-    // Comprobar campos obligatorios
+
     if (!type || !sqlStart || !sqlEnd || !consumption || !emissions) {
-      return res.status(400).json({ error: 'Faltan datos obligatorios.' });
+        return res.status(400).json({ error: 'Faltan datos obligatorios.' });
     }
-  
+
     const userId = req.session.userId;
-  
     const query = `
       INSERT INTO calculations (user_id, type, concept, building, start_date, end_date, consumption, emissions)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?)
     `;
-    
-    db.query(query, [userId, type, concept, building, sqlStart, sqlEnd, consumption, emissions], (err, result) => {
-      if (err) {
+
+    try {
+        const [result] = await pool.query(query, [userId, type, concept, building, sqlStart, sqlEnd, consumption, emissions]);
+        return res.status(200).json({ success: true, newId: result.insertId });
+    } catch (err) {
         console.error('Error al guardar cálculo:', err);
         return res.status(500).json({ error: 'Error al guardar el cálculo.' });
-      }
-      return res.status(200).json({
-        success: true,
-        newId: result.insertId
-      });
-    });
-  });
+    }
+});
 
-// === CAMBIO: get-calculations -> "/api/get-calculations" ===
-app.get('/api/get-calculations', (req, res) => {
+app.get('/api/get-calculations', async (req, res) => {
     if (!req.session.loggedin) {
         return res.status(401).json({ error: 'Usuario no autenticado.' });
     }
 
     const userId = req.session.userId;
-
     const query = `
         SELECT type, concept, building, start_date, end_date, consumption, emissions
         FROM calculations
@@ -206,17 +193,54 @@ app.get('/api/get-calculations', (req, res) => {
         ORDER BY start_date DESC
     `;
 
-    db.query(query, [userId], (err, results) => {
-        if (err) {
-            console.error('Error al obtener cálculos:', err);
-            return res.status(500).json({ error: 'Error al obtener cálculos.' });
-        }
-
+    try {
+        const [results] = await pool.query(query, [userId]);
         res.json(results);
-    });
+    } catch (err) {
+        console.error('Error al obtener cálculos:', err);
+        return res.status(500).json({ error: 'Error al obtener cálculos.' });
+    }
 });
 
-// Ruta protegida para verificar sesión
+app.get('/api/get-user-calculations', async (req, res) => {
+    if (!req.session.loggedin) {
+        return res.status(401).json({ success: false, error: 'Usuario no autenticado.' });
+    }
+
+    const userId = req.session.userId;
+    const query = 'SELECT id, type, concept, building, start_date, end_date, consumption, emissions FROM calculations WHERE user_id = ?';
+
+    try {
+        const [results] = await pool.query(query, [userId]);
+        res.status(200).json({ success: true, calculations: results });
+    } catch (err) {
+        console.error('Error al obtener cálculos:', err);
+        return res.status(500).json({ success: false, error: 'Error al obtener cálculos.' });
+    }
+});
+
+app.delete('/api/delete-calculation/:id', async (req, res) => {
+    if (!req.session.loggedin) {
+        return res.status(401).json({ error: 'Usuario no autenticado.' });
+    }
+
+    const calcId = req.params.id;
+    const userId = req.session.userId;
+
+    const query = 'DELETE FROM calculations WHERE id = ? AND user_id = ?';
+
+    try {
+        const [result] = await pool.query(query, [calcId, userId]);
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ error: 'Cálculo no encontrado o no pertenece al usuario actual.' });
+        }
+        return res.json({ success: true });
+    } catch (err) {
+        console.error('Error al eliminar cálculo:', err);
+        return res.status(500).json({ error: 'Error al eliminar el cálculo.' });
+    }
+});
+
 app.get('/session-check', (req, res) => {
     if (req.session.loggedin) {
         res.json({ loggedIn: true, username: req.session.username });
@@ -225,7 +249,6 @@ app.get('/session-check', (req, res) => {
     }
 });
 
-// Ruta para cerrar sesión
 app.get('/logout', (req, res) => {
     req.session.destroy((err) => {
         if (err) {
@@ -237,53 +260,67 @@ app.get('/logout', (req, res) => {
     });
 });
 
-// === CAMBIO: get-user-calculations -> "/api/get-user-calculations" ===
-app.get('/api/get-user-calculations', (req, res) => {
+app.get('/api/factores-emision', async (req, res) => {
+    const query = 'SELECT * FROM detallesinstalacionesfijas';
+    try {
+        const [results] = await pool.query(query);
+        res.status(200).json({ success: true, factors: results });
+    } catch (err) {
+        console.error('Error al obtener los factores de emisión:', err);
+        return res.status(500).json({ error: 'Error al obtener los factores de emisión.' });
+    }
+});
+
+app.get('/api/detalles-comercializadoras', async (req, res) => {
+    const query = 'SELECT * FROM detallescomercializadoras';
+    try {
+        const [results] = await pool.query(query);
+        res.status(200).json({ success: true, data: results });
+    } catch (err) {
+        console.error('Error al obtener detalles comercializadoras:', err);
+        return res.status(500).json({ error: 'Error al obtener los datos.' });
+    }
+});
+
+app.get('/api/detalles-recarga-gas', async (req, res) => {
+    const query = 'SELECT * FROM detallesemisionesfugitivas';
+    try {
+        const [results] = await pool.query(query);
+        res.status(200).json({ success: true, data: results });
+    } catch (err) {
+        console.error('Error al obtener detalles de recarga de gas:', err);
+        return res.status(500).json({ error: 'Error al obtener los datos.' });
+    }
+});
+
+app.post('/api/company-profile', async (req, res) => {
     if (!req.session.loggedin) {
-        return res.status(401).json({ success: false, error: 'Usuario no autenticado.' });
+        return res.status(401).json({ success: false, message: 'Usuario no autenticado.' });
     }
 
     const userId = req.session.userId;
+    const {
+        cif, nombre_empresa, razon_social, sector, actividad,
+        direccion, ciudad, municipio, codigo_postal,
+        empleados, facturacion, cantidad, tipo_actividad
+    } = req.body;
 
-    const query = 'SELECT id, type, concept, building, start_date, end_date, consumption, emissions FROM calculations WHERE user_id = ?';
+    const query = `
+        INSERT INTO company
+        (user_id, cif, nombre_empresa, razon_social, sector, actividad, direccion, ciudad, municipio, codigo_postal, empleados, facturacion, cantidad, tipo_actividad) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `;
 
-    db.query(query, [userId], (err, results) => {
-        if (err) {
-            console.error('Error al obtener cálculos:', err);
-            return res.status(500).json({ success: false, error: 'Error al obtener cálculos.' });
-        }
-
-        res.status(200).json({ success: true, calculations: results });
-    });
-});
-
-// Ruta DELETE sigue igual en "/api/delete-calculation/:id"
-app.delete('/api/delete-calculation/:id', (req, res) => {
-    if (!req.session.loggedin) {
-        return res.status(401).json({ error: 'Usuario no autenticado.' });
+    try {
+        const [result] = await pool.query(query, [
+            userId, cif, nombre_empresa, razon_social, sector, actividad, direccion,
+            ciudad, municipio, codigo_postal, empleados, facturacion, cantidad, tipo_actividad
+        ]);
+        res.status(200).json({ success: true, newId: result.insertId });
+    } catch (err) {
+        console.error('❌ Error al guardar perfil de compañía:', err);
+        return res.status(500).json({ success: false, message: 'Error al guardar los datos.' });
     }
-
-    const calcId = req.params.id;
-    const userId = req.session.userId;
-
-    const query = 'DELETE FROM calculations WHERE id = ? AND user_id = ?';
-    db.query(query, [calcId, userId], (err, result) => {
-        if (err) {
-            console.error('Error al eliminar cálculo:', err);
-            return res.status(500).json({ error: 'Error al eliminar el cálculo.' });
-        }
-
-        if (result.affectedRows === 0) {
-            return res.status(404).json({ error: 'Cálculo no encontrado o no pertenece al usuario actual.' });
-        }
-
-        return res.json({ success: true });
-    });
-});
-
-// Iniciar el servidor en el puerto 3000
-app.listen(3000, () => {
-    console.log('Servidor iniciado en http://localhost:3000');
 });
 
 // Manejador de rutas no encontradas para la API
@@ -296,86 +333,8 @@ app.use((req, res, next) => {
     next();
 });
 
-
-// Nuevo endpoint para obtener los factores de emisión desde la tabla detallesinstalacionesfijas
-app.get('/api/factores-emision', (req, res) => {
-    // Consulta para obtener todos los registros de la tabla
-    const query = 'SELECT * FROM detallesinstalacionesfijas';
-    db.query(query, (err, results) => {
-        if (err) {
-            console.error('Error al obtener los factores de emisión:', err);
-            return res.status(500).json({ error: 'Error al obtener los factores de emisión.' });
-        }
-        // Se envían los resultados en formato JSON
-        res.status(200).json({ success: true, factors: results });
-    });
+// Iniciar el servidor
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`🚀 Servidor iniciado en http://localhost:${PORT}`);
 });
-
-// Nuevo endpoint para obtener datos de detallescomercializadoras
-app.get('/api/detalles-comercializadoras', (req, res) => {
-    // Si requieres autenticación, puedes incluir también una verificación de sesión aquí
-    // Por ejemplo: if (!req.session.loggedin) return res.status(401).json({ error: 'Usuario no autenticado.' }); detallesemisionesfugitivas
-
-    const query = 'SELECT * FROM detallescomercializadoras';
-    db.query(query, (err, results) => {
-        if (err) {
-            console.error('Error al obtener detalles comercializadoras:', err);
-            return res.status(500).json({ error: 'Error al obtener los datos.' });
-        }
-        res.status(200).json({ success: true, data: results }); 
-    });
-});
-
-// Nuevo endpoint para obtener datos de recarga de gas desde la tabla detallesemisionesfugitivas
-app.get('/api/detalles-recarga-gas', (req, res) => {
-    const query = 'SELECT * FROM detallesemisionesfugitivas'; // Usa el nombre exacto de tu tabla
-    db.query(query, (err, results) => {
-        if (err) {
-            console.error('Error al obtener detalles de recarga de gas:', err);
-            return res.status(500).json({ error: 'Error al obtener los datos.' });
-        }
-        // Devuelve el resultado en formato JSON
-        res.status(200).json({ success: true, data: results });
-    });
-});
-
-
-// 👇 Aquí tienes tus cálculos
-app.post('/api/save-calculation', (req, res) => { ... });
-app.get('/api/get-calculations', (req, res) => { ... });
-
-// 👇 AQUÍ puedes pegar el nuevo endpoint
-app.post('/api/company-profile', (req, res) => {
-  if (!req.session.loggedin) {
-    return res.status(401).json({ success: false, message: 'Usuario no autenticado.' });
-  }
-
-  const userId = req.session.userId;
-  const {
-    cif, nombre_empresa, razon_social, sector, actividad,
-    direccion, ciudad, municipio, codigo_postal,
-    empleados, facturacion, cantidad, tipo_actividad
-  } = req.body;
-
-  const query = `
-    INSERT INTO company
-    (user_id, cif, nombre_empresa, razon_social, sector, actividad, direccion, ciudad, municipio, codigo_postal, empleados, facturacion, cantidad, tipo_actividad) 
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-  `;
-
-  db.query(query, [
-    userId, cif, nombre_empresa, razon_social, sector, actividad, direccion,
-    ciudad, municipio, codigo_postal, empleados, facturacion, cantidad, tipo_actividad
-  ], (err, result) => {
-    if (err) {
-      console.error('❌ Error al guardar perfil de compañía:', err);
-      return res.status(500).json({ success: false, message: 'Error al guardar los datos.' });
-    }
-    res.status(200).json({ success: true, newId: result.insertId });
-  });
-});
-
-
-
-
-
