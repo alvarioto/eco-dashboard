@@ -6,14 +6,15 @@
 
 
 <style>
-    .fade {
-      transition: opacity 0.3s ease-in-out;
-    }
-    .opacity-0 {
-      opacity: 0 !important;
-    }
-  </style>
-  
+  .fade {
+    transition: opacity 0.3s ease-in-out;
+  }
+
+  .opacity-0 {
+    opacity: 0 !important;
+  }
+</style>
+
 
 <div class="page-heading">
   <div class="page-title">
@@ -29,16 +30,20 @@
           <!-- PESTAÑAS -->
           <ul class="nav nav-tabs mb-4" id="companyTabs" role="tablist">
             <li class="nav-item" role="presentation">
-              <button class="nav-link active" id="tab-compania" data-bs-toggle="tab" data-bs-target="#compania" type="button" role="tab">Compañía</button>
+              <button class="nav-link active" id="tab-compania" data-bs-toggle="tab" data-bs-target="#compania"
+                type="button" role="tab">Compañía</button>
             </li>
             <li class="nav-item" role="presentation">
-              <button class="nav-link" id="tab-edificio" data-bs-toggle="tab" data-bs-target="#edificio" type="button" role="tab">Edificio</button>
+              <button class="nav-link" id="tab-edificio" data-bs-toggle="tab" data-bs-target="#edificio" type="button"
+                role="tab">Edificio</button>
             </li>
             <li class="nav-item" role="presentation">
-              <button class="nav-link" id="tab-vehiculo" data-bs-toggle="tab" data-bs-target="#vehiculo" type="button" role="tab">Vehículo</button>
+              <button class="nav-link" id="tab-vehiculo" data-bs-toggle="tab" data-bs-target="#vehiculo" type="button"
+                role="tab">Vehículo</button>
             </li>
             <li class="nav-item" role="presentation">
-              <button class="nav-link" id="tab-personal" data-bs-toggle="tab" data-bs-target="#personal" type="button" role="tab">Personal</button>
+              <button class="nav-link" id="tab-personal" data-bs-toggle="tab" data-bs-target="#personal" type="button"
+                role="tab">Personal</button>
             </li>
           </ul>
 
@@ -52,7 +57,7 @@
                 <div class="row">
                   <div class="col-md-6 mb-3">
                     <label class="form-label">CIF</label>
-                    <input type="text" class="form-control form-control-sm" id="cif">>
+                    <input type="text" class="form-control form-control-sm" id="cif">
                   </div>
                   <div class="col-md-6 mb-3">
                     <label class="form-label">Nombre de empresa</label>
@@ -73,13 +78,13 @@
                   <div class="col-md-6 mb-3">
                     <label class="form-label">Sector</label>
                     <select class="form-select form-select-sm" id="sector"></select>
-                      <option>Servicios técnicos</option>
+                    <option>Servicios técnicos</option>
                     </select>
                   </div>
                   <div class="col-md-6 mb-3">
                     <label class="form-label">Actividad</label>
                     <select class="form-select form-select-sm" id="actividad"></select>
-                      <option>Otras actividades técnicas</option>
+                    <option>Otras actividades técnicas</option>
                     </select>
                   </div>
                 </div>
@@ -91,19 +96,19 @@
                 <div class="row">
                   <div class="col-12 mb-3">
                     <label class="form-label">Dirección</label>
-                    <input type="text" class="form-control form-control-sm"id="direccion">
+                    <input type="text" class="form-control form-control-sm" id="direccion">
                   </div>
                   <div class="col-md-6 mb-3">
                     <label class="form-label">Ciudad</label>
-                    <input type="text" class="form-control form-control-sm"id="ciudad">
+                    <input type="text" class="form-control form-control-sm" id="ciudad">
                   </div>
                   <div class="col-md-3 mb-3">
                     <label class="form-label">Municipio</label>
-                    <input type="text" class="form-control form-control-sm"id="municipio">
+                    <input type="text" class="form-control form-control-sm" id="municipio">
                   </div>
                   <div class="col-md-3 mb-3">
                     <label class="form-label">Código postal</label>
-                    <input type="text" class="form-control form-control-sm"id="codigo_postal">
+                    <input type="text" class="form-control form-control-sm" id="codigo_postal">
                   </div>
                 </div>
               </div>
@@ -114,36 +119,37 @@
                 <div class="row">
                   <div class="col-md-6 mb-3">
                     <label class="form-label">Empleados</label>
-                    <input type="number" class="form-control form-control-sm"id="empleados">
+                    <input type="number" class="form-control form-control-sm" id="empleados">
                   </div>
                   <div class="col-md-6 mb-3">
                     <label class="form-label">Facturación (€)</label>
-                    <input type="text" class="form-control form-control-sm"id="facturacion">
+                    <input type="text" class="form-control form-control-sm" id="facturacion">
                   </div>
                   <div class="col-md-6 mb-3">
                     <label class="form-label">Cantidad</label>
-                    <input type="text" class="form-control form-control-sm"id="cantidad">
+                    <input type="text" class="form-control form-control-sm" id="cantidad">
                   </div>
                   <div class="col-md-6 mb-3">
                     <label class="form-label">Tipo de actividad</label>
-                    <input type="text" class="form-control form-control-sm"id="tipo_actividad">
+                    <input type="text" class="form-control form-control-sm" id="tipo_actividad">
                   </div>
                 </div>
               </div>
 
               <!-- Botón Guardar y Eliminar -->
-              
-            <div class="text-end d-flex justify-content-end gap-2">
+
+              <div class="text-end d-flex justify-content-end gap-2">
                 <button class="btn btn-danger btn-sm" id="btnEliminarCompania">Eliminar datos</button>
                 <button class="btn btn-primary btn-sm" id="btnGuardarCompania">Guardar</button>
-            </div>
-              
-            <!-- EDIFICIO -->
-            <div class="tab-pane fade" id="edificio" role="tabpanel">
+              </div>
+
+              <!-- EDIFICIO -->
+              <div class="tab-pane fade" id="edificio" role="tabpanel">
                 <div class="d-flex justify-content-between align-items-center mb-3">
                   <div>
                     <h5 class="mb-0">Edificios</h5>
-                    <p class="text-muted mb-0">Crea y gestiona tus edificios o sedes. Cualquier lugar que tenga asociada una factura o vehículo deberá ser creado para poder trazar sus consumos.</p>
+                    <p class="text-muted mb-0">Crea y gestiona tus edificios o sedes. Cualquier lugar que tenga asociada
+                      una factura o vehículo deberá ser creado para poder trazar sus consumos.</p>
                   </div>
                   <div>
                     <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modalCrearEdificio">
@@ -151,18 +157,19 @@
                     </button>
                   </div>
                 </div>
-  
+
                 <div class="card border shadow-sm">
                   <div class="card-body">
                     <div class="d-flex justify-content-between align-items-center mb-3">
                       <button class="btn btn-outline-secondary btn-sm"><i class="bi bi-filter"></i> Filtrar</button>
                       <div class="d-flex align-items-center gap-2">
-                        <input type="text" class="form-control form-control-sm" placeholder="Buscar ..." style="width: 200px;">
+                        <input type="text" class="form-control form-control-sm" placeholder="Buscar ..."
+                          style="width: 200px;">
                         <button class="btn btn-outline-secondary btn-sm"><i class="bi bi-download"></i></button>
                         <button class="btn btn-outline-secondary btn-sm"><i class="bi bi-list-ul"></i></button>
                       </div>
                     </div>
-  
+
                     <div class="table-responsive">
                       <table class="table table-sm align-middle">
                         <thead>
@@ -187,7 +194,7 @@
                         </tbody>
                       </table>
                     </div>
-  
+
                     <div class="d-flex justify-content-between align-items-center mt-3">
                       <small>1 de 15 sobre 1 resultados</small>
                       <select class="form-select form-select-sm" style="width: auto;">
@@ -203,47 +210,47 @@
 
 
 
-<!------------------------------------------------------------------------------------------------------------------------------------------------------------>
-    
-  
+              <!------------------------------------------------------------------------------------------------------------------------------------------------------------>
+
+
               <!-- VEHÍCULO -->
-            <div class="tab-pane fade" id="vehiculo" role="tabpanel">
+              <div class="tab-pane fade" id="vehiculo" role="tabpanel">
                 <div class="d-flex justify-content-between align-items-center mb-3">
-                <div>
+                  <div>
                     <h5 class="mb-0">Vehículos</h5>
                     <p class="text-muted mb-0">
-                    Crea y gestiona tu flota de vehículos y maquinaria. Si deseas certificar años anteriores,
-                    será necesario que también crees los vehículos que tuviste ese año.
+                      Crea y gestiona tu flota de vehículos y maquinaria. Si deseas certificar años anteriores,
+                      será necesario que también crees los vehículos que tuviste ese año.
                     </p>
-                </div>
-                <div>
+                  </div>
+                  <div>
                     <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modalCrearVehiculo">
-                        <i class="bi bi-car-front-fill me-1"></i> Crear vehículo
+                      <i class="bi bi-car-front-fill me-1"></i> Crear vehículo
                     </button>
+                  </div>
                 </div>
-                </div>
-            
+
                 <div class="card border shadow-sm">
-                <div class="card-body">
+                  <div class="card-body">
                     <!-- Filtros superiores -->
                     <div class="d-flex justify-content-between align-items-center mb-3">
-                    <div class="d-flex gap-2">
+                      <div class="d-flex gap-2">
                         <select class="form-select form-select-sm" style="width: 180px;">
-                        <option selected>Edificio</option>
+                          <option selected>Edificio</option>
                         </select>
-                    </div>
-                    <div class="d-flex align-items-center gap-2">
+                      </div>
+                      <div class="d-flex align-items-center gap-2">
                         <button class="btn btn-outline-secondary btn-sm">
-                        <i class="bi bi-funnel"></i> Filtrar
+                          <i class="bi bi-funnel"></i> Filtrar
                         </button>
+                      </div>
                     </div>
-                    </div>
-            
+
                     <!-- Tabla de vehículos -->
                     <div class="table-responsive">
-                    <table class="table table-sm align-middle">
+                      <table class="table table-sm align-middle">
                         <thead>
-                        <tr>
+                          <tr>
                             <th><input type="checkbox"></th>
                             <th>Tipo</th>
                             <th>Categoría</th>
@@ -252,10 +259,10 @@
                             <th>Fecha de fin</th>
                             <th>Modelo</th>
                             <th>Edificio</th>
-                        </tr>
+                          </tr>
                         </thead>
                         <tbody>
-                        <tr>
+                          <tr>
                             <td><input type="checkbox"></td>
                             <td><span class="badge bg-light border text-dark">Vehículos</span></td>
                             <td>Turismos</td>
@@ -264,403 +271,451 @@
                             <td>--</td>
                             <td>WV GOLF VARIANT</td>
                             <td>La Lonja Tech</td>
-                        </tr>
+                          </tr>
                         </tbody>
-                    </table>
+                      </table>
                     </div>
-            
+
                     <!-- Footer: paginación -->
                     <div class="d-flex justify-content-between align-items-center mt-3">
-                    <div>
+                      <div>
                         <small>1 de 15</small> sobre 1 resultados
-                    </div>
-                    <div>
+                      </div>
+                      <div>
                         <select class="form-select form-select-sm" style="width: auto;">
-                        <option selected>15</option>
-                        <option>30</option>
-                        <option>50</option>
+                          <option selected>15</option>
+                          <option>30</option>
+                          <option>50</option>
                         </select>
+                      </div>
                     </div>
-                    </div>
+                  </div>
                 </div>
-                </div>
-            </div>
+              </div>
 
 
 
-<!------------------------------------------------------------------------------------------------------------------------------------------------------------>
+              <!------------------------------------------------------------------------------------------------------------------------------------------------------------>
 
 
               <!-- PERSONAL / EQUIPO -->
-<div class="tab-pane fade" id="personal" role="tabpanel">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-      <div>
-        <h5 class="mb-0">Equipo</h5>
-        <p class="text-muted mb-0">Crea y gestiona el equipo de tu organización</p>
-      </div>
-      <div class="d-flex gap-2">
-        <button id="btn-gestionar-departamentos" class="btn btn-outline-secondary btn-sm">
-            <i class="bi bi-briefcase"></i> Gestionar departamentos
-        </button>          
-        <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modalCrearEmpleado">
-            <i class="bi bi-person-plus-fill"></i> Añadir empleado
-        </button>      
-      </div>
-    </div>
-  
-    <div class="card border shadow-sm">
-      <div class="card-body">
-  
-        <!-- Filtros superiores -->
-        <div class="d-flex justify-content-between align-items-center mb-3">
-          <div class="d-flex align-items-center gap-2">
-            <select class="form-select form-select-sm" style="width: 180px;">
-              <option selected>Edificio</option>
-            </select>
-            <button class="btn btn-outline-secondary btn-sm">
-              <i class="bi bi-funnel"></i> Filtrar
-            </button>
-          </div>
-          <div class="d-flex align-items-center gap-2">
-            <input type="text" class="form-control form-control-sm" placeholder="Buscar ..." style="width: 200px;">
-            <button class="btn btn-outline-secondary btn-sm"><i class="bi bi-download"></i></button>
-            <button class="btn btn-outline-secondary btn-sm"><i class="bi bi-list-ul"></i></button>
-          </div>
-        </div>
-  
-        <!-- Tabla del equipo -->
-        <div class="table-responsive">
-          <table class="table table-sm align-middle">
-            <thead>
-              <tr>
-                <th><input type="checkbox"></th>
-                <th>Nombre</th>
-                <th>Email</th>
-                <th>Fecha de inicio</th>
-                <th>Fecha de fin</th>
-                <th>Edificio</th>
-                <th>Departamento</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><input type="checkbox"></td>
-                <td>
-                  <div class="d-flex align-items-center gap-2">
-                    <div class="avatar bg-success-subtle text-success fw-bold rounded-circle d-flex justify-content-center align-items-center" style="width: 30px; height: 30px;">JS</div>
-                    Jose Alvaro Diaz
+              <div class="tab-pane fade" id="personal" role="tabpanel">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                  <div>
+                    <h5 class="mb-0">Equipo</h5>
+                    <p class="text-muted mb-0">Crea y gestiona el equipo de tu organización</p>
                   </div>
-                </td>
-                <td>eslendis@desarrollocircular.es</td>
-                <td>--</td>
-                <td>--</td>
-                <td><span class="badge bg-light text-dark">La Lonja Tech</span></td>
-                <td><span class="badge bg-light text-dark">DPTO TÉCICO</span></td>
-              </tr>
-              <tr>
-                <td><input type="checkbox"></td>
-                <td>
-                  <div class="d-flex align-items-center gap-2">
-                    <div class="avatar bg-success-subtle text-success fw-bold rounded-circle d-flex justify-content-center align-items-center" style="width: 30px; height: 30px;">JM</div>
-                    José Manuel Ramírez Mendoza
-                  </div>
-                </td>
-                <td>josemanuel@desarrollocircular.es</td>
-                <td>--</td>
-                <td>--</td>
-                <td>--</td>
-                <td>--</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-  
-        <!-- Footer de paginación -->
-        <div class="d-flex justify-content-between align-items-center mt-3">
-          <div><small>1 de 15</small> sobre 2 resultados</div>
-          <div>
-            <select class="form-select form-select-sm" style="width: auto;">
-              <option selected>15</option>
-              <option>30</option>
-              <option>50</option>
-            </select>
-          </div>
-        </div>
-  
-      </div>
-    </div>
-  </div>
-
-
-  <!-- 🔥 Subsección para gestionar departamentos (inicialmente oculta) -->
-<div id="departamentos-section" class="d-none">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-      <div>
-        <h5 class="mb-0">Departamentos</h5>
-        <p class="text-muted mb-0">Administra los departamentos de tu organización.</p>
-      </div>
-      <div>
-        <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modalCrearDepartamento">
-          <i class="bi bi-plus-lg"></i> Añadir departamento
-        </button>
-      </div>
-    </div>
-  
-    <div class="card border shadow-sm">
-      <div class="card-body">
-        <div class="table-responsive">
-          <table class="table table-sm align-middle">
-            <thead>
-              <tr>
-                <th>Nombre</th>
-                <th>Acciones</th>
-              </tr>
-            </thead>
-            <tbody id="departamentos-list">
-              <tr>
-                <td>DPTO TÉCNICO</td>
-                <td>
-                  <button class="btn btn-outline-secondary btn-sm"><i class="bi bi-pencil"></i></button>
-                  <button class="btn btn-outline-danger btn-sm"><i class="bi bi-trash"></i></button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-  </div>
-  
-  
-  
-<!------------------------------------------------------------------------------------------------------------------------------------------------------------>
-
-
-
-<!-- ✅ MODAL: Crear edificio (Estructura FINA) -->
-<div class="modal fade" id="modalCrearEdificio" tabindex="-1" aria-labelledby="modalCrearEdificioLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered">
-      <div class="modal-content rounded-4">
-        <div class="modal-header border-0 pb-0">
-          <h5 class="modal-title fw-semibold">Crear edificio</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-        </div>
-  
-        <div class="modal-body pt-0">
-          <!-- Tabs del modal -->
-          <ul class="nav nav-tabs mb-3" id="modalTabs" role="tablist">
-            <li class="nav-item" role="presentation">
-              <button class="nav-link active" id="tab-edificio-tab" data-bs-toggle="tab" data-bs-target="#tab-edificio-content" type="button" role="tab">Edificio</button>
-            </li>
-            <li class="nav-item" role="presentation">
-              <button class="nav-link" id="tab-identificador-tab" data-bs-toggle="tab" data-bs-target="#tab-identificador-content" type="button" role="tab">Identificador de factura</button>
-            </li>
-            <li class="nav-item" role="presentation">
-              <button class="nav-link" id="tab-actividad-tab" data-bs-toggle="tab" data-bs-target="#tab-actividad-content" type="button" role="tab">Actividad</button>
-            </li>
-          </ul>
-  
-          <!-- Contenido de cada pestaña -->
-          <div class="tab-content" id="modalTabsContent">
-            <!-- Pestaña: Edificio -->
-            <div class="tab-pane fade show active" id="tab-edificio-content" role="tabpanel" aria-labelledby="tab-edificio-tab">
-              <form>
-                <div class="mb-2">
-                  <label class="form-label">Nombre *</label>
-                  <input class="form-control" placeholder="Introduce un nombre para la sede">
-                </div>
-                <div class="mb-2">
-                  <label class="form-label">Tipo de edificio *</label>
-                  <select class="form-select"><option>--</option></select>
-                </div>
-                <div class="mb-2">
-                  <label class="form-label">Dirección *</label>
-                  <div class="input-group">
-                    <input class="form-control">
-                    <span class="input-group-text"><i class="bi bi-geo-alt"></i></span>
+                  <div class="d-flex gap-2">
+                    <button id="btn-gestionar-departamentos" class="btn btn-outline-secondary btn-sm">
+                      <i class="bi bi-briefcase"></i> Gestionar departamentos
+                    </button>
+                    <button class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#modalCrearEmpleado">
+                      <i class="bi bi-person-plus-fill"></i> Añadir empleado
+                    </button>
                   </div>
                 </div>
-                <div class="row mb-2">
-                  <div class="col"><label class="form-label">Región</label><input class="form-control"></div>
-                  <div class="col"><label class="form-label">Provincia</label><input class="form-control"></div>
-                  <div class="col"><label class="form-label">Ciudad</label><input class="form-control"></div>
-                </div>
-                <div class="row mb-2">
-                  <div class="col">
-                    <label class="form-label">País *</label>
-                    <select class="form-select"><option>--</option></select>
+
+                <div class="card border shadow-sm">
+                  <div class="card-body">
+
+                    <!-- Filtros superiores -->
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                      <div class="d-flex align-items-center gap-2">
+                        <select class="form-select form-select-sm" style="width: 180px;">
+                          <option selected>Edificio</option>
+                        </select>
+                        <button class="btn btn-outline-secondary btn-sm">
+                          <i class="bi bi-funnel"></i> Filtrar
+                        </button>
+                      </div>
+                      <div class="d-flex align-items-center gap-2">
+                        <input type="text" class="form-control form-control-sm" placeholder="Buscar ..."
+                          style="width: 200px;">
+                        <button class="btn btn-outline-secondary btn-sm"><i class="bi bi-download"></i></button>
+                        <button class="btn btn-outline-secondary btn-sm"><i class="bi bi-list-ul"></i></button>
+                      </div>
+                    </div>
+
+                    <!-- Tabla del equipo -->
+                    <div class="table-responsive">
+                      <table class="table table-sm align-middle">
+                        <thead>
+                          <tr>
+                            <th><input type="checkbox"></th>
+                            <th>Nombre</th>
+                            <th>Email</th>
+                            <th>Fecha de inicio</th>
+                            <th>Fecha de fin</th>
+                            <th>Edificio</th>
+                            <th>Departamento</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td><input type="checkbox"></td>
+                            <td>
+                              <div class="d-flex align-items-center gap-2">
+                                <div
+                                  class="avatar bg-success-subtle text-success fw-bold rounded-circle d-flex justify-content-center align-items-center"
+                                  style="width: 30px; height: 30px;">JS</div>
+                                Jose Alvaro Diaz
+                              </div>
+                            </td>
+                            <td>eslendis@desarrollocircular.es</td>
+                            <td>--</td>
+                            <td>--</td>
+                            <td><span class="badge bg-light text-dark">La Lonja Tech</span></td>
+                            <td><span class="badge bg-light text-dark">DPTO TÉCICO</span></td>
+                          </tr>
+                          <tr>
+                            <td><input type="checkbox"></td>
+                            <td>
+                              <div class="d-flex align-items-center gap-2">
+                                <div
+                                  class="avatar bg-success-subtle text-success fw-bold rounded-circle d-flex justify-content-center align-items-center"
+                                  style="width: 30px; height: 30px;">JM</div>
+                                José Manuel Ramírez Mendoza
+                              </div>
+                            </td>
+                            <td>josemanuel@desarrollocircular.es</td>
+                            <td>--</td>
+                            <td>--</td>
+                            <td>--</td>
+                            <td>--</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+
+                    <!-- Footer de paginación -->
+                    <div class="d-flex justify-content-between align-items-center mt-3">
+                      <div><small>1 de 15</small> sobre 2 resultados</div>
+                      <div>
+                        <select class="form-select form-select-sm" style="width: auto;">
+                          <option selected>15</option>
+                          <option>30</option>
+                          <option>50</option>
+                        </select>
+                      </div>
+                    </div>
+
                   </div>
-                  <div class="col">
-                    <label class="form-label">Superficie</label>
-                    <div class="input-group">
-                      <input class="form-control">
-                      <span class="input-group-text">m²</span>
+                </div>
+              </div>
+
+
+              <!-- 🔥 Subsección para gestionar departamentos (inicialmente oculta) -->
+              <div id="departamentos-section" class="d-none">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                  <div>
+                    <h5 class="mb-0">Departamentos</h5>
+                    <p class="text-muted mb-0">Administra los departamentos de tu organización.</p>
+                  </div>
+                  <div>
+                    <button class="btn btn-primary btn-sm" data-bs-toggle="modal"
+                      data-bs-target="#modalCrearDepartamento">
+                      <i class="bi bi-plus-lg"></i> Añadir departamento
+                    </button>
+                  </div>
+                </div>
+
+                <div class="card border shadow-sm">
+                  <div class="card-body">
+                    <div class="table-responsive">
+                      <table class="table table-sm align-middle">
+                        <thead>
+                          <tr>
+                            <th>Nombre</th>
+                            <th>Acciones</th>
+                          </tr>
+                        </thead>
+                        <tbody id="departamentos-list">
+                          <tr>
+                            <td>DPTO TÉCNICO</td>
+                            <td>
+                              <button class="btn btn-outline-secondary btn-sm"><i class="bi bi-pencil"></i></button>
+                              <button class="btn btn-outline-danger btn-sm"><i class="bi bi-trash"></i></button>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
                     </div>
                   </div>
                 </div>
-              </form>
-            </div>
-  
-            <!-- Pestaña: Identificador de factura -->
-            <div class="tab-pane fade" id="tab-identificador-content" role="tabpanel" aria-labelledby="tab-identificador-tab">
-              <p class="fw-semibold">Identificadores de facturas</p>
-              <p class="text-muted">El CUPS es un código único que identifica un punto de suministro...</p>
-              <div class="mb-3">
-                <label class="form-label">CUPS Electricidad</label>
-                <div class="input-group">
-                  <input class="form-control" placeholder="0000000000000">
-                  <button class="btn btn-outline-primary">Añadir</button>
-                </div>
               </div>
-              <div class="mb-3">
-                <label class="form-label">CUPS Gas</label>
-                <div class="input-group">
-                  <input class="form-control" placeholder="0000000000000">
-                  <button class="btn btn-outline-primary">Añadir</button>
-                </div>
-              </div>
-              <div class="mb-3">
-                <label class="form-label">Contador Agua</label>
-                <div class="input-group">
-                  <input class="form-control" placeholder="0000000000000">
-                  <button class="btn btn-outline-primary">Añadir</button>
-                </div>
-              </div>
-            </div>
-  
-            <!-- Pestaña: Actividad -->
-            <div class="tab-pane fade" id="tab-actividad-content" role="tabpanel" aria-labelledby="tab-actividad-tab">
-              <div class="mb-3">
-                <p class="fw-semibold">Control operacional <a href="#">Saber más</a></p>
-                <div class="mb-2">
-                  <label class="form-label">¿Propiedad o alquiler?</label>
-                  <select class="form-select"><option>--</option></select>
-                </div>
-                <div class="mb-2">
-                  <label class="form-label">¿Control operacional?</label>
-                  <select class="form-select"><option>--</option></select>
-                </div>
-                <div class="form-check form-switch mb-2">
-                  <input class="form-check-input" type="checkbox" id="activoSwitch" checked>
-                  <label class="form-check-label" for="activoSwitch">Edificio actualmente en activo</label>
-                </div>
-                <div class="mb-2">
-                  <label class="form-label">Año de inicio</label>
-                  <input class="form-control" placeholder="----">
-                </div>
-                <div class="mb-2">
-                  <label class="form-label">Energías renovables</label>
-                  <select class="form-select"><option>--</option></select>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-  
-        <div class="modal-footer border-0">
-          <button class="btn btn-primary w-100">Guardar</button>
-        </div>
-      </div>
-    </div>
-  </div>
 
 
-            <!-- ✅ MODAL CREAR VEHÍCULO -->
-            <div class="modal fade" id="modalCrearVehiculo" tabindex="-1" aria-hidden="true">
+
+              <!------------------------------------------------------------------------------------------------------------------------------------------------------------>
+
+
+
+              <!-- ✅ MODAL: Crear edificio (Estructura FINA) -->
+              <div class="modal fade" id="modalCrearEdificio" tabindex="-1" aria-labelledby="modalCrearEdificioLabel"
+                aria-hidden="true">
+                <div class="modal-dialog modal-lg modal-dialog-centered">
+                  <div class="modal-content rounded-4">
+                    <div class="modal-header border-0 pb-0">
+                      <h5 class="modal-title fw-semibold">Crear edificio</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                    </div>
+
+                    <div class="modal-body pt-0">
+                      <!-- Tabs del modal -->
+                      <ul class="nav nav-tabs mb-3" id="modalTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                          <button class="nav-link active" id="tab-edificio-tab" data-bs-toggle="tab"
+                            data-bs-target="#tab-edificio-content" type="button" role="tab">Edificio</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                          <button class="nav-link" id="tab-identificador-tab" data-bs-toggle="tab"
+                            data-bs-target="#tab-identificador-content" type="button" role="tab">Identificador de
+                            factura</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                          <button class="nav-link" id="tab-actividad-tab" data-bs-toggle="tab"
+                            data-bs-target="#tab-actividad-content" type="button" role="tab">Actividad</button>
+                        </li>
+                      </ul>
+
+                      <!-- Contenido de cada pestaña -->
+                      <div class="tab-content" id="modalTabsContent">
+                        <!-- Pestaña: Edificio -->
+                        <div class="tab-pane fade show active" id="tab-edificio-content" role="tabpanel"
+                          aria-labelledby="tab-edificio-tab">
+                          <form>
+                            <div class="mb-2">
+                              <label class="form-label">Nombre *</label>
+                              <input class="form-control" placeholder="Introduce un nombre para la sede">
+                            </div>
+                            <div class="mb-2">
+                              <label class="form-label">Tipo de edificio *</label>
+                              <select class="form-select">
+                                <option>--</option>
+                              </select>
+                            </div>
+                            <div class="mb-2">
+                              <label class="form-label">Dirección *</label>
+                              <div class="input-group">
+                                <input class="form-control">
+                                <span class="input-group-text"><i class="bi bi-geo-alt"></i></span>
+                              </div>
+                            </div>
+                            <div class="row mb-2">
+                              <div class="col"><label class="form-label">Región</label><input class="form-control">
+                              </div>
+                              <div class="col"><label class="form-label">Provincia</label><input class="form-control">
+                              </div>
+                              <div class="col"><label class="form-label">Ciudad</label><input class="form-control">
+                              </div>
+                            </div>
+                            <div class="row mb-2">
+                              <div class="col">
+                                <label class="form-label">País *</label>
+                                <select class="form-select">
+                                  <option>--</option>
+                                </select>
+                              </div>
+                              <div class="col">
+                                <label class="form-label">Superficie</label>
+                                <div class="input-group">
+                                  <input class="form-control">
+                                  <span class="input-group-text">m²</span>
+                                </div>
+                              </div>
+                            </div>
+                          </form>
+                        </div>
+
+                        <!-- Pestaña: Identificador de factura -->
+                        <div class="tab-pane fade" id="tab-identificador-content" role="tabpanel"
+                          aria-labelledby="tab-identificador-tab">
+                          <p class="fw-semibold">Identificadores de facturas</p>
+                          <p class="text-muted">El CUPS es un código único que identifica un punto de suministro...</p>
+                          <div class="mb-3">
+                            <label class="form-label">CUPS Electricidad</label>
+                            <div class="input-group">
+                              <input class="form-control" placeholder="0000000000000">
+                              <button class="btn btn-outline-primary">Añadir</button>
+                            </div>
+                          </div>
+                          <div class="mb-3">
+                            <label class="form-label">CUPS Gas</label>
+                            <div class="input-group">
+                              <input class="form-control" placeholder="0000000000000">
+                              <button class="btn btn-outline-primary">Añadir</button>
+                            </div>
+                          </div>
+                          <div class="mb-3">
+                            <label class="form-label">Contador Agua</label>
+                            <div class="input-group">
+                              <input class="form-control" placeholder="0000000000000">
+                              <button class="btn btn-outline-primary">Añadir</button>
+                            </div>
+                          </div>
+                        </div>
+
+                        <!-- Pestaña: Actividad -->
+                        <div class="tab-pane fade" id="tab-actividad-content" role="tabpanel"
+                          aria-labelledby="tab-actividad-tab">
+                          <div class="mb-3">
+                            <p class="fw-semibold">Control operacional <a href="#">Saber más</a></p>
+                            <div class="mb-2">
+                              <label class="form-label">¿Propiedad o alquiler?</label>
+                              <select class="form-select">
+                                <option>--</option>
+                              </select>
+                            </div>
+                            <div class="mb-2">
+                              <label class="form-label">¿Control operacional?</label>
+                              <select class="form-select">
+                                <option>--</option>
+                              </select>
+                            </div>
+                            <div class="form-check form-switch mb-2">
+                              <input class="form-check-input" type="checkbox" id="activoSwitch" checked>
+                              <label class="form-check-label" for="activoSwitch">Edificio actualmente en activo</label>
+                            </div>
+                            <div class="mb-2">
+                              <label class="form-label">Año de inicio</label>
+                              <input class="form-control" placeholder="----">
+                            </div>
+                            <div class="mb-2">
+                              <label class="form-label">Energías renovables</label>
+                              <select class="form-select">
+                                <option>--</option>
+                              </select>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="modal-footer border-0">
+                      <button class="btn btn-primary w-100">Guardar</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+
+              <!-- ✅ MODAL CREAR VEHÍCULO -->
+              <div class="modal fade" id="modalCrearVehiculo" tabindex="-1" aria-hidden="true">
                 <div class="modal-dialog modal-lg modal-dialog-centered">
                   <div class="modal-content rounded-4">
                     <div class="modal-header border-0 pb-0">
                       <h5 class="modal-title fw-semibold">Crear vehículo</h5>
                       <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                     </div>
-              
+
                     <div class="modal-body pt-0">
                       <!-- Tabs internas -->
                       <ul class="nav nav-tabs mb-3" id="tabsCrearVehiculo" role="tablist">
-                        <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#vehiculo-tab-content" type="button">Vehículo</button></li>
-                        <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#actividad-tab-content" type="button">Actividad</button></li>
+                        <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab"
+                            data-bs-target="#vehiculo-tab-content" type="button">Vehículo</button></li>
+                        <li class="nav-item"><button class="nav-link" data-bs-toggle="tab"
+                            data-bs-target="#actividad-tab-content" type="button">Actividad</button></li>
                       </ul>
-              
+
                       <div class="tab-content">
                         <!-- TAB: Vehículo -->
                         <div class="tab-pane fade show active" id="vehiculo-tab-content" role="tabpanel">
                           <!-- Subtabs: Con matrícula / Genérico -->
                           <ul class="nav nav-pills mb-3" id="vehiculoSubTab" role="tablist">
                             <li class="nav-item" role="presentation">
-                              <button class="nav-link active" id="vehiculo-conmatricula-tab" data-bs-toggle="pill" data-bs-target="#vehiculo-conmatricula" type="button">Con matrícula</button>
+                              <button class="nav-link active" id="vehiculo-conmatricula-tab" data-bs-toggle="pill"
+                                data-bs-target="#vehiculo-conmatricula" type="button">Con matrícula</button>
                             </li>
                             <li class="nav-item" role="presentation">
-                              <button class="nav-link" id="vehiculo-generico-tab" data-bs-toggle="pill" data-bs-target="#vehiculo-generico" type="button">Genérico</button>
+                              <button class="nav-link" id="vehiculo-generico-tab" data-bs-toggle="pill"
+                                data-bs-target="#vehiculo-generico" type="button">Genérico</button>
                             </li>
                           </ul>
-              
+
                           <div class="tab-content">
                             <!-- Vehículo con matrícula -->
                             <div class="tab-pane fade show active" id="vehiculo-conmatricula" role="tabpanel">
                               <div class="mb-2">
                                 <label class="form-label">Edificio *</label>
-                                <select class="form-select"><option>--</option></select>
+                                <select class="form-select">
+                                  <option>--</option>
+                                </select>
                               </div>
-              
+
                               <div class="mb-3">
                                 <label class="form-label">Tipo de vehículo *</label>
                                 <div class="d-flex gap-2 tipo-vehiculo-selector">
-                                    <button type="button" class="btn btn-outline-secondary w-100 active">🚗 Vehículos</button>
-                                    <button type="button" class="btn btn-outline-secondary w-100">🚜 Maquinaria</button>
-                                    <button type="button" class="btn btn-outline-secondary w-100">✈️ Larga distancia</button>
+                                  <button type="button" class="btn btn-outline-secondary w-100 active">🚗
+                                    Vehículos</button>
+                                  <button type="button" class="btn btn-outline-secondary w-100">🚜 Maquinaria</button>
+                                  <button type="button" class="btn btn-outline-secondary w-100">✈️ Larga
+                                    distancia</button>
                                 </div>
-                                  
+
                               </div>
-              
+
                               <div class="row mb-2">
                                 <div class="col">
                                   <label class="form-label">Categoría *</label>
-                                  <select class="form-select"><option>Turismos</option></select>
+                                  <select class="form-select">
+                                    <option>Turismos</option>
+                                  </select>
                                 </div>
                                 <div class="col">
                                   <label class="form-label">Tipo de motor *</label>
-                                  <select class="form-select"><option>--</option></select>
+                                  <select class="form-select">
+                                    <option>--</option>
+                                  </select>
                                 </div>
                               </div>
-              
+
                               <div class="mb-2">
                                 <label class="form-label">Combustible por defecto *</label>
-                                <select class="form-select"><option>--</option></select>
+                                <select class="form-select">
+                                  <option>--</option>
+                                </select>
                               </div>
-              
+
                               <div class="mb-2">
                                 <label class="form-label">Matrícula o identificador del vehículo *</label>
                                 <input class="form-control" placeholder="0000AAA">
                               </div>
-              
+
                               <div class="row mb-2">
-                                <div class="col"><label class="form-label">Marca</label><input class="form-control" value="Honda"></div>
-                                <div class="col"><label class="form-label">Modelo</label><input class="form-control" value="Civic"></div>
-                                <div class="col"><label class="form-label">Clase</label><input class="form-control" value="Compact"></div>
+                                <div class="col"><label class="form-label">Marca</label><input class="form-control"
+                                    value="Honda"></div>
+                                <div class="col"><label class="form-label">Modelo</label><input class="form-control"
+                                    value="Civic"></div>
+                                <div class="col"><label class="form-label">Clase</label><input class="form-control"
+                                    value="Compact"></div>
                               </div>
                             </div>
-              
+
                             <!-- Vehículo genérico -->
                             <div class="tab-pane fade" id="vehiculo-generico" role="tabpanel">
                               <div class="mb-2">
                                 <label class="form-label">Edificio *</label>
-                                <select class="form-select"><option>--</option></select>
+                                <select class="form-select">
+                                  <option>--</option>
+                                </select>
                               </div>
-              
+
                               <div class="mb-3">
                                 <label class="form-label">Tipo de vehículo *</label>
                                 <div class="d-flex gap-2 tipo-vehiculo-selector">
-                                    <button type="button" class="btn btn-outline-secondary w-100 active">🚗 Vehículos</button>
-                                    <button type="button" class="btn btn-outline-secondary w-100">🚜 Maquinaria</button>
-                                    <button type="button" class="btn btn-outline-secondary w-100">✈️ Larga distancia</button>
+                                  <button type="button" class="btn btn-outline-secondary w-100 active">🚗
+                                    Vehículos</button>
+                                  <button type="button" class="btn btn-outline-secondary w-100">🚜 Maquinaria</button>
+                                  <button type="button" class="btn btn-outline-secondary w-100">✈️ Larga
+                                    distancia</button>
                                 </div>
                               </div>
-              
+
                               <div class="mb-2">
                                 <label class="form-label">Categoría *</label>
                                 <input class="form-control" value="Turismos">
                               </div>
-              
+
                               <div class="mb-2">
                                 <label class="form-label">Nombre *</label>
                                 <input class="form-control" placeholder="Furgoneta">
@@ -668,27 +723,32 @@
                             </div>
                           </div>
                         </div>
-              
+
                         <!-- TAB: Actividad -->
                         <div class="tab-pane fade" id="actividad-tab-content" role="tabpanel">
                           <div class="mb-3">
                             <p class="fw-semibold mb-1">Control operacional <a href="#">Saber más</a></p>
-              
+
                             <div class="mb-2">
-                              <label class="form-label">¿Este activo es propiedad de la compañía o está alquilado?</label>
-                              <select class="form-select"><option>--</option></select>
+                              <label class="form-label">¿Este activo es propiedad de la compañía o está
+                                alquilado?</label>
+                              <select class="form-select">
+                                <option>--</option>
+                              </select>
                             </div>
                             <div class="mb-2">
                               <label class="form-label">¿Tiene la compañía el control operacional?</label>
-                              <select class="form-select"><option>--</option></select>
+                              <select class="form-select">
+                                <option>--</option>
+                              </select>
                             </div>
                           </div>
-              
+
                           <div class="form-check form-switch mb-3">
                             <input class="form-check-input" type="checkbox" id="vehiculoActivo" checked>
                             <label class="form-check-label" for="vehiculoActivo">Vehículo actualmente en activo</label>
                           </div>
-              
+
                           <div class="mb-2">
                             <label class="form-label">Fecha de inicio</label>
                             <input class="form-control" placeholder="dd/mm/aaaa" type="date">
@@ -696,7 +756,7 @@
                         </div>
                       </div>
                     </div>
-              
+
                     <!-- Botón Guardar -->
                     <div class="modal-footer border-0">
                       <button class="btn btn-primary w-100">Guardar</button>
@@ -706,112 +766,261 @@
               </div>
 
               <!-- ✅ MODAL: Crear empleado -->
-<div class="modal fade" id="modalCrearEmpleado" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
-      <div class="modal-content rounded-4">
-        <div class="modal-header border-0 pb-0">
-          <h5 class="modal-title fw-semibold">Crear empleado</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-        </div>
-  
-        <div class="modal-body pt-0">
-          <form>
-            <div class="row mb-3">
-              <div class="col-md-6">
-                <label class="form-label">Nombre *</label>
-                <input class="form-control" required>
+              <div class="modal fade" id="modalCrearEmpleado" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered modal-lg">
+                  <div class="modal-content rounded-4">
+                    <div class="modal-header border-0 pb-0">
+                      <h5 class="modal-title fw-semibold">Crear empleado</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                    </div>
+
+                    <div class="modal-body pt-0">
+                      <form>
+                        <div class="row mb-3">
+                          <div class="col-md-6">
+                            <label class="form-label">Nombre *</label>
+                            <input class="form-control" required>
+                          </div>
+                          <div class="col-md-6">
+                            <label class="form-label">DNI</label>
+                            <input class="form-control">
+                          </div>
+                        </div>
+
+                        <div class="row mb-3">
+                          <div class="col-md-6">
+                            <label class="form-label">Email *</label>
+                            <input class="form-control" type="email" required>
+                          </div>
+                          <div class="col-md-6">
+                            <label class="form-label">Teléfono</label>
+                            <input class="form-control" type="tel">
+                          </div>
+                        </div>
+
+                        <div class="mb-3">
+                          <label class="form-label">Dirección</label>
+                          <div class="input-group">
+                            <input class="form-control">
+                            <span class="input-group-text"><i class="bi bi-geo-alt"></i></span>
+                          </div>
+                        </div>
+
+                        <div class="form-check form-switch mb-3">
+                          <input class="form-check-input" type="checkbox" id="empleadoActivo" checked>
+                          <label class="form-check-label" for="empleadoActivo">Empleado actualmente en activo</label>
+                        </div>
+
+                        <div class="mb-3">
+                          <label class="form-label">Fecha de inicio <i class="bi bi-info-circle small ms-1"
+                              title="Fecha de inicio de actividad laboral"></i></label>
+                          <input class="form-control" type="date">
+                        </div>
+
+                        <div class="row mb-3">
+                          <div class="col-md-6">
+                            <label class="form-label">Edificio <i class="bi bi-info-circle small ms-1"></i></label>
+                            <select class="form-select">
+                              <option>--</option>
+                            </select>
+                          </div>
+                          <div class="col-md-6">
+                            <label class="form-label">Departamento</label>
+                            <select class="form-select">
+                              <option>--</option>
+                            </select>
+                          </div>
+                        </div>
+
+                        <div class="mb-3">
+                          <label class="form-label">Idioma</label>
+                          <select class="form-select">
+                            <option selected>Español</option>
+                            <option>Inglés</option>
+                            <option>Francés</option>
+                            <option>Alemán</option>
+                          </select>
+                        </div>
+
+                        <div class="modal-footer border-0 p-0 pt-3">
+                          <button class="btn btn-primary w-100">Guardar</button>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                </div>
               </div>
-              <div class="col-md-6">
-                <label class="form-label">DNI</label>
-                <input class="form-control">
+
+
+
+
+              <!-- ✅ MODAL: Crear departamento -->
+              <div class="modal fade" id="modalCrearDepartamento" tabindex="-1"
+                aria-labelledby="modalCrearDepartamentoLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                  <div class="modal-content rounded-4">
+                    <div class="modal-header border-0 pb-0">
+                      <h5 class="modal-title fw-semibold" id="modalCrearDepartamentoLabel">Crear departamento</h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                    </div>
+                    <div class="modal-body pt-0">
+                      <form id="formCrearDepartamento">
+                        <div class="mb-3">
+                          <label class="form-label">Nombre del departamento *</label>
+                          <input type="text" class="form-control" id="nombreDepartamento"
+                            placeholder="Ej. Departamento técnico" required>
+                        </div>
+                        <div class="modal-footer border-0 pt-0">
+                          <button type="submit" class="btn btn-primary w-100">Guardar</button>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                </div>
               </div>
-            </div>
-  
-            <div class="row mb-3">
-              <div class="col-md-6">
-                <label class="form-label">Email *</label>
-                <input class="form-control" type="email" required>
+
+
+
+
+
+
+
+
+
+
+
+
+
+              <script>
+                document.querySelectorAll('.tipo-vehiculo-selector').forEach(grupo => {
+                  grupo.querySelectorAll('button').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                      grupo.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+                      btn.classList.add('active');
+                    });
+                  });
+                });
+              </script>
+
+
+              <!-- ✅ Toast Container -->
+              <div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 9999;">
+                <div id="successToast" class="toast align-items-center text-bg-success border-0" role="alert"
+                  aria-live="assertive" aria-atomic="true">
+                  <div class="d-flex">
+                    <div class="toast-body">
+                      Guardado correctamente ✅
+                    </div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                      aria-label="Cerrar"></button>
+                  </div>
+                </div>
               </div>
-              <div class="col-md-6">
-                <label class="form-label">Teléfono</label>
-                <input class="form-control" type="tel">
-              </div>
-            </div>
-  
-            <div class="mb-3">
-              <label class="form-label">Dirección</label>
-              <div class="input-group">
-                <input class="form-control">
-                <span class="input-group-text"><i class="bi bi-geo-alt"></i></span>
-              </div>
-            </div>
-  
-            <div class="form-check form-switch mb-3">
-              <input class="form-check-input" type="checkbox" id="empleadoActivo" checked>
-              <label class="form-check-label" for="empleadoActivo">Empleado actualmente en activo</label>
-            </div>
-  
-            <div class="mb-3">
-              <label class="form-label">Fecha de inicio <i class="bi bi-info-circle small ms-1" title="Fecha de inicio de actividad laboral"></i></label>
-              <input class="form-control" type="date">
-            </div>
-  
-            <div class="row mb-3">
-              <div class="col-md-6">
-                <label class="form-label">Edificio <i class="bi bi-info-circle small ms-1"></i></label>
-                <select class="form-select"><option>--</option></select>
-              </div>
-              <div class="col-md-6">
-                <label class="form-label">Departamento</label>
-                <select class="form-select"><option>--</option></select>
-              </div>
-            </div>
-  
-            <div class="mb-3">
-              <label class="form-label">Idioma</label>
-              <select class="form-select">
-                <option selected>Español</option>
-                <option>Inglés</option>
-                <option>Francés</option>
-                <option>Alemán</option>
-              </select>
-            </div>
-  
-            <div class="modal-footer border-0 p-0 pt-3">
-              <button class="btn btn-primary w-100">Guardar</button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
-  </div>
-  
+
+              <script>
+                // Función global para simular AJAX + mostrar toast
+                function simularGuardado(modalId) {
+                  const modal = bootstrap.Modal.getInstance(document.querySelector(modalId));
+                  modal.hide();
+
+                  // Simula tiempo de espera (AJAX falso)
+                  setTimeout(() => {
+                    const toast = new bootstrap.Toast(document.getElementById('successToast'));
+                    toast.show();
+                  }, 300);
+                }
+
+                // Detectamos todos los botones Guardar en los modales
+                document.querySelectorAll('.modal button.btn-primary.w-100').forEach(btn => {
+                  btn.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const modal = this.closest('.modal');
+                    if (modal) {
+                      simularGuardado(`#${modal.id}`);
+                    }
+                  });
+                });
+              </script>
+
+              <script>
+                const personalSection = document.getElementById('personal');
+                const departamentosSection = document.getElementById('departamentos-section');
+
+                // Función para mostrar departamentos y ocultar personal con transición
+                document.getElementById('btn-gestionar-departamentos').addEventListener('click', () => {
+                  personalSection.classList.add('opacity-0');
+
+                  setTimeout(() => {
+                    personalSection.classList.add('d-none');
+                    departamentosSection.classList.remove('d-none');
+                    departamentosSection.classList.add('fade', 'show', 'opacity-0');
+
+                    setTimeout(() => {
+                      departamentosSection.classList.remove('opacity-0');
+                    }, 10);
+                  }, 300);
+                });
+
+                // Restaurar estado si vuelvo a pestaña "Personal"
+                document.querySelectorAll('#companyTabs button[data-bs-toggle="tab"]').forEach(tab => {
+                  tab.addEventListener('shown.bs.tab', function (event) {
+                    const activeTab = event.target.getAttribute('data-bs-target');
+
+                    if (activeTab === '#personal') {
+                      departamentosSection.classList.add('d-none');
+                      personalSection.classList.remove('d-none');
+                      personalSection.classList.add('fade', 'show');
+                      personalSection.classList.remove('opacity-0');
+                    } else {
+                      departamentosSection.classList.add('d-none');
+                    }
+                  });
+                });
+              </script>
+
+              <script>
+                document.getElementById('btnGuardarCompania').addEventListener('click', function () {
+                  const data = {
+                    cif: document.getElementById('cif').value,
+                    nombre_empresa: document.getElementById('nombre_empresa').value,
+                    razon_social: document.getElementById('razon_social').value,
+                    sector: document.getElementById('sector').value,
+                    actividad: document.getElementById('actividad').value,
+                    direccion: document.getElementById('direccion').value,
+                    ciudad: document.getElementById('ciudad').value,
+                    municipio: document.getElementById('municipio').value,
+                    codigo_postal: document.getElementById('codigo_postal').value,
+                    empleados: parseInt(document.getElementById('empleados').value),
+                    facturacion: parseFloat(document.getElementById('facturacion').value),
+                    cantidad: document.getElementById('cantidad').value,
+                    tipo_actividad: document.getElementById('tipo_actividad').value
+                  };
+
+                  fetch('/api/company-profile', {
+                    method: 'POST',
+                    headers: {
+                      'Content-Type': 'application/json'
+                    },
+                    credentials: 'include',
+                    body: JSON.stringify(data)
+                  })
+                    .then(res => res.json())
+                    .then(res => {
+                      if (res.success) {
+                        alert('✅ Datos guardados correctamente');
+                      } else {
+                        alert('❌ Error al guardar: ' + res.message);
+                      }
+                    })
+                    .catch(err => {
+                      console.error('Error al guardar perfil de compañía:', err);
+                      alert('❌ Error en la petición.');
+                    });
+                });
+              </script>
 
 
 
-<!-- ✅ MODAL: Crear departamento -->
-<div class="modal fade" id="modalCrearDepartamento" tabindex="-1" aria-labelledby="modalCrearDepartamentoLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content rounded-4">
-        <div class="modal-header border-0 pb-0">
-          <h5 class="modal-title fw-semibold" id="modalCrearDepartamentoLabel">Crear departamento</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-        </div>
-        <div class="modal-body pt-0">
-          <form id="formCrearDepartamento">
-            <div class="mb-3">
-              <label class="form-label">Nombre del departamento *</label>
-              <input type="text" class="form-control" id="nombreDepartamento" placeholder="Ej. Departamento técnico" required>
-            </div>
-            <div class="modal-footer border-0 pt-0">
-              <button type="submit" class="btn btn-primary w-100">Guardar</button>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
-  </div>
-  
 
 
 
@@ -819,145 +1028,4 @@
 
 
 
-
-
-
-
-
-  <script>
-    document.querySelectorAll('.tipo-vehiculo-selector').forEach(grupo => {
-      grupo.querySelectorAll('button').forEach(btn => {
-        btn.addEventListener('click', () => {
-          grupo.querySelectorAll('button').forEach(b => b.classList.remove('active'));
-          btn.classList.add('active');
-        });
-      });
-    });
-  </script>
-
-
-<!-- ✅ Toast Container -->
-<div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 9999;">
-    <div id="successToast" class="toast align-items-center text-bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
-      <div class="d-flex">
-        <div class="toast-body">
-          Guardado correctamente ✅
-        </div>
-        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Cerrar"></button>
-      </div>
-    </div>
-  </div>
-  
-  <script>
-    // Función global para simular AJAX + mostrar toast
-    function simularGuardado(modalId) {
-      const modal = bootstrap.Modal.getInstance(document.querySelector(modalId));
-      modal.hide();
-  
-      // Simula tiempo de espera (AJAX falso)
-      setTimeout(() => {
-        const toast = new bootstrap.Toast(document.getElementById('successToast'));
-        toast.show();
-      }, 300);
-    }
-  
-    // Detectamos todos los botones Guardar en los modales
-    document.querySelectorAll('.modal button.btn-primary.w-100').forEach(btn => {
-      btn.addEventListener('click', function (e) {
-        e.preventDefault();
-        const modal = this.closest('.modal');
-        if (modal) {
-          simularGuardado(`#${modal.id}`);
-        }
-      });
-    });
-  </script>
-  
-  <script>
-    const personalSection = document.getElementById('personal');
-    const departamentosSection = document.getElementById('departamentos-section');
-  
-    // Función para mostrar departamentos y ocultar personal con transición
-    document.getElementById('btn-gestionar-departamentos').addEventListener('click', () => {
-      personalSection.classList.add('opacity-0');
-  
-      setTimeout(() => {
-        personalSection.classList.add('d-none');
-        departamentosSection.classList.remove('d-none');
-        departamentosSection.classList.add('fade', 'show', 'opacity-0');
-  
-        setTimeout(() => {
-          departamentosSection.classList.remove('opacity-0');
-        }, 10);
-      }, 300);
-    });
-  
-    // Restaurar estado si vuelvo a pestaña "Personal"
-    document.querySelectorAll('#companyTabs button[data-bs-toggle="tab"]').forEach(tab => {
-      tab.addEventListener('shown.bs.tab', function (event) {
-        const activeTab = event.target.getAttribute('data-bs-target');
-  
-        if (activeTab === '#personal') {
-          departamentosSection.classList.add('d-none');
-          personalSection.classList.remove('d-none');
-          personalSection.classList.add('fade', 'show');
-          personalSection.classList.remove('opacity-0');
-        } else {
-          departamentosSection.classList.add('d-none');
-        }
-      });
-    });
-  </script>
-
-<script>
-    document.getElementById('btnGuardarCompania').addEventListener('click', function () {
-      const data = {
-        cif: document.getElementById('cif').value,
-        nombre_empresa: document.getElementById('nombre_empresa').value,
-        razon_social: document.getElementById('razon_social').value,
-        sector: document.getElementById('sector').value,
-        actividad: document.getElementById('actividad').value,
-        direccion: document.getElementById('direccion').value,
-        ciudad: document.getElementById('ciudad').value,
-        municipio: document.getElementById('municipio').value,
-        codigo_postal: document.getElementById('codigo_postal').value,
-        empleados: parseInt(document.getElementById('empleados').value),
-        facturacion: parseFloat(document.getElementById('facturacion').value),
-        cantidad: document.getElementById('cantidad').value,
-        tipo_actividad: document.getElementById('tipo_actividad').value
-      };
-  
-      fetch('/api/company-profile', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        credentials: 'include',
-        body: JSON.stringify(data)
-      })
-      .then(res => res.json())
-      .then(res => {
-        if (res.success) {
-          alert('✅ Datos guardados correctamente');
-        } else {
-          alert('❌ Error al guardar: ' + res.message);
-        }
-      })
-      .catch(err => {
-        console.error('Error al guardar perfil de compañía:', err);
-        alert('❌ Error en la petición.');
-      });
-    });
-  </script>
-  
-    
-    
-  
-  
-  
-  
-  
-  
-  
-  {% endblock %}
-  
+              {% endblock %}

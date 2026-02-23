@@ -43,11 +43,7 @@ function checkSession(req, res, next) {
 }
 
 // Configurar directorios estáticos
-app.use('/js', express.static(path.join(__dirname, 'src', 'assets', 'js')));
-app.use('/scss', express.static(path.join(__dirname, 'src', 'assets', 'scss')));
-app.use('/statics', express.static(path.join(__dirname, 'src', 'assets', 'statics')));
-app.use(express.static(path.join(__dirname, 'src')));
-app.use('/dist', express.static(path.join(__dirname, 'dist')));
+app.use(express.static(path.join(__dirname, 'dist')));
 
 // *** INICIO: Conexión a MySQL (Pool) ***
 const pool = mysql.createPool({
@@ -58,7 +54,8 @@ const pool = mysql.createPool({
     port: process.env.DB_PORT || 3307,
     waitForConnections: true,
     connectionLimit: 10,
-    queueLimit: 0
+    queueLimit: 0,
+    ssl: { rejectUnauthorized: false }
 });
 
 // Verificar conexión inicial
@@ -74,7 +71,7 @@ pool.getConnection()
 
 // Ruta inicial
 app.get('/', checkSession, (req, res) => {
-    res.sendFile(path.join(__dirname, 'src', 'index.html'));
+    res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 });
 
 app.post('/api/register', async (req, res) => {
@@ -109,7 +106,7 @@ app.post('/api/register', async (req, res) => {
 });
 
 app.get('/login', (req, res) => {
-    res.sendFile(path.join(__dirname, 'src', 'auth-login.html'));
+    res.sendFile(path.join(__dirname, 'dist', 'auth-login.html'));
 });
 
 app.post('/api/login', async (req, res) => {
@@ -320,6 +317,25 @@ app.post('/api/company-profile', async (req, res) => {
     } catch (err) {
         console.error('❌ Error al guardar perfil de compañía:', err);
         return res.status(500).json({ success: false, message: 'Error al guardar los datos.' });
+    }
+});
+
+app.get('/api/ver-tablas', async (req, res) => {
+    try {
+        const [tables] = await pool.query('SHOW TABLES');
+        let result = { mensaje: "¡Conexión exitosa a tu base de datos!", tablas: {} };
+
+        for (let row of tables) {
+            let tableName = Object.values(row)[0];
+            const [tableData] = await pool.query(`SELECT * FROM \`${tableName}\` LIMIT 100`);
+            result.tablas[tableName] = tableData;
+        }
+
+        res.setHeader('Content-Type', 'application/json');
+        res.send(JSON.stringify(result, null, 2));
+    } catch (err) {
+        console.error('Error al ver tablas:', err);
+        res.status(500).json({ error: err.message });
     }
 });
 
