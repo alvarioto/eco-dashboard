@@ -238,7 +238,7 @@ app.delete('/api/delete-calculation/:id', async (req, res) => {
     }
 });
 
-app.get('/session-check', (req, res) => {
+app.get('/api/session-check', (req, res) => {
     if (req.session.loggedin) {
         res.json({ loggedIn: true, username: req.session.username });
     } else {
@@ -246,7 +246,7 @@ app.get('/session-check', (req, res) => {
     }
 });
 
-app.get('/logout', (req, res) => {
+app.get('/api/logout', (req, res) => {
     req.session.destroy((err) => {
         if (err) {
             console.error('Error al cerrar sesión:', err);

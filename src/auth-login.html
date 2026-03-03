@@ -2,7 +2,8 @@
 
 {% extends 'src/layouts/auth.html' %}
 {% block content %}
-<div class="row h-100" style="background-image: url('assets/static/images/samples/fondeverde.avif'); background-size: cover; background-position: center;">
+<div class="row h-100"
+    style="background-image: url('assets/static/images/samples/fondeverde.avif'); background-size: cover; background-position: center;">
     <div class="col-lg-4 col-10 mx-auto">
         <!-- Añadimos un margen superior para bajar el recuadro -->
         <div id="auth-left" class="p-4 mt-5" style="background-color: rgba(255, 255, 255, 0.9); border-radius: 10px;">
@@ -16,15 +17,16 @@
 
             <!-- Cambiar 'action="/api/login" method="POST"' por onsubmit="handleLogin(event)" -->
             <form onsubmit="handleLogin(event)">
-                <!-- Campos de formulario más pequeños -->
-                <div class="form-group position-relative mb-3">
-                    <input id="usernameInput" type="text" name="username" class="form-control form-control-sm" placeholder="Usuario" style="font-size: 0.8rem;" required>
+                <div class="form-group position-relative has-icon-left mb-4">
+                    <input id="usernameInput" type="text" name="username" class="form-control form-control-xl"
+                        placeholder="Usuario" required>
                     <div class="form-control-icon">
                         <i class="bi bi-person"></i>
                     </div>
                 </div>
-                <div class="form-group position-relative mb-3">
-                    <input id="passwordInput" type="password" name="password" class="form-control form-control-sm" placeholder="Contraseña" style="font-size: 0.8rem;" required>
+                <div class="form-group position-relative has-icon-left mb-4">
+                    <input id="passwordInput" type="password" name="password" class="form-control form-control-xl"
+                        placeholder="Contraseña" required>
                     <div class="form-control-icon">
                         <i class="bi bi-shield-lock"></i>
                     </div>
@@ -35,7 +37,8 @@
                         Mantener sesión iniciada
                     </label>
                 </div>
-                <button type="submit" class="btn btn-primary btn-sm w-100" style="font-size: 0.8rem;">Iniciar sesión</button>
+                <button type="submit" class="btn btn-primary btn-sm w-100" style="font-size: 0.8rem;">Iniciar
+                    sesión</button>
             </form>
 
             <div class="text-center mt-4" style="font-size: 0.8rem;">
@@ -62,18 +65,18 @@
             },
             body: JSON.stringify({ username, password })
         })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                window.location.href = '/index.html';
-            } else {
-                alert('Usuario o contraseña incorrectos.');
-            }
-        })
-        .catch(err => {
-            console.error('Error al iniciar sesión:', err);
-            alert('Error de servidor.');
-        });
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    window.location.href = '/index.html';
+                } else {
+                    alert('Usuario o contraseña incorrectos.');
+                }
+            })
+            .catch(err => {
+                console.error('Error al iniciar sesión:', err);
+                alert('Error de servidor.');
+            });
     }
 </script>
 {% endblock %}

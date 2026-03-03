@@ -66,7 +66,7 @@ var optionsEurope = {
     },
   ],
   chart: {
-    height: 80,
+    height: 120,
     type: "area",
     toolbar: {
       show: false,

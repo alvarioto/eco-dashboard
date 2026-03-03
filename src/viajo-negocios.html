@@ -1,0 +1,791 @@
+{% set title = 'Viajes de Negocios' %}
+{% set filename = 'Viajes-Negocios.html' %}
+
+{% extends 'src/layouts/master.html' %}
+
+{% block styles %}
+<!-- Flatpickr y Choices CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<link rel="stylesheet" href="assets/extensions/choices.js/public/assets/styles/choices.css">
+
+<style>
+    /* Estilos base como descritos en el plan */
+    .page-content {
+        padding: 20px;
+        position: relative;
+        background-color: #f8f9fa;
+        min-height: calc(100vh - 80px);
+    }
+
+    /* Encabezado */
+    .header-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+    }
+
+    .header-left {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .header-left h3 {
+        margin: 0;
+        font-weight: 700;
+        color: #1f2937;
+        font-size: 1.5rem;
+    }
+
+    .btn-back {
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        cursor: pointer;
+        color: #9ca3af;
+        padding: 0;
+        display: flex;
+        align-items: center;
+    }
+
+    .btn-back:hover {
+        color: #4b5563;
+    }
+
+    /* Botones Superiores */
+    .btn-icon-custom {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 16px;
+        border-radius: 6px;
+        font-size: 0.9rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s;
+        border: 1px solid #d1d5db;
+        background-color: white;
+        color: #374151;
+    }
+
+    .btn-icon-custom:hover {
+        background-color: #f3f4f6;
+    }
+
+    .btn-primary-dark {
+        background-color: #111827;
+        color: white;
+        border: 1px solid #111827;
+    }
+
+    .btn-primary-dark:hover {
+        background-color: #374151;
+        color: white;
+    }
+
+    /* Menús Desplegables */
+    .dropdown-menu-custom {
+        display: none;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        margin-top: 8px;
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        min-width: 220px;
+        z-index: 1050;
+        padding: 8px 0;
+    }
+
+    .dropdown-menu-custom.dropdown-right {
+        left: auto;
+        right: 0;
+    }
+
+    .dropdown-menu-custom.show {
+        display: block;
+    }
+
+    .dropdown-item-custom {
+        padding: 8px 20px;
+        display: flex;
+        align-items: center;
+        color: #374151;
+        text-decoration: none;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: background-color 0.2s;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .dropdown-item-custom:hover {
+        background-color: #f3f4f6;
+    }
+
+    /* Checkboxes en dropdowns */
+    .dropdown-checkbox-item {
+        display: flex;
+        align-items: center;
+        padding: 8px 20px;
+        cursor: pointer;
+    }
+
+    .dropdown-checkbox-item input[type="checkbox"] {
+        margin-right: 12px;
+        width: 16px;
+        height: 16px;
+        border-radius: 4px;
+        border: 1px solid #d1d5db;
+        appearance: none;
+        -webkit-appearance: none;
+        background-color: white;
+        cursor: pointer;
+        position: relative;
+    }
+
+    .dropdown-checkbox-item input[type="checkbox"]:checked {
+        background-color: #111827;
+        border-color: #111827;
+    }
+
+    .dropdown-checkbox-item input[type="checkbox"]:checked::after {
+        content: '';
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -60%) rotate(45deg);
+        width: 4px;
+        height: 8px;
+        border: solid white;
+        border-width: 0 2px 2px 0;
+    }
+
+    .toolbar-container {
+        display: flex;
+        gap: 12px;
+        margin-bottom: 24px;
+        align-items: center;
+    }
+
+    /* ESTADO GLOBAL VACÍO */
+    .global-empty-state {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 120px 20px;
+        text-align: center;
+        background: white;
+        border-radius: 12px;
+        border: 1px solid #e5e7eb;
+    }
+
+    .empty-state-graphic {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        align-items: center;
+        margin-bottom: 30px;
+    }
+
+    .empty-doc-card {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        padding: 12px 20px;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        width: 250px;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    }
+
+    .empty-doc-line {
+        height: 8px;
+        background-color: #e5e7eb;
+        border-radius: 4px;
+        flex: 1;
+    }
+
+    .empty-doc-icon {
+        color: #10b981;
+        background-color: #d1fae5;
+        padding: 4px 8px;
+        border-radius: 6px;
+        font-size: 1.1rem;
+    }
+
+    .global-empty-title {
+        font-size: 1.15rem;
+        font-weight: 600;
+        color: #1f2937;
+        margin-bottom: 8px;
+    }
+
+    .global-empty-subtitle {
+        font-size: 0.9rem;
+        color: #6b7280;
+        margin-bottom: 24px;
+    }
+
+    /* OVERLAY */
+    .custom-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 1040;
+        display: none;
+        opacity: 0;
+        transition: opacity 0.3s;
+    }
+
+    .custom-overlay.show {
+        display: block;
+        opacity: 1;
+    }
+
+    /* MODAL VIAJE */
+    .custom-modal {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) scale(0.95);
+        background: white;
+        border-radius: 12px;
+        width: 100%;
+        max-width: 500px;
+        /* Un poco mas ancho para 2 columnas */
+        z-index: 1050;
+        display: none;
+        opacity: 0;
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        transition: all 0.3s;
+    }
+
+    .custom-modal.show {
+        display: block;
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+
+    .modal-header {
+        padding: 24px 24px 0px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .modal-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #1f2937;
+        margin: 0;
+    }
+
+    .btn-close-custom {
+        background: none;
+        border: none;
+        font-size: 1.25rem;
+        color: #9ca3af;
+        cursor: pointer;
+        padding: 0;
+        line-height: 1;
+    }
+
+    /* Pestañas superioes puras del modal */
+    .modal-main-tabs {
+        display: flex;
+        padding: 16px 24px 0;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .modal-main-tab {
+        padding: 12px 0;
+        margin-right: 24px;
+        font-size: 0.95rem;
+        font-weight: 500;
+        color: #6b7280;
+        cursor: pointer;
+        border-bottom: 2px solid transparent;
+        margin-bottom: -1px;
+    }
+
+    .modal-main-tab.active {
+        color: #111827;
+        border-bottom-color: #111827;
+    }
+
+    .modal-body {
+        padding: 24px;
+        max-height: 65vh;
+        overflow-y: auto;
+    }
+
+    /* Botonera Tabs Internas (Solo ida, Ida vuelta...) */
+    .trip-type-tabs {
+        display: flex;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        overflow: hidden;
+        margin-bottom: 24px;
+    }
+
+    .trip-type-tab {
+        flex: 1;
+        padding: 10px 0;
+        text-align: center;
+        font-size: 0.85rem;
+        font-weight: 500;
+        color: #374151;
+        background: white;
+        cursor: pointer;
+        border-right: 1px solid #e5e7eb;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+    }
+
+    .trip-type-tab:last-child {
+        border-right: none;
+    }
+
+    .trip-type-tab.active {
+        background-color: #dcfce7;
+        color: #065f46;
+    }
+
+    /* ESTILOS DE FORMS COMUNES */
+    .form-group-custom {
+        margin-bottom: 20px;
+    }
+
+    .form-group-custom label {
+        display: block;
+        font-size: 0.85rem;
+        font-weight: 500;
+        color: #4b5563;
+        margin-bottom: 8px;
+    }
+
+    .form-control-custom {
+        width: 100%;
+        padding: 10px 14px;
+        border: 1px solid #d1d5db;
+        border-radius: 6px;
+        font-size: 0.95rem;
+        color: #374151;
+        outline: none;
+        box-sizing: border-box;
+        background-color: #fff;
+    }
+
+    .form-control-custom:focus {
+        border-color: #3b82f6;
+    }
+
+    select.form-control-custom {
+        -webkit-appearance: none !important;
+        -moz-appearance: none !important;
+        appearance: none !important;
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e") !important;
+        background-repeat: no-repeat;
+        background-position: right 14px center;
+        background-size: 14px 10px;
+        padding-right: 36px;
+        cursor: pointer;
+    }
+
+    /* Input con iconito final (Fecha calendario o Mapa) */
+    .input-with-icon-right {
+        position: relative;
+        display: flex;
+        align-items: center;
+    }
+
+    .input-with-icon-right input {
+        padding-right: 40px;
+    }
+
+    .input-with-icon-right i {
+        position: absolute;
+        right: 14px;
+        color: #6b7280;
+    }
+
+    /* Grid Form (2 Columnas) */
+    .form-grid-2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+    }
+
+    /* Input Combinado Falso (Input lado izq, Texto lado der) */
+    .split-unit-input {
+        display: flex;
+        border: 1px solid #d1d5db;
+        border-radius: 6px;
+        overflow: hidden;
+    }
+
+    .split-unit-input input {
+        flex: 1;
+        border: none;
+        padding: 10px 14px;
+        outline: none;
+        font-size: 0.95rem;
+    }
+
+    .split-unit-input .unit {
+        background-color: white;
+        border-left: 1px solid #e5e7eb;
+        padding: 10px 14px;
+        color: #6b7280;
+        font-size: 0.95rem;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* Primary verde/cyan botón */
+    .btn-save-cyan {
+        background-color: #dcfce7;
+        color: #065f46;
+        border: none;
+        padding: 14px 20px;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 0.95rem;
+        cursor: pointer;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 8px;
+        transition: background-color 0.2s;
+    }
+
+    .btn-save-cyan:hover {
+        background-color: #bbf7d0;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-heading"></div>
+
+<div class="page-content" id="viajes-dashboard">
+    <!-- Encabezado superior -->
+    <div class="header-container">
+        <div class="header-left">
+            <button class="btn-back">
+                <i class="bi bi-arrow-left"></i>
+            </button>
+            <h3>Viajes de negocios</h3>
+        </div>
+        <div class="header-right">
+            <!-- Botón Crear viaje -->
+            <div class="relative" style="position: relative;">
+                <button class="btn-icon-custom btn-primary-dark" id="btn-crear-viaje"
+                    onclick="toggleDropdown('menu-crear-viaje')">
+                    Crear viaje
+                    <i class="bi bi-chevron-down ms-1 text-white"></i>
+                </button>
+                <div class="dropdown-menu-custom dropdown-right" id="menu-crear-viaje">
+                    <a class="dropdown-item-custom" href="javascript:void(0)" onclick="openCrearViajeModal()">
+                        Creación manual
+                    </a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item-custom text-muted"
+                        style="cursor: default; font-size: 0.8rem; padding-bottom: 5px;">Añadir en masa</a>
+                    <a class="dropdown-item-custom">Importar desde plantilla (Excel)</a>
+                    <a class="dropdown-item-custom">Importar mis archivos</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filtros Secundarios Bar -->
+    <div class="toolbar-container">
+        <!-- Filtro General -->
+        <div class="relative">
+            <button class="btn-icon-custom" onclick="toggleDropdown('menu-filtro')">
+                <i class="bi bi-plus"></i> Añadir filtro
+            </button>
+            <div class="dropdown-menu-custom" id="menu-filtro" style="min-width: 240px; padding: 12px;">
+                <div class="form-control-custom"
+                    style="padding: 8px; display: flex; align-items: center; border-radius: 4px; margin-bottom: 8px;">
+                    <i class="bi bi-search text-muted" style="margin-right: 8px;"></i>
+                    <input type="text" placeholder="Añadir filtro..."
+                        style="width:100%; border:none; outline:none; font-size: 0.85rem;">
+                </div>
+
+                <div class="dropdown-item-custom" style="justify-content: space-between;">
+                    <span><i class="bi bi-magic" style="margin-right:8px; color:#10b981;"></i> Filtrar con IA</span>
+                    <i class="bi bi-chevron-right text-muted"></i>
+                </div>
+                <div class="dropdown-divider"></div>
+
+                <label class="dropdown-checkbox-item text-muted"> <input type="checkbox"> Fecha de inicio y fin</label>
+                <label class="dropdown-checkbox-item text-muted"> <input type="checkbox"> Edificio</label>
+                <label class="dropdown-checkbox-item text-muted"> <input type="checkbox"> País</label>
+                <label class="dropdown-checkbox-item text-muted"> <input type="checkbox"> Miembro del equipo</label>
+                <label class="dropdown-checkbox-item text-muted"> <input type="checkbox"> Clasificación del
+                    viaje</label>
+            </div>
+        </div>
+
+        <!-- Filtro Año -->
+        <div class="relative">
+            <button class="btn-icon-custom" onclick="toggleDropdown('menu-year')">
+                <i class="bi bi-calendar"></i> Año <span style="margin-left: 8px;">2026</span> <i
+                    class="bi bi-chevron-down ms-1"></i>
+            </button>
+            <div class="dropdown-menu-custom" id="menu-year" style="min-width: 220px;">
+                <div style="padding: 10px;">
+                    <div class="form-control-custom"
+                        style="padding: 8px; display: flex; align-items: center; border-radius: 6px;">
+                        <i class="bi bi-search text-muted" style="margin-right: 8px;"></i>
+                        <input type="text" placeholder="Buscar año..."
+                            style="width:100%; border:none; outline:none; font-size: 0.9rem;">
+                    </div>
+                </div>
+                <label class="dropdown-checkbox-item"><input type="checkbox" checked> 2026</label>
+                <label class="dropdown-checkbox-item text-muted"><input type="checkbox"> 2025</label>
+                <label class="dropdown-checkbox-item text-muted"><input type="checkbox"> 2024</label>
+            </div>
+        </div>
+
+        <!-- Filtro Medio Transporte -->
+        <div class="relative">
+            <button class="btn-icon-custom" onclick="toggleDropdown('menu-transporte')">
+                Medio de transporte <span class="text-muted ms-1" style="font-weight: 400;">cualquiera de</span> <span
+                    style="margin-left: 4px;">Seleccionar</span> <i class="bi bi-chevron-down ms-1"></i>
+            </button>
+            <div class="dropdown-menu-custom" id="menu-transporte" style="min-width: 260px;">
+                <div style="padding: 10px;">
+                    <div class="form-control-custom"
+                        style="padding: 8px; display: flex; align-items: center; border-radius: 6px;">
+                        <i class="bi bi-search text-muted" style="margin-right: 8px;"></i>
+                        <input type="text" placeholder="Buscar medio de transporte..."
+                            style="width:100%; border:none; outline:none; font-size: 0.9rem;">
+                    </div>
+                </div>
+                <label class="dropdown-checkbox-item"><input type="checkbox"> Seleccionar todo (5)</label>
+                <label class="dropdown-checkbox-item" style="background-color: #f9fafb;"><input type="checkbox" checked>
+                    Avión</label>
+                <label class="dropdown-checkbox-item text-muted"><input type="checkbox"> Coche</label>
+                <label class="dropdown-checkbox-item text-muted"><input type="checkbox"> Bus</label>
+                <label class="dropdown-checkbox-item text-muted"><input type="checkbox"> Tren</label>
+                <label class="dropdown-checkbox-item text-muted"><input type="checkbox"> Barco</label>
+            </div>
+        </div>
+    </div>
+
+    <!-- ESTADO GLOBAL VACÍO -->
+    <div class="global-empty-state" id="global-empty-state">
+        <div class="empty-state-graphic">
+            <div class="empty-doc-card">
+                <i class="bi bi-airplane empty-doc-icon"></i>
+                <div class="empty-doc-line"></div>
+            </div>
+            <div class="empty-doc-card">
+                <i class="bi bi-airplane empty-doc-icon"></i>
+                <div class="empty-doc-line"></div>
+            </div>
+        </div>
+        <h3 class="global-empty-title">No hay ningún viaje</h3>
+        <p class="global-empty-subtitle">¿Quieres empezar creando uno?</p>
+
+        <div class="relative mt-2" style="position: relative;">
+            <button class="btn-icon-custom btn-primary-dark" id="btn-crear-viaje-empty"
+                onclick="toggleDropdown('menu-crear-viaje-empty')">
+                Crear viaje
+                <i class="bi bi-chevron-down ms-1 text-white"></i>
+            </button>
+            <div class="dropdown-menu-custom" id="menu-crear-viaje-empty"
+                style="min-width: 260px; left: 50%; transform: translateX(-50%); margin-top: 8px;">
+                <a class="dropdown-item-custom" href="javascript:void(0)" onclick="openCrearViajeModal()">
+                    Creación manual
+                </a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item-custom text-muted"
+                    style="cursor: default; font-size: 0.8rem; padding-bottom: 5px;">Añadir en masa</a>
+                <a class="dropdown-item-custom">Importar desde plantilla (Excel)</a>
+                <a class="dropdown-item-custom">Importar mis archivos</a>
+            </div>
+        </div>
+    </div>
+
+</div> <!-- /page-content -->
+
+<!-- OVERLAY PARA MODAL -->
+<div class="custom-overlay" id="customOverlay" onclick="closeAllPanels()"></div>
+
+<!-- MODAL: CREAR VIAJE -->
+<div class="custom-modal" id="crearViajeModal">
+    <div class="modal-header">
+        <h4 class="modal-title">Crear viaje</h4>
+        <button class="btn-close-custom" onclick="closeCrearViajeModal()"><i class="bi bi-x"></i></button>
+    </div>
+
+    <div class="modal-main-tabs">
+        <div class="modal-main-tab active">Datos</div>
+    </div>
+
+    <div class="modal-body">
+
+        <!-- Pestañas internas tipo Viaje -->
+        <div class="trip-type-tabs">
+            <div class="trip-type-tab active">
+                Solo ida <i class="bi bi-arrow-right"></i>
+            </div>
+            <div class="trip-type-tab">
+                Ida y vuelta <i class="bi bi-arrow-left-right"></i>
+            </div>
+            <div class="trip-type-tab">
+                Tramos <i class="bi bi-diagram-3"></i>
+            </div>
+            <div class="trip-type-tab">
+                Solo hotel
+            </div>
+        </div>
+
+        <div class="form-grid-2">
+            <div class="form-group-custom">
+                <label>Identificador único <i class="bi bi-info-circle text-muted ms-1"
+                        style="font-size: 0.8rem;"></i></label>
+                <input type="text" class="form-control-custom">
+            </div>
+            <div class="form-group-custom">
+                <label>Fecha <span class="text-danger">*</span></label>
+                <div class="input-with-icon-right">
+                    <input type="text" class="form-control-custom" placeholder="dd/mm/aaaa">
+                    <i class="bi bi-calendar"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-grid-2">
+            <div class="form-group-custom">
+                <label>Edificio</label>
+                <select class="form-control-custom">
+                    <option value="" disabled selected>--</option>
+                    <option value="oficina">Oficina Central</option>
+                </select>
+            </div>
+            <div class="form-group-custom">
+                <label>Miembro del equipo</label>
+                <select class="form-control-custom">
+                    <option value="" disabled selected>--</option>
+                    <option value="user1">Juan Pérez</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group-custom">
+            <label>Medio de transporte <span class="text-danger">*</span></label>
+            <select class="form-control-custom">
+                <option value="" disabled selected>--</option>
+                <option value="Coche">Coche</option>
+                <option value="Avión">Avión</option>
+            </select>
+        </div>
+
+        <div class="form-group-custom">
+            <label>Punto de partida de tus trayectos <span class="text-danger">*</span></label>
+            <div class="input-with-icon-right">
+                <input type="text" class="form-control-custom">
+                <i class="bi bi-geo-alt"></i>
+            </div>
+        </div>
+
+        <div class="form-group-custom">
+            <label>Destino de tus trayectos</label>
+            <div class="input-with-icon-right">
+                <input type="text" class="form-control-custom">
+                <i class="bi bi-geo-alt"></i>
+            </div>
+        </div>
+
+        <div class="form-grid-2 mb-4">
+            <div class="form-group-custom mb-0">
+                <label>Distancia recorrida ✨</label>
+                <div class="split-unit-input">
+                    <input type="number">
+                    <div class="unit">km</div>
+                </div>
+            </div>
+            <div class="form-group-custom mb-0">
+                <label>Número de noches de hotel</label>
+                <div class="split-unit-input">
+                    <input type="number">
+                    <div class="unit">noches</div>
+                </div>
+            </div>
+        </div>
+
+        <button class="btn-save-cyan" onclick="closeCrearViajeModal()">
+            Guardar y calcular distancia ✨
+        </button>
+
+    </div>
+</div>
+
+{% endblock %}
+
+{% block js %}
+<script>
+    // --- MANEJO DE DROPDOWNS ---
+    function toggleDropdown(id) {
+        document.getElementById(id).classList.toggle('show');
+    }
+
+    window.onclick = function (event) {
+        // Evitamos que los clicks DENTRO del dropdown (como los checkbox) lo cierren
+        if (event.target.closest('.dropdown-menu-custom')) {
+            return;
+        }
+
+        if (!event.target.matches('.btn-icon-custom') && !event.target.closest('.btn-icon-custom')) {
+            var dropdowns = document.getElementsByClassName("dropdown-menu-custom");
+            for (var i = 0; i < dropdowns.length; i++) {
+                var openDropdown = dropdowns[i];
+                if (openDropdown.classList.contains('show')) {
+                    openDropdown.classList.remove('show');
+                }
+            }
+        }
+    }
+
+    // --- MODAL CREAR VIAJE ---
+    const customOverlay = document.getElementById('customOverlay');
+    const crearViajeModal = document.getElementById('crearViajeModal');
+
+    function openCrearViajeModal() {
+        customOverlay.classList.add('show');
+        crearViajeModal.classList.add('show');
+    }
+
+    function closeCrearViajeModal() {
+        customOverlay.classList.remove('show');
+        crearViajeModal.classList.remove('show');
+    }
+
+    function closeAllPanels() {
+        closeCrearViajeModal();
+        var dropdowns = document.getElementsByClassName("dropdown-menu-custom");
+        for (var i = 0; i < dropdowns.length; i++) {
+            dropdowns[i].classList.remove('show');
+        }
+    }
+</script>
+{% endblock %}

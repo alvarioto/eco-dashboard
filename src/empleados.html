@@ -1,0 +1,676 @@
+{% set title = 'Empleados' %}
+{% set filename = 'Empleados.html' %}
+
+{% extends 'src/layouts/master.html' %}
+
+{% block styles %}
+<!-- Flatpickr y Choices CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<link rel="stylesheet" href="assets/extensions/choices.js/public/assets/styles/choices.css">
+
+<style>
+    /* Estilos base como descritos en el plan */
+    .page-content {
+        padding: 20px;
+        position: relative;
+        background-color: #f8f9fa;
+    }
+
+    /* Encabezado */
+    .header-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+    }
+
+    .header-left {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .header-left h3 {
+        margin: 0;
+        font-weight: 700;
+        color: #1f2937;
+        font-size: 1.5rem;
+    }
+
+    .btn-back {
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        cursor: pointer;
+        color: #9ca3af;
+        padding: 0;
+        display: flex;
+        align-items: center;
+    }
+
+    .btn-back:hover {
+        color: #4b5563;
+    }
+
+    .header-right {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+    }
+
+    /* Botones Superiores */
+    .btn-icon {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 16px;
+        border-radius: 6px;
+        font-size: 0.9rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .btn-outline {
+        background-color: transparent;
+        border: 1px solid #d1d5db;
+        color: #374151;
+    }
+
+    .btn-outline:hover {
+        background-color: #f3f4f6;
+    }
+
+    .btn-primary-dark {
+        background-color: #111827;
+        color: white;
+        border: 1px solid #111827;
+    }
+
+    .btn-primary-dark:hover {
+        background-color: #374151;
+    }
+
+    /* Banner Informativo */
+    .info-banner {
+        display: flex;
+        align-items: flex-start;
+        background-color: #f0fdf4;
+        border: 1px solid #dcfce7;
+        border-radius: 8px;
+        padding: 16px 20px;
+        margin-bottom: 24px;
+        gap: 15px;
+    }
+
+    .info-icon {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background-color: white;
+        border: 1px solid #86efac;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #10b981;
+        font-size: 1.1rem;
+        flex-shrink: 0;
+    }
+
+    .info-text strong {
+        display: block;
+        color: #065f46;
+        font-weight: 600;
+        font-size: 0.95rem;
+        margin-bottom: 4px;
+    }
+
+    .info-text p {
+        margin: 0;
+        color: #4b5563;
+        font-size: 0.85rem;
+        line-height: 1.5;
+    }
+
+    /* Menús Desplegables */
+    .dropdown-menu-custom {
+        display: none;
+        position: absolute;
+        top: 100%;
+        right: 0;
+        margin-top: 8px;
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        min-width: 260px;
+        z-index: 1050;
+        padding: 8px 0;
+    }
+
+    .dropdown-menu-custom.show {
+        display: block;
+    }
+
+    .dropdown-header-custom {
+        padding: 10px 20px 4px;
+        font-size: 0.85rem;
+        color: #6b7280;
+        font-weight: 500;
+        cursor: default;
+    }
+
+    .dropdown-item-custom {
+        padding: 8px 20px;
+        display: block;
+        color: #374151;
+        text-decoration: none;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: background-color 0.2s;
+    }
+
+    .dropdown-item-custom i {
+        margin-right: 8px;
+        color: #6b7280;
+    }
+
+    .dropdown-item-custom:hover {
+        background-color: #f3f4f6;
+    }
+
+    .dropdown-divider {
+        height: 1px;
+        background-color: #e5e7eb;
+        margin: 8px 0;
+    }
+
+    /* Utilidades de posicionamiento relativo */
+    .relative {
+        position: relative;
+    }
+
+    /* Contenedor Toolbar: Año etc */
+    .toolbar-container {
+        display: flex;
+        justify-content: flex-start;
+        margin-bottom: 24px;
+    }
+
+    .year-filter {
+        position: relative;
+    }
+
+    /* ESTADO GLOBAL VACÍO */
+    .global-empty-state {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        padding: 120px 20px;
+        text-align: center;
+        background: white;
+        border-radius: 12px;
+        border: 1px solid #e5e7eb;
+    }
+
+    .empty-state-graphic {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+        align-items: center;
+        margin-bottom: 30px;
+    }
+
+    .empty-doc-card {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        padding: 10px 20px;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        width: 250px;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    }
+
+    .empty-doc-line {
+        height: 8px;
+        background-color: #e5e7eb;
+        border-radius: 4px;
+        flex: 1;
+    }
+
+    .empty-doc-icon {
+        color: #10b981;
+        background-color: #d1fae5;
+        padding: 6px;
+        border-radius: 6px;
+        font-size: 1.1rem;
+    }
+
+    .global-empty-title {
+        font-size: 1.15rem;
+        font-weight: 600;
+        color: #1f2937;
+        margin-bottom: 8px;
+    }
+
+    .global-empty-subtitle {
+        font-size: 0.9rem;
+        color: #6b7280;
+        margin-bottom: 24px;
+    }
+
+    /* OVERLAY */
+    .custom-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 1040;
+        display: none;
+        opacity: 0;
+        transition: opacity 0.3s;
+    }
+
+    .custom-overlay.show {
+        display: block;
+        opacity: 1;
+    }
+
+    /* MODAL AÑADIR/CREAR */
+    .custom-modal {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) scale(0.95);
+        background: white;
+        border-radius: 12px;
+        width: 100%;
+        max-width: 450px;
+        z-index: 1050;
+        display: none;
+        opacity: 0;
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        transition: all 0.3s;
+    }
+
+    .custom-modal.show {
+        display: block;
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
+
+    .modal-header {
+        padding: 24px 24px 16px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .modal-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #1f2937;
+        margin: 0;
+    }
+
+    .btn-close-custom {
+        background: none;
+        border: none;
+        font-size: 1.25rem;
+        color: #9ca3af;
+        cursor: pointer;
+        padding: 0;
+        line-height: 1;
+    }
+
+    .btn-close-custom:hover {
+        color: #374151;
+    }
+
+    .modal-body {
+        padding: 24px;
+        max-height: 65vh;
+        overflow-y: auto;
+    }
+
+    .modal-footer {
+        padding: 20px 24px;
+        border-top: 1px solid #e5e7eb;
+    }
+
+    .btn-save-custom {
+        background-color: #1f2937;
+        color: white;
+        border: none;
+        padding: 12px 20px;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 0.95rem;
+        cursor: pointer;
+        width: 100%;
+        transition: background-color 0.2s;
+    }
+
+    .btn-save-custom:hover {
+        background-color: #111827;
+    }
+
+    /* ESTILOS DE FORMS COMUNES */
+    .form-group-custom {
+        margin-bottom: 20px;
+    }
+
+    .form-group-custom label {
+        display: block;
+        font-size: 0.85rem;
+        font-weight: 500;
+        color: #6b7280;
+        margin-bottom: 8px;
+    }
+
+    .form-control-custom {
+        width: 100%;
+        padding: 10px 14px;
+        border: 1px solid #d1d5db;
+        border-radius: 6px;
+        font-size: 0.95rem;
+        color: #374151;
+        outline: none;
+        box-sizing: border-box;
+        background-color: #fff;
+    }
+
+    .form-control-custom:focus {
+        border-color: #3b82f6;
+    }
+
+    select.form-control-custom {
+        -webkit-appearance: none !important;
+        -moz-appearance: none !important;
+        appearance: none !important;
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e") !important;
+        background-repeat: no-repeat;
+        background-position: right 14px center;
+        background-size: 14px 10px;
+        padding-right: 36px;
+        cursor: pointer;
+    }
+
+    /* Recordatorio Pseudo-input */
+    .recordatorio-input {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        cursor: pointer;
+    }
+
+    .recordatorio-input .icons {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+    }
+
+    .recordatorio-input .bi-x {
+        cursor: pointer;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-heading">
+    <!-- El page-heading está vacío intencionalmente para manejar nosotros el header en el contenido -->
+</div>
+
+<div class="page-content" id="empleados-dashboard">
+    <!-- Encabezado superior -->
+    <div class="header-container">
+        <div class="header-left">
+            <button class="btn-back">
+                <i class="bi bi-arrow-left"></i>
+            </button>
+            <h3>Empleados</h3>
+        </div>
+        <div class="header-right">
+            <!-- Botón Acciones -->
+            <div class="relative">
+                <button class="btn-icon btn-outline" id="btn-acciones" onclick="toggleDropdown('menu-acciones')">
+                    Acciones
+                    <i class="bi bi-chevron-down ms-1"></i>
+                </button>
+                <div class="dropdown-menu-custom" id="menu-acciones">
+                    <a class="dropdown-item-custom" href="#"><i class="bi bi-pen"></i> Editar empleados</a>
+                </div>
+            </div>
+
+            <!-- Botón Crear encuesta -->
+            <div class="relative">
+                <button class="btn-icon btn-primary-dark" id="btn-crear-encuesta"
+                    onclick="toggleDropdown('menu-crear-encuesta')">
+                    Crear encuesta
+                    <i class="bi bi-chevron-down ms-1"></i>
+                </button>
+                <div class="dropdown-menu-custom" id="menu-crear-encuesta" style="min-width: 260px;">
+                    <a class="dropdown-item-custom text-muted"
+                        style="cursor: default; font-size: 0.8rem; padding-bottom: 5px;">Añadir individual</a>
+                    <a class="dropdown-item-custom" href="javascript:void(0)" onclick="openCrearModal()">
+                        Creación manual
+                    </a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item-custom text-muted"
+                        style="cursor: default; font-size: 0.8rem; padding-bottom: 5px;">Añadir en masa</a>
+                    <a class="dropdown-item-custom">
+                        Importar mis archivos
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Banner Info -->
+    <div class="info-banner">
+        <div class="info-icon"><i class="bi bi-people"></i></div>
+        <div class="info-text">
+            <strong>Descubre las emisiones generadas por los participantes</strong>
+            <p>Las emisiones generadas por los participantes se dividen en dos categorías del Alcance 3: Desplazamiento
+                de participantes desde su hogar hasta el lugar de trabajo y Viajes de Negocios. Para obtener la
+                información, se puede conocer a través de una encuesta muy sencilla enviada a todos los participantes.
+            </p>
+        </div>
+    </div>
+
+    <!-- Controles secundarios -->
+    <div class="toolbar-container">
+        <div class="year-filter relative">
+            <button class="btn-icon btn-outline" onclick="toggleDropdown('menu-year')">
+                <i class="bi bi-calendar"></i> Año <span style="margin-left: 8px;">2026</span> <i
+                    class="bi bi-chevron-down ms-1"></i>
+            </button>
+            <div class="dropdown-menu-custom text-start" id="menu-year" style="min-width: 220px; left: 0;">
+                <div style="padding: 10px;">
+                    <div class="form-control-custom"
+                        style="padding: 8px; display: flex; align-items: center; border-radius: 6px;">
+                        <i class="bi bi-search text-muted" style="margin-right: 8px;"></i>
+                        <input type="text" placeholder="Buscar año..."
+                            style="width:100%; border:none; outline:none; font-size: 0.9rem;">
+                    </div>
+                </div>
+                <a class="dropdown-item-custom" style="font-weight: 500;">
+                    <i class="bi bi-circle-fill text-success"
+                        style="font-size: 0.45rem; vertical-align: middle; margin-right: 8px;"></i> 2026
+                </a>
+                <a class="dropdown-item-custom text-muted" style="background-color: #f9fafb;">2025</a>
+                <a class="dropdown-item-custom text-muted">2024</a>
+                <a class="dropdown-item-custom text-muted">2023</a>
+                <a class="dropdown-item-custom text-muted">2022</a>
+                <a class="dropdown-item-custom text-muted">2021</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ESTADO GLOBAL VACÍO -->
+    <div class="global-empty-state" id="global-empty-state">
+        <div class="empty-state-graphic">
+            <div class="empty-doc-card">
+                <i class="bi bi-chat-square-text empty-doc-icon"></i>
+                <div class="empty-doc-line"></div>
+            </div>
+            <div class="empty-doc-card">
+                <i class="bi bi-chat-square-text empty-doc-icon"></i>
+                <div class="empty-doc-line"></div>
+            </div>
+        </div>
+        <h3 class="global-empty-title">No hay encuestas</h3>
+        <p class="global-empty-subtitle">¿Quieres empezar creando una?</p>
+
+        <div class="relative mt-2">
+            <button class="btn-icon btn-primary-dark" id="btn-crear-encuesta-empty"
+                onclick="toggleDropdown('menu-crear-encuesta-empty')">
+                Crear encuesta
+                <i class="bi bi-chevron-down ms-1"></i>
+            </button>
+            <div class="dropdown-menu-custom text-start" id="menu-crear-encuesta-empty"
+                style="min-width: 260px; left: 50%; transform: translateX(-50%); margin-top: 8px;">
+                <a class="dropdown-item-custom text-muted"
+                    style="cursor: default; font-size: 0.8rem; padding-bottom: 5px;">Añadir individual</a>
+                <a class="dropdown-item-custom" href="javascript:void(0)" onclick="openCrearModal()">
+                    Creación manual
+                </a>
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item-custom text-muted"
+                    style="cursor: default; font-size: 0.8rem; padding-bottom: 5px;">Añadir en masa</a>
+                <a class="dropdown-item-custom">
+                    Importar mis archivos
+                </a>
+            </div>
+        </div>
+    </div>
+
+</div> <!-- /page-content -->
+
+<!-- OVERLAY PARA MODAL -->
+<div class="custom-overlay" id="customOverlay" onclick="closeAllPanels()"></div>
+
+<!-- MODAL: CREAR ENCUESTA -->
+<div class="custom-modal" id="crearEncuestaModal">
+    <div class="modal-header">
+        <h4 class="modal-title">Crear encuesta</h4>
+        <button class="btn-close-custom" onclick="closeCrearModal()"><i class="bi bi-x"></i></button>
+    </div>
+
+    <div class="modal-body">
+
+        <div class="form-group-custom">
+            <label>Plantilla <span class="text-danger">*</span></label>
+            <select class="form-control-custom">
+                <option value="desplazamiento" selected>Desplazamiento de empleados</option>
+                <option value="viajes">Viajes de negocios</option>
+            </select>
+        </div>
+
+        <div class="form-group-custom">
+            <label>Nombre de la encuesta <span class="text-danger">*</span></label>
+            <input type="text" class="form-control-custom">
+        </div>
+
+        <div class="form-group-custom">
+            <label>Año <span class="text-danger">*</span></label>
+            <select class="form-control-custom text-muted">
+                <option value="" disabled selected>--</option>
+                <option value="2026">2026</option>
+                <option value="2025">2025</option>
+                <option value="2024">2024</option>
+            </select>
+        </div>
+
+        <div class="form-group-custom">
+            <label>Privacidad <span class="text-danger">*</span></label>
+            <select class="form-control-custom">
+                <option value="visibles" selected>Visibles</option>
+                <option value="ocultas">Ocultas</option>
+            </select>
+        </div>
+
+        <div class="form-group-custom">
+            <label>Recordatorio <i class="bi bi-info-circle text-muted ms-1" style="font-size: 0.8rem;"></i></label>
+            <div class="form-control-custom recordatorio-input">
+                <span>Sin recordatorio</span>
+                <div class="icons">
+                    <i class="bi bi-x text-muted" style="font-size: 1.2rem;"></i>
+                    <i class="bi bi-chevron-down text-muted" style="font-size: 0.9rem;"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group-custom">
+            <label>Datos requeridos del participante <span class="text-danger">*</span></label>
+            <select class="form-control-custom">
+                <option value="nombre_email" selected>Nombre y email</option>
+                <option value="anonimo">Anónimo</option>
+            </select>
+        </div>
+
+        <div class="form-group-custom mb-0">
+            <label>Edificio <i class="bi bi-info-circle text-muted ms-1" style="font-size: 0.8rem;"></i></label>
+            <select class="form-control-custom">
+                <option value="todos" selected>Todos</option>
+                <option value="oficina_central">Oficina Central</option>
+            </select>
+        </div>
+
+    </div>
+
+    <div class="modal-footer">
+        <button class="btn-save-custom w-100" onclick="closeCrearModal()">Guardar</button>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block js %}
+<script>
+    // --- MANEJO DE DROPDOWNS ---
+    function toggleDropdown(id) {
+        document.getElementById(id).classList.toggle('show');
+    }
+
+    window.onclick = function (event) {
+        if (!event.target.matches('.btn-icon') && !event.target.closest('.btn-icon')) {
+            var dropdowns = document.getElementsByClassName("dropdown-menu-custom");
+            for (var i = 0; i < dropdowns.length; i++) {
+                var openDropdown = dropdowns[i];
+                if (openDropdown.classList.contains('show')) {
+                    openDropdown.classList.remove('show');
+                }
+            }
+        }
+    }
+
+    // --- MODAL CREAR ENCUESTA ---
+    const customOverlay = document.getElementById('customOverlay');
+    const crearEncuestaModal = document.getElementById('crearEncuestaModal');
+
+    function openCrearModal() {
+        customOverlay.classList.add('show');
+        crearEncuestaModal.classList.add('show');
+    }
+
+    function closeCrearModal() {
+        customOverlay.classList.remove('show');
+        crearEncuestaModal.classList.remove('show');
+    }
+
+    function closeAllPanels() {
+        closeCrearModal();
+        var dropdowns = document.getElementsByClassName("dropdown-menu-custom");
+        for (var i = 0; i < dropdowns.length; i++) {
+            dropdowns[i].classList.remove('show');
+        }
+    }
+</script>
+{% endblock %}
