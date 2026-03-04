@@ -19,3 +19,109 @@ body .bi::before, [class^=bi-]::before, [class*=" bi-"]::before {
 
 // Mazer CSS
 @import "./mazer";
+
+/* ---------------------------------------------------
+   CUSTOM SIDEBAR REDESIGN
+   Overriding default Mazer styles for a cleaner look
+----------------------------------------------------- */
+
+#sidebar .sidebar-wrapper {
+    box-shadow: none;
+    border-right: 1px solid #e5e7eb;
+}
+
+#sidebar .sidebar-menu {
+    padding: 0 1rem;
+}
+
+#sidebar .menu .sidebar-title {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: #9ca3af;
+    text-transform: uppercase;
+    margin-top: 1.5rem;
+    margin-bottom: 0.75rem;
+    padding-left: 0.5rem;
+}
+
+#sidebar .menu .sidebar-item {
+    margin-bottom: 0.25rem;
+}
+
+#sidebar .menu .sidebar-item .sidebar-link {
+    padding: 0.6rem 1rem;
+    border-radius: 8px;
+    color: #4b5563;
+    font-size: 0.95rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    background-color: transparent;
+}
+
+#sidebar .menu .sidebar-item .sidebar-link i {
+    color: #9ca3af;
+    font-size: 1.1rem;
+    margin-right: 12px;
+    transition: all 0.2s ease;
+}
+
+/* Hover State */
+#sidebar .menu .sidebar-item:not(.active):hover > .sidebar-link {
+    background-color: #f3f4f6;
+    color: #1f2937;
+}
+
+#sidebar .menu .sidebar-item:not(.active):hover > .sidebar-link i {
+    color: #4b5563;
+}
+
+/* Active State (Solid Blue indicator like Emisiones KPIs) */
+#sidebar .menu .sidebar-item.active > .sidebar-link {
+    background-color: #f1f5f9;
+    color: #1f2937;
+    font-weight: 600;
+    border-left: 4px solid #1f2937;
+    padding-left: calc(1rem - 4px); /* Adjust padding because of border */
+}
+
+#sidebar .menu .sidebar-item.active > .sidebar-link i {
+    color: #1f2937;
+}
+
+/* Submenu Styling */
+#sidebar .menu .submenu {
+    padding-left: 2rem;
+    position: relative;
+    margin-top: 0.25rem;
+}
+
+#sidebar .menu .submenu::before {
+    content: '';
+    position: absolute;
+    left: 1.4rem;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background-color: #e5e7eb;
+}
+
+#sidebar .menu .submenu .submenu-item .submenu-link {
+    padding: 0.4rem 0.5rem;
+    font-size: 0.85rem;
+    color: #6b7280;
+    transition: color 0.2s ease;
+}
+
+#sidebar .menu .submenu .submenu-item:hover > .submenu-link {
+    color: #1f2937;
+    background: transparent;
+}
+
+#sidebar .menu .submenu .submenu-item.active > .submenu-link {
+    color: #1f2937;
+    font-weight: 600;
+}
+
