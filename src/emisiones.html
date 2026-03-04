@@ -1,0 +1,1054 @@
+{% set title = 'Emisiones' %}
+{% set filename = 'emisiones.html' %}
+
+{% extends 'src/layouts/master.html' %}
+
+{% block styles %}
+<!-- Flatpickr CSS para el rango de fechas -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<style>
+    .page-content {
+        padding: 20px;
+        position: relative;
+        background-color: #f8f9fa;
+        min-height: calc(100vh - 80px);
+    }
+
+    /* Encabezado */
+    .header-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 24px;
+    }
+
+    .header-left {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .header-left h3 {
+        margin: 0;
+        font-weight: 700;
+        color: #1f2937;
+        font-size: 1.5rem;
+    }
+
+    .btn-back {
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        cursor: pointer;
+        color: #9ca3af;
+        padding: 0;
+        display: flex;
+        align-items: center;
+    }
+
+    .btn-back:hover {
+        color: #4b5563;
+    }
+
+    .header-right {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+    }
+
+    .btn-header-outline {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 16px;
+        border-radius: 6px;
+        font-size: 0.9rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s;
+        border: 1px solid #d1d5db;
+        background-color: white;
+        color: #374151;
+    }
+
+    .btn-header-outline:hover {
+        background-color: #f3f4f6;
+    }
+
+    /* TOP KPIs GRID */
+    .kpis-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+        margin-bottom: 24px;
+    }
+
+    .kpi-card {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        padding: 16px;
+        text-align: center;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 110px;
+    }
+
+    .kpi-card.active {
+        background-color: #f1f5f9;
+        border-left: 4px solid #1f2937;
+        /* Borde grueso izquierdo */
+        border-color: #cbd5e1;
+    }
+
+    .kpi-title-row {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+        position: absolute;
+        top: 12px;
+        left: 0;
+        padding: 0 16px;
+        box-sizing: border-box;
+    }
+
+    .kpi-title-row span {
+        font-size: 0.85rem;
+        font-weight: 600;
+        color: #9ca3af;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+    }
+
+    .kpi-title-row .status-dot {
+        font-size: 0.75rem;
+        color: #34d399;
+        /* Verde claro */
+        background-color: #d1fae5;
+        border-radius: 50%;
+        padding: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .kpi-content {
+        margin-top: 20px;
+    }
+
+    .kpi-subtitle {
+        font-size: 0.8rem;
+        color: #6b7280;
+        margin-bottom: 4px;
+    }
+
+    .kpi-value {
+        font-size: 1.05rem;
+        font-weight: 600;
+        color: #1f2937;
+    }
+
+    .btn-kpi-action {
+        background-color: #1f2937;
+        color: white;
+        border: none;
+        padding: 6px 12px;
+        border-radius: 6px;
+        font-size: 0.8rem;
+        font-weight: 500;
+        margin-top: 8px;
+        cursor: pointer;
+    }
+
+    .btn-kpi-action:hover {
+        background-color: #111827;
+    }
+
+    /* PANEL PRINCIPAL BLANCO (Contiene graficos y tabs) */
+    .dashboard-panel {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        margin-bottom: 24px;
+        padding: 24px;
+    }
+
+    .panel-title {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #1f2937;
+        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .info-icon-small {
+        color: #9ca3af;
+        font-size: 0.9rem;
+        cursor: pointer;
+    }
+
+    /* Gráfico Evolución (Espacio) */
+    .chart-evolution-container {
+        height: 280px;
+        width: 100%;
+        /* Placeholder styling for now, ApexCharts will fill this */
+    }
+
+    /* TABS DEL DASHBOARD */
+    .dashboard-tabs-wrapper {
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        background: white;
+        margin-bottom: 24px;
+    }
+
+    .dashboard-tabs-header {
+        display: flex;
+        border-bottom: 1px solid #e5e7eb;
+        padding: 0 16px;
+    }
+
+    .dashboard-tab {
+        padding: 16px 20px;
+        font-size: 0.9rem;
+        font-weight: 500;
+        color: #6b7280;
+        cursor: pointer;
+        border-bottom: 2px solid transparent;
+        margin-bottom: -1px;
+    }
+
+    .dashboard-tab.active {
+        color: #1f2937;
+        border-bottom-color: #1f2937;
+        font-weight: 600;
+    }
+
+    .dashboard-tabs-body {
+        padding: 20px;
+        background-color: #f8f9fa;
+        /* Fondo grisecito suave dentro del tab */
+    }
+
+    /* GRID DE GRÁFICOS ALCANCE (Izquierda Pie, Derecha Area) */
+    .alcance-charts-grid {
+        display: grid;
+        grid-template-columns: 3fr 7fr;
+        gap: 16px;
+    }
+
+    .alcance-chart-card {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .chart-donut-container {
+        height: 200px;
+        flex-grow: 1;
+    }
+
+    .chart-area-container {
+        height: 250px;
+        flex-grow: 1;
+    }
+
+    /* Leyenda personalizada para Donut */
+    .custom-legend {
+        margin-top: 16px;
+    }
+
+    .legend-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 0.8rem;
+        color: #4b5563;
+        margin-bottom: 8px;
+    }
+
+    .legend-label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .legend-color {
+        width: 10px;
+        height: 10px;
+        border-radius: 2px;
+    }
+
+    /* Toggle bar/lineas inferior */
+    .chart-toggle-footer {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 8px;
+        margin-top: 10px;
+    }
+
+    .toggle-switch-custom {
+        position: relative;
+        width: 36px;
+        height: 20px;
+        background-color: #e5e7eb;
+        border-radius: 10px;
+        cursor: pointer;
+    }
+
+    .toggle-switch-custom::after {
+        content: '';
+        position: absolute;
+        top: 2px;
+        left: 2px;
+        width: 16px;
+        height: 16px;
+        background-color: white;
+        border-radius: 50%;
+        transition: 0.2s;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    }
+
+    /* COLUMNAS INFERIORES DE ALCANCES (1, 2, 3) */
+    .alcance-columns-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+    }
+
+    .alcance-col-card {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        padding: 24px;
+    }
+
+    .alcance-col-header {
+        margin-bottom: 16px;
+    }
+
+    .alcance-col-title {
+        font-size: 1rem;
+        font-weight: 700;
+        color: #1f2937;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-bottom: 4px;
+    }
+
+    .alcance-col-desc {
+        font-size: 0.75rem;
+        color: #6b7280;
+        margin-bottom: 12px;
+    }
+
+    .col-big-percent {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #1f2937;
+        margin-bottom: 2px;
+    }
+
+    .col-big-percent span {
+        font-size: 0.85rem;
+        font-weight: 400;
+        color: #6b7280;
+    }
+
+    .col-small-val {
+        font-size: 0.8rem;
+        color: #9ca3af;
+        margin-bottom: 16px;
+    }
+
+    .col-inner-tabs {
+        display: flex;
+        border-bottom: 1px solid #e5e7eb;
+        margin-bottom: 16px;
+    }
+
+    .col-inner-tab {
+        padding: 6px 0;
+        margin-right: 16px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        color: #9ca3af;
+        cursor: pointer;
+        border-bottom: 2px solid transparent;
+        margin-bottom: -1px;
+    }
+
+    .col-inner-tab.active {
+        color: #1f2937;
+        border-bottom-color: #1f2937;
+    }
+
+    /* Lista de progresos */
+    .progress-list {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .progress-item {
+        width: 100%;
+    }
+
+    .progress-label-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 6px;
+        font-size: 0.75rem;
+        color: #4b5563;
+        font-weight: 500;
+    }
+
+    .progress-bar-bg {
+        width: 100%;
+        height: 8px;
+        background-color: #f1f5f9;
+        border-radius: 4px;
+        overflow: hidden;
+    }
+
+    .progress-bar-fill {
+        height: 100%;
+        background-color: #10b981;
+        /* Solo placeholder, cada uno tendra su color si hay valor */
+        width: 0%;
+        border-radius: 4px;
+    }
+
+    /* OFFCANVAS / DRAWER DE FILTROS */
+    .filters-drawer {
+        position: fixed;
+        top: 0;
+        right: -400px;
+        width: 380px;
+        height: 100vh;
+        background-color: white;
+        box-shadow: -4px 0 15px rgba(0, 0, 0, 0.05);
+        z-index: 1050;
+        transition: right 0.3s ease;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .filters-drawer.open {
+        right: 0;
+    }
+
+    .drawer-header {
+        padding: 20px 24px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .drawer-header h5 {
+        margin: 0;
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #1f2937;
+    }
+
+    .btn-close-drawer {
+        background: none;
+        border: none;
+        font-size: 1.25rem;
+        color: #9ca3af;
+        cursor: pointer;
+        padding: 0;
+    }
+
+    .drawer-body {
+        padding: 24px;
+        overflow-y: auto;
+        flex-grow: 1;
+    }
+
+    /* Formulario de Filtros */
+    .form-group-custom {
+        margin-bottom: 20px;
+    }
+
+    .form-group-custom label {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 0.85rem;
+        font-weight: 500;
+        color: #4b5563;
+        margin-bottom: 8px;
+    }
+
+    .form-control-custom {
+        width: 100%;
+        padding: 10px 14px;
+        border: 1px solid #d1d5db;
+        border-radius: 6px;
+        font-size: 0.9rem;
+        color: #374151;
+        outline: none;
+        background-color: #fff;
+    }
+
+    .form-control-custom:focus {
+        border-color: #3b82f6;
+    }
+
+    select.form-control-custom {
+        -webkit-appearance: none !important;
+        -moz-appearance: none !important;
+        appearance: none !important;
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e") !important;
+        background-repeat: no-repeat;
+        background-position: right 14px center;
+        background-size: 14px 10px;
+        padding-right: 36px;
+        cursor: pointer;
+    }
+
+    /* Date range falso input con pseudo chevron arrow */
+    .date-range-container {
+        display: flex;
+        align-items: center;
+        border: 1px solid #d1d5db;
+        border-radius: 6px;
+        padding: 0 14px;
+        background-color: white;
+    }
+
+    .date-range-container input {
+        border: none;
+        padding: 10px 0;
+        outline: none;
+        width: 100%;
+        font-size: 0.9rem;
+    }
+
+    .date-range-container i {
+        color: #6b7280;
+    }
+
+    .date-range-separator {
+        color: #9ca3af;
+        margin: 0 8px;
+        font-size: 0.8rem;
+    }
+
+    .drawer-divider {
+        height: 1px;
+        background-color: #e5e7eb;
+        margin: 24px 0;
+    }
+
+    .drawer-subtitle {
+        font-size: 0.85rem;
+        color: #9ca3af;
+        margin-bottom: 16px;
+    }
+
+    /* Tag select simulado */
+    .tag-select-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        border: 1px solid #d1d5db;
+        border-radius: 6px;
+        padding: 6px;
+        background-color: white;
+        cursor: pointer;
+    }
+
+    .tag-item {
+        background-color: #f3f4f6;
+        border: 1px solid #e5e7eb;
+        border-radius: 4px;
+        padding: 4px 8px;
+        font-size: 0.85rem;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        color: #374151;
+    }
+
+    .tag-item i {
+        font-size: 0.8rem;
+        color: #9ca3af;
+        cursor: pointer;
+    }
+
+    .tag-select-container .bi-chevron-down {
+        margin-left: auto;
+        margin-right: 8px;
+        align-self: center;
+        color: #6b7280;
+    }
+
+    /* Toggle switch con label */
+    .toggle-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 20px;
+    }
+
+    .toggle-switch-green {
+        position: relative;
+        width: 40px;
+        height: 22px;
+        background-color: #10b981;
+        border-radius: 11px;
+        cursor: pointer;
+    }
+
+    .toggle-switch-green::after {
+        content: '';
+        position: absolute;
+        top: 2px;
+        right: 2px;
+        width: 18px;
+        height: 18px;
+        background-color: white;
+        border-radius: 50%;
+        transition: 0.2s;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Overlay general para el sidebar */
+    .general-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.4);
+        z-index: 1040;
+        display: none;
+        opacity: 0;
+        transition: 0.3s;
+    }
+
+    .general-overlay.show {
+        display: block;
+        opacity: 1;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-heading"></div>
+
+<div class="page-content" id="emisiones-dashboard">
+
+    <!-- Encabezado superior -->
+    <div class="header-container">
+        <div class="header-left">
+            <button class="btn-back">
+                <i class="bi bi-arrow-left"></i>
+            </button>
+            <h3>Emisiones</h3>
+        </div>
+        <div class="header-right">
+            <button class="btn-header-outline">
+                <i class="bi bi-building"></i> Edificio <i class="bi bi-chevron-down ms-1 text-muted"
+                    style="font-size:0.8rem"></i>
+            </button>
+            <button class="btn-header-outline" onclick="openFiltros()">
+                <i class="bi bi-funnel"></i> Filtrar
+            </button>
+        </div>
+    </div>
+
+    <!-- Top KPIs -->
+    <div class="kpis-grid">
+        <div class="kpi-card active">
+            <div class="kpi-title-row">
+                <span class="text-white">Emisiones totales <i class="bi bi-info-circle info-icon-small"
+                        style="color:#d1d5db"></i></span>
+                <div class="status-dot"><i class="bi bi-asterisk"></i></div>
+            </div>
+            <div class="kpi-content">
+                <div class="kpi-subtitle">Emisiones totales</div>
+                <div class="kpi-value">Sin datos disponibles</div>
+            </div>
+        </div>
+
+        <div class="kpi-card">
+            <div class="kpi-title-row">
+                <span>Emisiones por empleado <i class="bi bi-info-circle info-icon-small"></i></span>
+                <div class="status-dot"><i class="bi bi-asterisk"></i></div>
+            </div>
+            <div class="kpi-content">
+                <div class="kpi-subtitle">Emisiones por empleado</div>
+                <div class="kpi-value" style="font-size:0.95rem; margin-bottom: 2px;">Sin datos disponibles</div>
+                <button class="btn-kpi-action">Añadir número de empleados</button>
+            </div>
+        </div>
+
+        <div class="kpi-card">
+            <div class="kpi-title-row">
+                <span>Emisiones por actividad <i class="bi bi-info-circle info-icon-small"></i></span>
+                <div class="status-dot"><i class="bi bi-asterisk"></i></div>
+            </div>
+            <div class="kpi-content">
+                <div class="kpi-subtitle">Emisiones por actividad</div>
+                <div class="kpi-value">Sin datos disponibles</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Chart: Evolución -->
+    <div class="dashboard-panel">
+        <div class="panel-title">Evolución vs periodo anterior <i class="bi bi-info-circle info-icon-small"></i></div>
+        <div class="chart-evolution-container" id="chart-evolucion-general"></div>
+    </div>
+
+    <!-- Bloque de Tabs + Charts Inferiores -->
+    <div class="dashboard-tabs-wrapper">
+        <div class="dashboard-tabs-header">
+            <div class="dashboard-tab active">Alcance</div>
+            <div class="dashboard-tab">Categorías</div>
+            <div class="dashboard-tab">Edificios</div>
+        </div>
+
+        <div class="dashboard-tabs-body">
+
+            <!-- Grid de gráficos Alcance -->
+            <div class="alcance-charts-grid mb-4">
+                <div class="alcance-chart-card">
+                    <div class="panel-title" style="font-size:0.95rem;">Emisiones por alcance <i
+                            class="bi bi-info-circle info-icon-small"></i></div>
+                    <div class="chart-donut-container" id="chart-alcance-donut"></div>
+                    <div class="custom-legend">
+                        <div class="legend-item">
+                            <div class="legend-label">
+                                <span class="legend-color" style="background-color: #34d399;"></span> Alcance 1
+                            </div>
+                            <span>0 %</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-label">
+                                <span class="legend-color" style="background-color: #fb923c;"></span> Alcance 2
+                            </div>
+                            <span>0 %</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-label">
+                                <span class="legend-color" style="background-color: #3b82f6;"></span> Alcance 3
+                            </div>
+                            <span>0 %</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="alcance-chart-card">
+                    <div class="panel-title" style="font-size:0.95rem;">Evolución mensual por alcance <i
+                            class="bi bi-info-circle info-icon-small"></i></div>
+                    <div class="chart-area-container" id="chart-alcance-evolucion"></div>
+                    <div class="chart-toggle-footer">
+                        <i class="bi bi-bar-chart text-muted"></i>
+                        <div class="toggle-switch-custom"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Columnas Breakdown -->
+            <div class="alcance-columns-grid">
+
+                <!-- Columna: Alcance 1 -->
+                <div class="alcance-col-card">
+                    <div class="alcance-col-header">
+                        <div class="alcance-col-title">Alcance 1 <i class="bi bi-info-circle info-icon-small"></i></div>
+                        <div class="alcance-col-desc">Emisiones directas de la empresa</div>
+                        <div class="col-big-percent">0% <span>de tus emisiones</span></div>
+                        <div class="col-small-val">0 / 0 kg CO2e</div>
+                    </div>
+
+                    <div class="col-inner-tabs">
+                        <div class="col-inner-tab active">Porcentaje</div>
+                        <div class="col-inner-tab">Emisiones</div>
+                    </div>
+
+                    <div class="progress-list">
+                        <div class="progress-item">
+                            <div class="progress-label-row"><span>Transporte y maquinaria</span> <span>0 %</span></div>
+                            <div class="progress-bar-bg">
+                                <div class="progress-bar-fill"></div>
+                            </div>
+                        </div>
+                        <div class="progress-item">
+                            <div class="progress-label-row"><span>Combustión</span> <span>0 %</span></div>
+                            <div class="progress-bar-bg">
+                                <div class="progress-bar-fill"></div>
+                            </div>
+                        </div>
+                        <div class="progress-item">
+                            <div class="progress-label-row"><span>Emisiones de procesos</span> <span>0 %</span></div>
+                            <div class="progress-bar-bg">
+                                <div class="progress-bar-fill"></div>
+                            </div>
+                        </div>
+                        <div class="progress-item">
+                            <div class="progress-label-row"><span>Emisiones fugitivas</span> <span>0 %</span></div>
+                            <div class="progress-bar-bg">
+                                <div class="progress-bar-fill"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Columna: Alcance 2 -->
+                <div class="alcance-col-card">
+                    <div class="alcance-col-header">
+                        <div class="alcance-col-title">Alcance 2 <i class="bi bi-info-circle info-icon-small"></i></div>
+                        <div class="alcance-col-desc">Emisiones de compra de energía</div>
+                        <div class="col-big-percent">0% <span>de tus emisiones</span></div>
+                        <div class="col-small-val">0 / 0 kg CO2e</div>
+                    </div>
+
+                    <div class="col-inner-tabs">
+                        <div class="col-inner-tab active">Porcentaje</div>
+                        <div class="col-inner-tab">Emisiones</div>
+                    </div>
+
+                    <div class="progress-list">
+                        <div class="progress-item">
+                            <div class="progress-label-row"><span>Electricidad en vehículos</span> <span>0 %</span>
+                            </div>
+                            <div class="progress-bar-bg">
+                                <div class="progress-bar-fill"></div>
+                            </div>
+                        </div>
+                        <div class="progress-item">
+                            <div class="progress-label-row"><span>Electricidad y otras energías</span> <span>0 %</span>
+                            </div>
+                            <div class="progress-bar-bg">
+                                <div class="progress-bar-fill"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Columna: Alcance 3 -->
+                <div class="alcance-col-card">
+                    <div class="alcance-col-header">
+                        <div class="alcance-col-title">Alcance 3 <i class="bi bi-info-circle info-icon-small"></i></div>
+                        <div class="alcance-col-desc">Emisiones indirectas y de cadena de suministro</div>
+                        <div class="col-big-percent">0% <span>de tus emisiones</span></div>
+                        <div class="col-small-val">0 / 0 kg CO2e</div>
+                    </div>
+
+                    <div class="col-inner-tabs">
+                        <div class="col-inner-tab active">Porcentaje</div>
+                        <div class="col-inner-tab">Emisiones</div>
+                    </div>
+
+                    <div class="progress-list">
+                        <div class="progress-item">
+                            <div class="progress-label-row"><span>Actividades relacionadas con el combustible...</span>
+                                <span>0 %</span></div>
+                            <div class="progress-bar-bg">
+                                <div class="progress-bar-fill"></div>
+                            </div>
+                        </div>
+                        <div class="progress-item">
+                            <div class="progress-label-row"><span>Productos vendidos</span> <span>0 %</span></div>
+                            <div class="progress-bar-bg">
+                                <div class="progress-bar-fill"></div>
+                            </div>
+                        </div>
+                        <div class="progress-item">
+                            <div class="progress-label-row"><span>Franquicias e inversiones</span> <span>0 %</span>
+                            </div>
+                            <div class="progress-bar-bg">
+                                <div class="progress-bar-fill"></div>
+                            </div>
+                        </div>
+                        <!-- ... More items but showing a few is enough to match layout beautifully -->
+                        <div class="progress-item">
+                            <div class="progress-label-row"><span>Transporte y distribución</span> <span>0 %</span>
+                            </div>
+                            <div class="progress-bar-bg">
+                                <div class="progress-bar-fill"></div>
+                            </div>
+                        </div>
+                        <div class="progress-item">
+                            <div class="progress-label-row"><span>Compras y servicios</span> <span>0 %</span></div>
+                            <div class="progress-bar-bg">
+                                <div class="progress-bar-fill"></div>
+                            </div>
+                        </div>
+                        <div class="progress-item">
+                            <div class="progress-label-row"><span>Viajes de negocios</span> <span>0 %</span></div>
+                            <div class="progress-bar-bg">
+                                <div class="progress-bar-fill"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div> <!-- /alcance-columns-grid -->
+
+        </div>
+    </div>
+
+</div> <!-- /page-content -->
+
+<!-- OVERLAYS Y DRAWER -->
+<div class="general-overlay" id="drawerOverlay" onclick="closeFiltros()"></div>
+
+<div class="filters-drawer" id="filtrosDrawer">
+    <div class="drawer-header">
+        <h5>Filtros</h5>
+        <button class="btn-close-drawer" onclick="closeFiltros()"><i class="bi bi-x"></i></button>
+    </div>
+    <div class="drawer-body">
+
+        <div class="form-group-custom">
+            <label>Edificio</label>
+            <select class="form-control-custom">
+                <option selected>Edificio</option>
+            </select>
+        </div>
+
+        <div class="form-group-custom">
+            <label>Año</label>
+            <select class="form-control-custom">
+                <option selected>--</option>
+            </select>
+        </div>
+
+        <div class="form-group-custom">
+            <label>Fecha de inicio y fin</label>
+            <div class="date-range-container">
+                <input type="text" placeholder="dd/mm/aaaa">
+                <span class="bi bi-arrow-right date-range-separator"></span>
+                <input type="text" placeholder="dd/mm/aaaa">
+                <i class="bi bi-calendar"></i>
+            </div>
+        </div>
+
+        <div class="form-group-custom">
+            <label>Alcance</label>
+            <select class="form-control-custom">
+                <option selected>Todos los alcances</option>
+            </select>
+        </div>
+
+        <div class="form-group-custom">
+            <label>Categoría</label>
+            <select class="form-control-custom">
+                <option selected>--</option>
+            </select>
+        </div>
+
+        <div class="drawer-subtitle mt-4">Visualización</div>
+
+        <div class="form-group-custom">
+            <label>Modo de visualización <i class="bi bi-info-circle info-icon-small"></i></label>
+            <div class="tag-select-container">
+                <div class="tag-item text-muted">Manglai <i class="bi bi-x"></i></div>
+                <i class="bi bi-chevron-down"></i>
+            </div>
+        </div>
+
+        <div class="form-group-custom">
+            <label>Unidad de las emisiones</label>
+            <div class="tag-select-container">
+                <div class="tag-item">Kilogramo (kg) <i class="bi bi-x"></i></div>
+                <i class="bi bi-chevron-down"></i>
+            </div>
+        </div>
+
+        <div class="form-group-custom">
+            <label>Desglose de emisiones <i class="bi bi-info-circle info-icon-small"></i></label>
+            <div class="toggle-switch-green"></div>
+        </div>
+
+        <div class="form-group-custom">
+            <label>Tipo de emisiones</label>
+            <div class="tag-select-container">
+                <div class="tag-item">Carbono <i class="bi bi-x"></i></div>
+                <i class="bi bi-chevron-down"></i>
+            </div>
+        </div>
+
+        <div class="form-group-custom">
+            <label>Intervalo de tiempo</label>
+            <div class="tag-select-container">
+                <div class="tag-item">Mensual <i class="bi bi-x"></i></div>
+                <i class="bi bi-chevron-down"></i>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}
+
+{% block js %}
+<script src="assets/extensions/apexcharts/apexcharts.min.js"></script>
+<script>
+    // Configuración Inicial Gráfica General (Evolución)
+    var lineOptions = {
+        chart: { type: 'line', height: 280, toolbar: { show: false } },
+        series: [
+            { name: 'Periodo actual', data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], color: '#34d399' },
+            { name: 'Periodo anterior', data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], color: '#fb923c' }
+        ],
+        xaxis: { categories: ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'] },
+        yaxis: { min: 0, max: 4, tickAmount: 4 },
+        stroke: { width: 2, curve: 'straight' },
+        legend: { position: 'top', horizontalAlign: 'left', markers: { radius: 0 } },
+        dataLabels: { enabled: false }
+    };
+    new ApexCharts(document.querySelector("#chart-evolucion-general"), lineOptions).render();
+
+    // Configuración Gráfica Alcance Area (Mensual)
+    var areaAlcanceOptions = {
+        chart: { type: 'line', height: 250, toolbar: { show: false } },
+        series: [
+            { name: 'Alcance 1', data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], color: '#34d399' },
+            { name: 'Alcance 2', data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], color: '#fb923c' },
+            { name: 'Alcance 3', data: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], color: '#3b82f6' }
+        ],
+        xaxis: { categories: ['ene', 'feb', 'mar', 'abr', 'may', 'jun', 'jul', 'ago', 'sep', 'oct', 'nov', 'dic'], labels: { style: { colors: '#9ca3af' } } },
+        yaxis: { min: 0, max: 4, tickAmount: 4, labels: { style: { colors: '#9ca3af' } } },
+        stroke: { width: 2, curve: 'straight' },
+        legend: { position: 'top', horizontalAlign: 'left', markers: { radius: 0 } },
+        dataLabels: { enabled: false }
+    };
+    new ApexCharts(document.querySelector("#chart-alcance-evolucion"), areaAlcanceOptions).render();
+
+    // Gráfica vacía/donut (Placeholder para el espacio del pie chart)
+    document.querySelector("#chart-alcance-donut").innerHTML = '<div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; color:#d1d5db; border:2px dashed #e5e7eb; border-radius:50%; box-sizing:border-box; margin:auto; max-width:180px;">Sin datos</div>';
+
+    // Manejo del Drawer (Offcanvas Filtros)
+    const filtrosDrawer = document.getElementById('filtrosDrawer');
+    const drawerOverlay = document.getElementById('drawerOverlay');
+
+    function openFiltros() {
+        filtrosDrawer.classList.add('open');
+        drawerOverlay.classList.add('show');
+    }
+
+    function closeFiltros() {
+        filtrosDrawer.classList.remove('open');
+        drawerOverlay.classList.remove('show');
+    }
+</script>
+{% endblock %}

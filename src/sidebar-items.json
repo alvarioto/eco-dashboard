@@ -14,8 +14,8 @@
     "icon": "pie-chart",
     "submenu": [
       {
-        "name": "Resumen",
-        "url": "Resumen.html"
+        "name": "Emisiones",
+        "url": "emisiones.html"
       },
       {
         "name": "Alcances",

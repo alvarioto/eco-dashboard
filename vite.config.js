@@ -1,3 +1,4 @@
+// Force Vite restart
 import fs from 'fs';
 import path, { resolve } from 'path';
 import { fileURLToPath } from 'url';
