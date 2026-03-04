@@ -7,11 +7,7 @@ $bootstrap-icons-font-src: url('~bootstrap-icons/font/fonts/bootstrap-icons.woff
 @import "~bootstrap-icons/font/bootstrap-icons";
 
 // Fix icon placement
-body .bi::before,
-[class^=bi-]::before,
-[class*=" bi-"]::before {
-    vertical-align: sub;
-}
+// Removed vertical-align: sub; as it breaks alignment in flex containers
 
 // Import fonts
 @import "./fonts";
@@ -128,12 +124,18 @@ body .bi::before,
     font-weight: 600;
 }
 
-/* Sidebar Toggle Desktop overrides */
+/* Sidebar Toggle Desktop overrides (Modern Edge Button) */
 @media (min-width: 1200px) {
 
     /* Main content transition */
     #main {
-        transition: margin-left 0.3s ease-out;
+        transition: margin-left 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+
+    #sidebar .sidebar-wrapper {
+        overflow: visible !important;
+        transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), left 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+        left: 0;
     }
 
     /* When Sidebar is Active (Default on desktop) */
@@ -144,7 +146,8 @@ body .bi::before,
     /* When Sidebar is completely hidden/collapsed */
     #sidebar:not(.active) .sidebar-wrapper,
     #sidebar.inactive .sidebar-wrapper {
-        left: -300px;
+        transform: translateX(-100%);
+        left: 0;
     }
 
     #sidebar:not(.active)~#main,
@@ -152,44 +155,44 @@ body .bi::before,
         margin-left: 0;
     }
 
-    /* Premium Desktop Burger Button */
-    header .burger-btn {
+    /* Rotate icon when sidebar is collapsed */
+    #sidebar:not(.active) .modern-sidebar-toggle .toggle-icon,
+    #sidebar.inactive .modern-sidebar-toggle .toggle-icon {
+        transform: rotate(180deg);
+    }
+
+    .modern-sidebar-toggle .toggle-icon {
+        transition: transform 0.3s ease;
+        display: inline-block;
+    }
+
+    /* Premium Desktop Menu Edge Button */
+    .modern-sidebar-toggle {
         display: flex !important;
-        align-items: center;
-        justify-content: center;
-        width: 44px;
-        height: 44px;
+        position: absolute;
+        top: 32px;
+        right: -16px;
+        /* Sticks outside the right edge */
+        width: 32px;
+        height: 32px;
         background-color: white;
         border: 1px solid #e5e7eb;
-        border-radius: 10px;
+        border-radius: 50%;
+        align-items: center;
+        justify-content: center;
         color: #4b5563;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+        font-size: 14px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        z-index: 1000;
+        cursor: pointer;
         transition: all 0.2s ease;
         text-decoration: none;
     }
 
-    header .burger-btn:hover {
-        background-color: #f8f9fa;
-        color: #1f2937;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.04);
+    .modern-sidebar-toggle:hover {
+        background-color: #f3f4f6;
+        color: #111827;
+        transform: scale(1.1);
         border-color: #d1d5db;
-    }
-
-    /* Inside Sidebar Close Button (X) */
-    .sidebar-hide {
-        display: flex !important;
-        background: #f3f4f6;
-        border-radius: 50%;
-        width: 32px;
-        height: 32px;
-        align-items: center;
-        justify-content: center;
-        color: #6b7280;
-        transition: all 0.2s;
-    }
-
-    .sidebar-hide:hover {
-        background: #e5e7eb;
-        color: #1f2937;
     }
 }
