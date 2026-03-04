@@ -4,7 +4,7 @@
             <div class="logo" style="width: 120px; height: auto;">
                 <a href="index.html"><img src="assets/static/images/logo/logo.svg"></a>
             </div>
-            <a href="#" class="sidebar-hide d-xl-none d-block position-absolute top-0 end-0 mt-2 me-2">
+            <a href="#" class="sidebar-hide d-block position-absolute top-0 end-0 mt-2 me-2">
                 <i class="bi bi-x bi-middle"></i>
             </a>
         </div>
@@ -13,59 +13,56 @@
     <div class="sidebar-menu">
         <ul class="menu">
             {% for sidebarItem in sidebarItems %}
-                {% if sidebarItem.isTitle %}
-                    <li class="sidebar-title">{{ sidebarItem.name }}</li>
-                {% else %}
-                    <li class="sidebar-item 
+            {% if sidebarItem.isTitle %}
+            <li class="sidebar-title">{{ sidebarItem.name }}</li>
+            {% else %}
+            <li class="sidebar-item 
                         {{ 'active' if (sidebarItem.url == filename or filename|startsWith(sidebarItem.key)) }} 
                         {{ 'has-sub' if sidebarItem.submenu.length > 0 }}">
 
-                        <a href="{{ sidebarItem.url if sidebarItem.url!==undefined else '#' }}" class="sidebar-link">
-                            <i class="bi bi-{{ sidebarItem.icon }}"></i>
-                            <span>{{ sidebarItem.name }}</span>
-                        </a>
+                <a href="{{ sidebarItem.url if sidebarItem.url!==undefined else '#' }}" class="sidebar-link">
+                    <i class="bi bi-{{ sidebarItem.icon }}"></i>
+                    <span>{{ sidebarItem.name }}</span>
+                </a>
 
-                        {% if sidebarItem.submenu.length > 0 %}
-                            <ul class="submenu 
+                {% if sidebarItem.submenu.length > 0 %}
+                <ul class="submenu 
                                 {{ 'active' if (sub.url == filename or filename|startsWith(sidebarItem.key)) }}">
-                                {% for sub in sidebarItem.submenu %}
-                                    <li class="submenu-item 
+                    {% for sub in sidebarItem.submenu %}
+                    <li class="submenu-item 
                                         {{ 'active' if sub.url == filename or filename|startsWith(sub.key) }} 
                                         {{ 'has-sub' if sub.submenu.length > 0 }}">
 
-                                        <a href="{{ sub.url }}" class="submenu-link">{{ sub.name }}</a>
+                        <a href="{{ sub.url }}" class="submenu-link">{{ sub.name }}</a>
 
-                                        {% if sub.submenu.length > 0 %}
-                                            <ul class="submenu submenu-level-2 ">
-                                                {% for subsub in sub.submenu %}
-                                                    <li class="submenu-item 
+                        {% if sub.submenu.length > 0 %}
+                        <ul class="submenu submenu-level-2 ">
+                            {% for subsub in sub.submenu %}
+                            <li class="submenu-item 
                                                         {{ 'active' if subsub.url == filename }}">
-                                                        <a href="{{ subsub.url }}" class="submenu-link">{{ subsub.name }}</a>
-                                                    </li>
-                                                {% endfor %}
-                                            </ul>
-                                        {% endif %}
-                                    </li>
-                                {% endfor %}
-                            </ul>
+                                <a href="{{ subsub.url }}" class="submenu-link">{{ subsub.name }}</a>
+                            </li>
+                            {% endfor %}
+                        </ul>
                         {% endif %}
                     </li>
+                    {% endfor %}
+                </ul>
                 {% endif %}
+            </li>
+            {% endif %}
             {% endfor %}
         </ul>
     </div>
 
     <div class="theme-toggle d-flex justify-content-center align-items-center mt-auto mb-2">
         <div class="d-flex gap-2 align-items-center">
-            <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" 
-                 class="iconify iconify--system-uicons" width="20" height="20" 
-                 preserveAspectRatio="xMidYMid meet" viewBox="0 0 21 21">
-                <g fill="none" fill-rule="evenodd" stroke="currentColor" 
-                   stroke-linecap="round" stroke-linejoin="round">
+            <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" class="iconify iconify--system-uicons"
+                width="20" height="20" preserveAspectRatio="xMidYMid meet" viewBox="0 0 21 21">
+                <g fill="none" fill-rule="evenodd" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M10.5 14.5c2.219 0 4-1.763 4-3.982a4.003 4.003 0 0 0-4-4.018c-2.219 0-4 1.781-4 4c0 2.219 1.781 4 4 4z
                              M4.136 4.136L5.55 5.55m9.9 9.9l1.414 1.414M1.5 10.5h2m14 0h2
-                             M4.135 16.863L5.55 15.45m9.899-9.9l1.414-1.415M10.5 19.5v-2m0-14v-2" 
-                          opacity=".3"></path>
+                             M4.135 16.863L5.55 15.45m9.899-9.9l1.414-1.415M10.5 19.5v-2m0-14v-2" opacity=".3"></path>
                     <g transform="translate(-210 -1)">
                         <path d="M220.5 2.5v2m6.5.5l-1.5 1.5"></path>
                         <circle cx="220.5" cy="11.5" r="4"></circle>
@@ -78,9 +75,8 @@
                 <input class="form-check-input me-0" type="checkbox" id="toggle-dark" style="cursor: pointer">
                 <label class="form-check-label"></label>
             </div>
-            <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" 
-                 role="img" class="iconify iconify--mdi" width="20" height="20" 
-                 preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24">
+            <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" class="iconify iconify--mdi"
+                width="20" height="20" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24">
                 <path fill="currentColor" d="m17.75 4.09l-2.53 1.94l.91 3.06l-2.63-1.81
                      l-2.63 1.81l.91-3.06l-2.53-1.94L12.44 4l1.06-3l1.06 3l3.19.09m3.5 
                      6.91l-1.64 1.25l.59 1.98l-1.7-1.17l-1.7 1.17l.59-1.98L15.75 11
@@ -103,9 +99,3 @@
     </div>
 
 </div>
-
-
-
-
-
-

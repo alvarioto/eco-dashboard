@@ -7,7 +7,9 @@ $bootstrap-icons-font-src: url('~bootstrap-icons/font/fonts/bootstrap-icons.woff
 @import "~bootstrap-icons/font/bootstrap-icons";
 
 // Fix icon placement
-body .bi::before, [class^=bi-]::before, [class*=" bi-"]::before {
+body .bi::before,
+[class^=bi-]::before,
+[class*=" bi-"]::before {
     vertical-align: sub;
 }
 
@@ -69,25 +71,26 @@ body .bi::before, [class^=bi-]::before, [class*=" bi-"]::before {
 }
 
 /* Hover State */
-#sidebar .menu .sidebar-item:not(.active):hover > .sidebar-link {
+#sidebar .menu .sidebar-item:not(.active):hover>.sidebar-link {
     background-color: #f3f4f6;
     color: #1f2937;
 }
 
-#sidebar .menu .sidebar-item:not(.active):hover > .sidebar-link i {
+#sidebar .menu .sidebar-item:not(.active):hover>.sidebar-link i {
     color: #4b5563;
 }
 
 /* Active State (Solid Blue indicator like Emisiones KPIs) */
-#sidebar .menu .sidebar-item.active > .sidebar-link {
+#sidebar .menu .sidebar-item.active>.sidebar-link {
     background-color: #f1f5f9;
     color: #1f2937;
     font-weight: 600;
     border-left: 4px solid #1f2937;
-    padding-left: calc(1rem - 4px); /* Adjust padding because of border */
+    padding-left: calc(1rem - 4px);
+    /* Adjust padding because of border */
 }
 
-#sidebar .menu .sidebar-item.active > .sidebar-link i {
+#sidebar .menu .sidebar-item.active>.sidebar-link i {
     color: #1f2937;
 }
 
@@ -115,13 +118,78 @@ body .bi::before, [class^=bi-]::before, [class*=" bi-"]::before {
     transition: color 0.2s ease;
 }
 
-#sidebar .menu .submenu .submenu-item:hover > .submenu-link {
+#sidebar .menu .submenu .submenu-item:hover>.submenu-link {
     color: #1f2937;
     background: transparent;
 }
 
-#sidebar .menu .submenu .submenu-item.active > .submenu-link {
+#sidebar .menu .submenu .submenu-item.active>.submenu-link {
     color: #1f2937;
     font-weight: 600;
 }
 
+/* Sidebar Toggle Desktop overrides */
+@media (min-width: 1200px) {
+
+    /* Main content transition */
+    #main {
+        transition: margin-left 0.3s ease-out;
+    }
+
+    /* When Sidebar is Active (Default on desktop) */
+    #sidebar.active~#main {
+        margin-left: 300px;
+    }
+
+    /* When Sidebar is completely hidden/collapsed */
+    #sidebar:not(.active) .sidebar-wrapper,
+    #sidebar.inactive .sidebar-wrapper {
+        left: -300px;
+    }
+
+    #sidebar:not(.active)~#main,
+    #sidebar.inactive~#main {
+        margin-left: 0;
+    }
+
+    /* Premium Desktop Burger Button */
+    header .burger-btn {
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+        width: 44px;
+        height: 44px;
+        background-color: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 10px;
+        color: #4b5563;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+        transition: all 0.2s ease;
+        text-decoration: none;
+    }
+
+    header .burger-btn:hover {
+        background-color: #f8f9fa;
+        color: #1f2937;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.04);
+        border-color: #d1d5db;
+    }
+
+    /* Inside Sidebar Close Button (X) */
+    .sidebar-hide {
+        display: flex !important;
+        background: #f3f4f6;
+        border-radius: 50%;
+        width: 32px;
+        height: 32px;
+        align-items: center;
+        justify-content: center;
+        color: #6b7280;
+        transition: all 0.2s;
+    }
+
+    .sidebar-hide:hover {
+        background: #e5e7eb;
+        color: #1f2937;
+    }
+}
