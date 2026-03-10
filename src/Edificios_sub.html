@@ -1230,6 +1230,32 @@
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function () {
+        
+        // --- Fetch User Buildings Dynamically ---
+        fetch('/api/get-user-buildings', { credentials: 'include' })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success && data.buildings) {
+                    const dropdowns = [
+                        document.getElementById('edificioElectricidad'),
+                        document.getElementById('edificioCombustible'),
+                        document.getElementById('edificioRecargaGas')
+                    ];
+                    
+                    dropdowns.forEach(select => {
+                        if (select) {
+                            select.innerHTML = '<option value="">-- Selecciona un edificio --</option>';
+                            data.buildings.forEach(b => {
+                                const option = document.createElement('option');
+                                option.value = b.nombre;
+                                option.textContent = b.nombre;
+                                select.appendChild(option);
+                            });
+                        }
+                    });
+                }
+            })
+            .catch(err => console.error('Error fetching user buildings:', err));
 
 
         // --- Flatpickr para Electricidad ---

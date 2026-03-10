@@ -219,13 +219,13 @@ app.post('/api/add-building', checkSession, async (req, res) => {
 
     try {
         const [result] = await pool.query(
-            'INSERT INTO buildings (user_id, name, property_type, address) VALUES (?, ?, ?, ?)',
+            'INSERT INTO buildings (user_id, nombre, tipo_edificio, direccion) VALUES (?, ?, ?, ?)',
             [userId, name, property_type || '', address || '']
         );
         res.json({ success: true, newId: result.insertId, message: 'Edificio guardado.' });
     } catch (err) {
-        console.error('Error adding building:', err);
-        res.status(500).json({ success: false, error: 'Error agregando edificio.' });
+        console.error('Error añadiendo edificio en MySQL:', err);
+        res.status(500).json({ success: false, message: 'La base de datos rechazó el registro.' });
     }
 });
 
