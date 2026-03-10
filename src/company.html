@@ -487,7 +487,7 @@
                         <form>
                           <div class="mb-2">
                             <label class="form-label">Nombre *</label>
-                            <input class="form-control" placeholder="Introduce un nombre para la sede">
+                            <input class="form-control" id="nombreNuevoEdificio" placeholder="Introduce un nombre para la sede">
                           </div>
                           <div class="mb-2">
                             <label class="form-label">Tipo de edificio *</label>
@@ -593,14 +593,12 @@
                   </div>
 
                   <div class="modal-footer border-0">
-                    <button class="btn btn-primary w-100">Guardar</button>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-
-            <!-- ✅ MODAL CREAR VEHÍCULO -->
+<button class="btn btn-primary w-100" id="btnGuardarEdificio">Guardar Edificio</button>
+</div>
+</div>
+</div>
+</div>
+<!-- ✅ MODAL CREAR VEHÍCULO -->
             <div class="modal fade" id="modalCrearVehiculo" tabindex="-1" aria-hidden="true">
               <div class="modal-dialog modal-lg modal-dialog-centered">
                 <div class="modal-content rounded-4">
@@ -934,6 +932,7 @@
               // Detectamos todos los botones Guardar en los modales
               document.querySelectorAll('.modal button.btn-primary.w-100').forEach(btn => {
                 btn.addEventListener('click', function (e) {
+                  if (this.id === 'btnGuardarEdificio') return; // Skip
                   e.preventDefault();
                   const modal = this.closest('.modal');
                   if (modal) {
@@ -941,6 +940,43 @@
                   }
                 });
               });
+
+              // REAL SAVE: ENVIAR EDIFICIO A BBDD
+              const btnEdificio = document.getElementById('btnGuardarEdificio');
+              if (btnEdificio) {
+                  btnEdificio.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const nombre = document.getElementById('nombreNuevoEdificio').value;
+                    if(!nombre) {
+                        alert('Por favor, indica un nombre para el edificio');
+                        return;
+                    }
+
+                    fetch('/api/add-building', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        credentials: 'include',
+                        body: JSON.stringify({ name: nombre, property_type: 'Edificio', address: '' })
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        if(data.success) {
+                            const modal = bootstrap.Modal.getInstance(document.getElementById('modalCrearEdificio'));
+                            modal.hide();
+                            document.getElementById('nombreNuevoEdificio').value = ''; // clean
+                            const toast = new bootstrap.Toast(document.getElementById('successToast'));
+                            toast.show();
+                            setTimeout(() => location.reload(), 800);
+                        } else {
+                            alert('Error al crear edificio: ' + data.message);
+                        }
+                    })
+                    .catch(err => {
+                        console.error('Error in fetching building API', err);
+                        alert('Error del servidor');
+                    });
+                  });
+              }
             </script>
 
             <script>

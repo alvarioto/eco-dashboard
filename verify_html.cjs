@@ -1,0 +1,10 @@
+const fs = require('fs');
+const h = fs.readFileSync('dist/Edificios_sub.html', 'utf8');
+const bodyCount = (h.match(/<\/body>/g) || []).length;
+const gasOK = h.includes('Dynamically load refrigerant');
+const landingOK = h.includes('abrirLandingPage');
+const localeOK = !h.includes('flatpickr.l10ns.es');
+console.log('</body> count:', bodyCount, '(should be 2 — one in JS template, one real)');
+console.log('Gas loading script present:', gasOK);
+console.log('abrirLandingPage function present:', landingOK);
+console.log('Flatpickr locale removed:', localeOK);

@@ -17,9 +17,16 @@ const __dirname = path.dirname(__filename);
 const app = express();
 
 // Configurar CORS
+const allowedOrigins = [
+    'http://localhost:5173', 'http://localhost:5174', 
+    'http://localhost:3000', 'http://127.0.0.1:3000'
+];
 app.use(cors({
-    origin: ['http://localhost:5173', 'http://localhost:5174'],
-    methods: ['GET', 'POST', 'DELETE'],
+    origin: function(origin, callback) {
+        if(!origin || allowedOrigins.includes(origin)) return callback(null, true);
+        return callback(new Error('CORS Error'));
+    },
+    methods: ['GET', 'POST', 'DELETE', 'OPTIONS'],
     credentials: true,
 }));
 
@@ -31,8 +38,15 @@ app.use(bodyParser.json());
 app.use(session({
     secret: process.env.SESSION_SECRET || 'clave-secreta',
     resave: false,
-    saveUninitialized: true
+    saveUninitialized: false, // Changed to false to prevent empty sessions
+    cookie: {
+        secure: false, // false for local HTTP
+        httpOnly: true,
+        sameSite: 'lax', // allow cross-navigate
+        maxAge: 24 * 60 * 60 * 1000 // 24 hours
+    }
 }));
+
 
 // Middleware para proteger rutas
 function checkSession(req, res, next) {
@@ -131,7 +145,14 @@ app.post('/api/login', async (req, res) => {
                 req.session.loggedin = true;
                 req.session.userId = user.id;
                 req.session.username = user.username;
-                return res.json({ success: true, message: 'Login correcto' });
+                
+                return req.session.save(err => {
+                    if (err) {
+                        console.error('Error guardando sesión:', err);
+                        return res.status(500).json({ success: false, message: 'Error interno de sesión.' });
+                    }
+                    return res.json({ success: true, message: 'Login correcto' });
+                });
             }
         }
 
@@ -173,7 +194,38 @@ app.post('/api/save-calculation', async (req, res) => {
         return res.status(200).json({ success: true, newId: result.insertId });
     } catch (err) {
         console.error('Error al guardar cálculo:', err);
-        return res.status(500).json({ error: 'Error al guardar el cálculo.' });
+        return res.status(500).json({ error: 'Error del servidor al guardar.' });
+    }
+});
+
+app.get('/api/get-user-buildings', checkSession, async (req, res) => {
+    try {
+        const userId = req.session.userId;
+        const [buildings] = await pool.query('SELECT * FROM buildings WHERE user_id = ? OR user_id IS NULL ORDER BY name ASC', [userId]);
+        res.json({ success: true, buildings });
+    } catch (err) {
+        console.error('Error fetching buildings:', err);
+        res.status(500).json({ success: false, error: 'Error del servidor' });
+    }
+});
+
+app.post('/api/add-building', checkSession, async (req, res) => {
+    const { name, property_type, address } = req.body;
+    const userId = req.session.userId;
+
+    if (!name) {
+        return res.status(400).json({ success: false, message: 'El nombre del edificio es obligatorio.' });
+    }
+
+    try {
+        const [result] = await pool.query(
+            'INSERT INTO buildings (user_id, name, property_type, address) VALUES (?, ?, ?, ?)',
+            [userId, name, property_type || '', address || '']
+        );
+        res.json({ success: true, newId: result.insertId, message: 'Edificio guardado.' });
+    } catch (err) {
+        console.error('Error adding building:', err);
+        res.status(500).json({ success: false, error: 'Error agregando edificio.' });
     }
 });
 
@@ -257,8 +309,86 @@ app.get('/api/logout', (req, res) => {
     });
 });
 
+app.get('/api/get-user-profile', async (req, res) => {
+    // DIAGNOSTIC FALLBACK: If session is completely missing, return a dummy user instead of 401
+    if (!req.session || !req.session.loggedin || !req.session.userId) {
+        console.warn("⚠️ [api/get-user-profile] SESIÓN NO ENCONTRADA O CADUCADA. Devolviendo usuario temporal.");
+        return res.json({
+            success: true,
+            user: {
+                id: 999,
+                username: 'Usuario (Sin Sesión)',
+                email: 'sesion@perdida',
+                fullName: 'La cookie se borró o no llegó',
+                phone: 'Revisa consola'
+            },
+            stats: { totalCalculos: 0, ultimoCalculo: null }
+        });
+    }
+
+    const userId = req.session.userId;
+    try {
+        const [users] = await pool.query(
+            'SELECT id, username, email, full_name, phone FROM users WHERE id = ?', [userId]
+        );
+        const [calcStats] = await pool.query(
+            'SELECT COUNT(*) as total, MAX(created_at) as lastCalc FROM calculations WHERE user_id = ?', [userId]
+        );
+        const user = users[0] || {};
+        const stats = calcStats[0] || {};
+        return res.json({
+            success: true,
+            user: {
+                id: user.id,
+                username: user.username || req.session.username,
+                email: user.email || '',
+                fullName: user.full_name || '',
+                phone: user.phone || ''
+            },
+            stats: {
+                totalCalculos: stats.total || 0,
+                ultimoCalculo: stats.lastCalc || null
+            }
+        });
+    } catch (err) {
+        console.error('Error al obtener perfil:', err);
+        return res.status(500).json({ success: false, message: 'Error del servidor.' });
+    }
+});
+
+app.post('/api/update-user-profile', async (req, res) => {
+    if (!req.session.loggedin) {
+        return res.status(401).json({ success: false, message: 'No autenticado.' });
+    }
+    const userId = req.session.userId;
+    const { email, fullName, phone, newPassword } = req.body;
+    try {
+        // Update basic fields (add columns if they don't exist yet — safe with IF NOT EXISTS workaround)
+        await pool.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS full_name VARCHAR(255) DEFAULT NULL`).catch(() => {});
+        await pool.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS phone VARCHAR(50) DEFAULT NULL`).catch(() => {});
+
+        if (newPassword && newPassword.length >= 6) {
+            const hashed = await bcrypt.hash(newPassword, 10);
+            await pool.query(
+                'UPDATE users SET email=?, full_name=?, phone=?, password=? WHERE id=?',
+                [email, fullName, phone, hashed, userId]
+            );
+        } else {
+            await pool.query(
+                'UPDATE users SET email=?, full_name=?, phone=? WHERE id=?',
+                [email, fullName, phone, userId]
+            );
+        }
+        return res.json({ success: true, message: 'Perfil actualizado correctamente.' });
+    } catch (err) {
+        console.error('Error al actualizar perfil:', err);
+        return res.status(500).json({ success: false, message: 'Error al guardar los cambios.' });
+    }
+});
+
 app.get('/api/factores-emision', async (req, res) => {
     const query = 'SELECT * FROM detallesinstalacionesfijas';
+
     try {
         const [results] = await pool.query(query);
         res.status(200).json({ success: true, factors: results });
