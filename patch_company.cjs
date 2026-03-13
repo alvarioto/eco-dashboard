@@ -48,27 +48,41 @@ const newScript = `// Detectamos todos los botones Guardar en los modales
 
               // REAL SAVE: ENVIAR EDIFICIO A BBDD
               const btnEdificio = document.getElementById('btnGuardarEdificio');
+              const formEdificio = btnEdificio ? btnEdificio.closest('.modal-content').querySelector('form') : null;
+
               if (btnEdificio) {
                   btnEdificio.addEventListener('click', function(e) {
                     e.preventDefault();
-                    const nombre = document.getElementById('nombreNuevoEdificio').value;
-                    if(!nombre) {
-                        alert('Por favor, indica un nombre para el edificio');
+                    
+                    if (formEdificio && !formEdificio.checkValidity()) {
+                        formEdificio.reportValidity();
                         return;
                     }
+
+                    const nombre = document.getElementById('nombreNuevoEdificio').value;
+                    const payload = {
+                        name: nombre,
+                        property_type: document.getElementById('tipoNuevoEdificio').value,
+                        address: document.getElementById('direccionNuevoEdificio').value,
+                        region: document.getElementById('regionNuevoEdificio').value,
+                        provincia: document.getElementById('provinciaNuevoEdificio').value,
+                        ciudad: document.getElementById('ciudadNuevoEdificio').value,
+                        pais: document.getElementById('paisNuevoEdificio').value,
+                        superficie: document.getElementById('superficieNuevoEdificio').value || null
+                    };
 
                     fetch('/api/add-building', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         credentials: 'include',
-                        body: JSON.stringify({ name: nombre, property_type: 'Edificio', address: '' })
+                        body: JSON.stringify(payload)
                     })
                     .then(res => res.json())
                     .then(data => {
                         if(data.success) {
                             const modal = bootstrap.Modal.getInstance(document.getElementById('modalCrearEdificio'));
                             modal.hide();
-                            document.getElementById('nombreNuevoEdificio').value = ''; // clean
+                            formEdificio.reset(); // clean
                             const toast = new bootstrap.Toast(document.getElementById('successToast'));
                             toast.show();
                             setTimeout(() => location.reload(), 800);

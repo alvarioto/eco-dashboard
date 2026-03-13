@@ -489,8 +489,7 @@
 
     .modal-body {
         padding: 24px;
-        max-height: 60vh;
-        overflow-y: auto;
+        min-height: 600px; /* Fixed height to prevent size jumps */
     }
 
     .tab-content {
@@ -1022,38 +1021,34 @@
     <div class="modal-body">
         <!-- Pestaña Datos -->
         <div id="tab-content-datos" class="tab-content active">
-            <div class="form-group-custom">
-                <label>Identificador único <i class="bi bi-info-circle text-muted ms-1"
+            <div class="mb-3">
+                <label class="form-label text-muted small fw-medium">Identificador único <i class="bi bi-info-circle text-muted ms-1"
                         style="font-size: 0.8rem;"></i></label>
-                <input type="text" id="add-id" class="form-control-custom">
+                <input type="text" id="add-id" class="form-control shadow-sm" placeholder="Ej. L-001">
             </div>
 
-            <div class="form-group-custom">
-                <label>Fecha de inicio y fin <span class="text-danger">*</span></label>
-                <div class="date-range-container">
-                    <input type="text" id="add-fecha-inicio" class="form-control-custom date-input"
-                        placeholder="dd/mm/aaaa">
-                    <span class="mx-2 text-muted" style="font-size: 0.8rem;">&rarr;</span>
-                    <input type="text" id="add-fecha-fin" class="form-control-custom date-input"
-                        placeholder="dd/mm/aaaa">
-                    <i class="bi bi-calendar ms-2 text-muted" style="font-size: 0.95rem;"></i>
+            <div class="mb-3">
+                <label class="form-label text-muted small fw-medium">Fecha de inicio y fin <span class="text-danger">*</span></label>
+                <div class="input-group shadow-sm">
+                    <input type="text" id="add-fecha-inicio" class="form-control text-center date-input" placeholder="dd/mm/aaaa">
+                    <span class="input-group-text bg-white border-start-0 border-end-0 text-muted">&rarr;</span>
+                    <input type="text" id="add-fecha-fin" class="form-control text-center date-input" placeholder="dd/mm/aaaa">
+                    <span class="input-group-text bg-white text-muted"><i class="bi bi-calendar"></i></span>
                 </div>
                 <div class="error-msg" id="error-fechas"></div>
             </div>
 
-            <div class="form-group-custom">
-                <label>Vehículo <span class="text-danger">*</span></label>
-                <select id="add-vehiculo" class="form-control-custom text-muted">
-                    <option value="" disabled selected>--</option>
-                    <option value="vehiculo-1">Coche Empresa 1 (1234-ABC)</option>
-                    <option value="vehiculo-2">Furgoneta Reparto (5678-DEF)</option>
+            <div class="mb-3">
+                <label class="form-label text-muted small fw-medium">Vehículo <span class="text-danger">*</span></label>
+                <select id="add-vehiculo" class="form-select shadow-sm text-muted select-vehiculo-dinamico">
+                    <option value="" disabled selected>-- Cargando vehículos --</option>
                 </select>
                 <div class="error-msg" id="error-vehiculo"></div>
             </div>
 
-            <div class="form-group-custom">
-                <label>Tipo de combustible <span class="text-danger">*</span></label>
-                <select id="add-combustible" class="form-control-custom text-muted">
+            <div class="mb-3">
+                <label class="form-label text-muted small fw-medium">Tipo de combustible <span class="text-danger">*</span></label>
+                <select id="add-combustible" class="form-select shadow-sm text-muted">
                     <option value="" disabled selected>--</option>
                     <option value="Diesel (B30)">Diésel (B30)</option>
                     <option value="Diesel (B7)">Diésel (B7)</option>
@@ -1067,11 +1062,11 @@
                 <div class="error-msg" id="error-combustible"></div>
             </div>
 
-            <div class="form-group-custom">
-                <label>Cantidad <span class="text-danger">*</span></label>
-                <div class="combined-input">
-                    <input type="number" id="add-cantidad" value="0" min="0" step="0.01">
-                    <select id="add-unidad">
+            <div class="mb-3">
+                <label class="form-label text-muted small fw-medium">Cantidad <span class="text-danger">*</span></label>
+                <div class="input-group shadow-sm">
+                    <input type="number" id="add-cantidad" class="form-control text-end" value="0" min="0" step="0.01">
+                    <select id="add-unidad" class="form-select" style="max-width: 170px;">
                         <option value="kg">Kilogramos (kg)</option>
                         <option value="km">Kilómetros (km)</option>
                         <option value="l" selected>Litros (l)</option>
@@ -1084,11 +1079,11 @@
                 <div class="error-msg" id="error-cantidad"></div>
             </div>
 
-            <div class="form-group-custom">
-                <label>Coste total <i class="bi bi-info-circle text-muted ms-1" style="font-size: 0.8rem;"></i></label>
-                <div class="combined-input">
-                    <input type="number" id="add-coste" placeholder="--" min="0" step="0.01">
-                    <select id="add-moneda" style="width: 110px;">
+            <div class="mb-3">
+                <label class="form-label text-muted small fw-medium">Coste total <i class="bi bi-info-circle text-muted ms-1" style="font-size: 0.8rem;"></i></label>
+                <div class="input-group shadow-sm">
+                    <input type="number" id="add-coste" class="form-control text-end" placeholder="--" min="0" step="0.01">
+                    <select id="add-moneda" class="form-select" style="max-width: 110px;">
                         <option value="EUR">EUR (€)</option>
                         <option value="USD">USD ($)</option>
                     </select>
@@ -1098,11 +1093,11 @@
 
         <!-- Pestaña Eficiencia -->
         <div id="tab-content-eficiencia" class="tab-content">
-            <div class="form-group-custom">
-                <label>Distancia</label>
-                <div class="combined-input">
-                    <input type="number" id="add-distancia" value="0" min="0" step="0.1">
-                    <div class="fixed-unit">Kilómetros (km)</div>
+            <div class="mb-3">
+                <label class="form-label text-muted small fw-medium">Distancia</label>
+                <div class="input-group shadow-sm">
+                    <input type="number" id="add-distancia" class="form-control text-end" value="0" min="0" step="0.1">
+                    <span class="input-group-text bg-white text-muted">Kilómetros (km)</span>
                 </div>
             </div>
         </div>
@@ -1121,44 +1116,44 @@
     </div>
 
     <div class="drawer-body">
-        <div class="form-group-custom">
-            <label>Edificio</label>
-            <select class="form-control-custom">
+        <div class="mb-3">
+            <label class="form-label text-muted small fw-medium">Edificio</label>
+            <select class="form-select shadow-sm">
                 <option value="" disabled selected>Edificio</option>
                 <option value="oficina">Oficina Central</option>
             </select>
         </div>
 
-        <div class="form-group-custom">
-            <label>Año</label>
-            <select class="form-control-custom">
+        <div class="mb-3">
+            <label class="form-label text-muted small fw-medium">Año</label>
+            <select class="form-select shadow-sm">
                 <option value="" disabled selected>--</option>
                 <option value="2024">2024</option>
                 <option value="2023">2023</option>
             </select>
         </div>
 
-        <div class="form-group-custom">
-            <label>Fecha de inicio y fin</label>
-            <div class="date-range-container">
-                <input type="text" class="form-control-custom date-input" placeholder="dd/mm/aaaa">
-                <span class="mx-1 text-muted">-</span>
-                <input type="text" class="form-control-custom date-input" placeholder="dd/mm/aaaa">
-                <i class="bi bi-calendar ms-1 text-muted"></i>
-            </div>
+        <div class="mb-3">
+            <label class="form-label text-muted small fw-medium">Fecha de inicio y fin</label>
+            <div class="input-group shadow-sm">
+                    <input type="text" id="add-fecha-inicio" class="form-control text-center date-input" placeholder="dd/mm/aaaa">
+                    <span class="input-group-text bg-white border-start-0 border-end-0 text-muted">&rarr;</span>
+                    <input type="text" id="add-fecha-fin" class="form-control text-center date-input" placeholder="dd/mm/aaaa">
+                    <span class="input-group-text bg-white text-muted"><i class="bi bi-calendar"></i></span>
+                </div>
         </div>
 
-        <div class="form-group-custom">
-            <label>Categoría</label>
-            <select class="form-control-custom">
+        <div class="mb-3">
+            <label class="form-label text-muted small fw-medium">Categoría</label>
+            <select class="form-select shadow-sm">
                 <option value="" disabled selected>--</option>
                 <option value="combustion">Combustión móvil</option>
             </select>
         </div>
 
-        <div class="form-group-custom">
-            <label>Vehículo</label>
-            <select class="form-control-custom">
+        <div class="mb-3">
+            <label class="form-label text-muted small fw-medium">Vehículo</label>
+            <select class="form-select shadow-sm">
                 <option value="" disabled selected>--</option>
                 <option value="v1">Coche 1</option>
             </select>
@@ -1167,9 +1162,9 @@
         <hr class="my-4" style="border-color: #e5e7eb;">
         <h5 style="font-size: 0.95rem; margin-bottom: 15px; color: #374151; font-weight: 600;">Visualización</h5>
 
-        <div class="form-group-custom">
-            <label>Unidad de las emisiones</label>
-            <select class="form-control-custom">
+        <div class="mb-3">
+            <label class="form-label text-muted small fw-medium">Unidad de las emisiones</label>
+            <select class="form-select shadow-sm">
                 <option value="kg" selected>Kilogramo (kg)</option>
                 <option value="ton">Tonelada (t)</option>
             </select>
@@ -1183,8 +1178,8 @@
         </div>
 
         <div class="form-group-custom mt-3">
-            <label>Intervalo de tiempo</label>
-            <select class="form-control-custom">
+            <label class="form-label text-muted small fw-medium">Intervalo de tiempo</label>
+            <select class="form-select shadow-sm">
                 <option value="mensual" selected>Mensual</option>
                 <option value="anual">Anual</option>
                 <option value="diario">Diario</option>
@@ -1395,6 +1390,32 @@
         updateUI();
     }
 
+    
+    // --- REAL DATABASE FETCH ---
+    let realVehicles = [];
+    
+    function fetchRealData() {
+        return fetch('/api/get-user-vehicles', { credentials: 'include' })
+            .then(res => res.json())
+            .then(data => {
+                if(data.success && data.vehicles) {
+                    realVehicles = data.vehicles;
+                }
+            })
+            .catch(err => console.error("Error fetching vehicles:", err));
+    }
+
+    function renderRealVehiclesDropdown() {
+        const selects = document.querySelectorAll('.select-vehiculo-dinamico');
+        selects.forEach(select => {
+            select.innerHTML = '<option value="" disabled selected>-- Seleccione un vehículo --</option>';
+            realVehicles.forEach(v => {
+                const text = `${v.marca || ''} ${v.modelo || ''} (${v.identificador || 'S/N'})`.trim() || 'Vehículo sin nombre';
+                select.innerHTML += `<option value="${v.id}">${text}</option>`;
+            });
+        });
+    }
+
     // --- ACTUALIZACIÓN DE INTERFAZ ---
     function updateUI() {
         const emptyState = document.getElementById('global-empty-state');
@@ -1520,7 +1541,10 @@
 
     // --- INICIALIZACIÓN ---
     document.addEventListener("DOMContentLoaded", function () {
-        updateUI(); // Se asegura de que la página cargue en estado vacío correctamente
+        fetchRealData().then(() => {
+            renderRealVehiclesDropdown();
+            updateUI(); 
+        }); // Se asegura de que la página cargue en estado vacío correctamente
     });
 
 </script>

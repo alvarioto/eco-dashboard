@@ -180,19 +180,8 @@
                           <th>País</th>
                           <th>Provincia</th>
                           <th>Dirección</th>
-                          <th>Superficie</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr>
-                          <td><input type="checkbox"></td>
-                          <td>La Lonja Tech</td>
-                          <td>España</td>
-                          <td>--</td>
-                          <td>Muelle de Levante (Puerto de Huelva), Avenida Hispanoamérica, Huelva</td>
-                          <td>18 m²</td>
-                        </tr>
-                      </tbody>
+                          <th>Superficie</th><th>Acciones</th></tr></thead>
+                      <tbody id="tbody-edificios"></tbody>
                     </table>
                   </div>
 
@@ -260,20 +249,10 @@
                           <th>Fecha de fin</th>
                           <th>Modelo</th>
                           <th>Edificio</th>
+                          <th>Acciones</th>
                         </tr>
                       </thead>
-                      <tbody>
-                        <tr>
-                          <td><input type="checkbox"></td>
-                          <td><span class="badge bg-light border text-dark">Vehículos</span></td>
-                          <td>Turismos</td>
-                          <td>8137KZX</td>
-                          <td>--</td>
-                          <td>--</td>
-                          <td>WV GOLF VARIANT</td>
-                          <td>La Lonja Tech</td>
-                        </tr>
-                      </tbody>
+                      <tbody id="tbody-vehiculos"></tbody>
                     </table>
                   </div>
 
@@ -349,42 +328,10 @@
                           <th>Fecha de fin</th>
                           <th>Edificio</th>
                           <th>Departamento</th>
+                          <th>Acciones</th>
                         </tr>
                       </thead>
-                      <tbody>
-                        <tr>
-                          <td><input type="checkbox"></td>
-                          <td>
-                            <div class="d-flex align-items-center gap-2">
-                              <div
-                                class="avatar bg-success-subtle text-success fw-bold rounded-circle d-flex justify-content-center align-items-center"
-                                style="width: 30px; height: 30px;">JS</div>
-                              Jose Alvaro Diaz
-                            </div>
-                          </td>
-                          <td>eslendis@desarrollocircular.es</td>
-                          <td>--</td>
-                          <td>--</td>
-                          <td><span class="badge bg-light text-dark">La Lonja Tech</span></td>
-                          <td><span class="badge bg-light text-dark">DPTO TÉCICO</span></td>
-                        </tr>
-                        <tr>
-                          <td><input type="checkbox"></td>
-                          <td>
-                            <div class="d-flex align-items-center gap-2">
-                              <div
-                                class="avatar bg-success-subtle text-success fw-bold rounded-circle d-flex justify-content-center align-items-center"
-                                style="width: 30px; height: 30px;">JM</div>
-                              José Manuel Ramírez Mendoza
-                            </div>
-                          </td>
-                          <td>josemanuel@desarrollocircular.es</td>
-                          <td>--</td>
-                          <td>--</td>
-                          <td>--</td>
-                          <td>--</td>
-                        </tr>
-                      </tbody>
+                      <tbody id="tbody-personal"></tbody>
                     </table>
                   </div>
 
@@ -487,44 +434,62 @@
                         <form>
                           <div class="mb-2">
                             <label class="form-label">Nombre *</label>
-                            <input class="form-control" id="nombreNuevoEdificio" placeholder="Introduce un nombre para la sede">
+                            <input class="form-control" id="nombreNuevoEdificio" placeholder="Introduce un nombre para la sede" required>
                           </div>
                           <div class="mb-2">
                             <label class="form-label">Tipo de edificio *</label>
-                            <select class="form-select">
-                              <option>--</option>
+                            <select class="form-select" id="tipoNuevoEdificio" required>
+                              <option value="">-- Selecciona --</option>
+                              <option value="Oficinas">Oficinas</option>
+                              <option value="Nave Industrial">Nave Industrial</option>
+                              <option value="Local Comercial">Local Comercial</option>
+                              <option value="Almacén">Almacén</option>
+                              <option value="Comercial">Comercial</option>
+                              <option value="Otro">Otro</option>
                             </select>
                           </div>
+                          
                           <div class="mb-2">
-                            <label class="form-label">Dirección *</label>
+                            <label class="form-label">Calle *</label>
                             <div class="input-group">
-                              <input class="form-control">
+                              <input class="form-control" id="direccionNuevoEdificio" placeholder="Calle fiel y verdadera..." required>
                               <span class="input-group-text"><i class="bi bi-geo-alt"></i></span>
                             </div>
                           </div>
                           <div class="row mb-2">
-                            <div class="col"><label class="form-label">Región</label><input class="form-control">
+                            <div class="col">
+                              <label class="form-label">Municipio *</label>
+                              <input class="form-control" id="municipioNuevoEdificio" placeholder="Municipio" required>
                             </div>
-                            <div class="col"><label class="form-label">Provincia</label><input class="form-control">
-                            </div>
-                            <div class="col"><label class="form-label">Ciudad</label><input class="form-control">
+                            <div class="col">
+                              <label class="form-label">Ciudad *</label>
+                              <input class="form-control" id="ciudadNuevoEdificio" placeholder="Ciudad" required>
                             </div>
                           </div>
                           <div class="row mb-2">
                             <div class="col">
-                              <label class="form-label">País *</label>
-                              <select class="form-select">
-                                <option>--</option>
-                              </select>
+                              <label class="form-label">C.P. *</label>
+                              <input class="form-control" id="codigoPostalNuevoEdificio" placeholder="Código Postal" required>
                             </div>
                             <div class="col">
-                              <label class="form-label">Superficie</label>
-                              <div class="input-group">
-                                <input class="form-control">
-                                <span class="input-group-text">m²</span>
-                              </div>
+                              <label class="form-label">País *</label>
+                              <select class="form-select" id="paisNuevoEdificio" required>
+                                <option value="">-- Selecciona --</option>
+                                <option value="España" selected>España</option>
+                                <option value="Portugal">Portugal</option>
+                                <option value="Francia">Francia</option>
+                                <option value="Otro">Otro</option>
+                              </select>
                             </div>
                           </div>
+                          <div class="mb-2">
+                              <label class="form-label">Superficie</label>
+                              <div class="input-group">
+                                <input type="number" step="0.01" class="form-control" id="superficieNuevoEdificio">
+                                <span class="input-group-text">m²</span>
+                              </div>
+                          </div>
+
                         </form>
                       </div>
 
@@ -633,69 +598,79 @@
 
                         <div class="tab-content">
                           <!-- Vehículo con matrícula -->
+                          
                           <div class="tab-pane fade show active" id="vehiculo-conmatricula" role="tabpanel">
+                            <form id="formCrearVehiculo">
                             <div class="mb-2">
                               <label class="form-label">Edificio *</label>
-                              <select class="form-select">
-                                <option>--</option>
+                              <select class="form-select select-edificio-dinamico" id="v_edificio" required>
+                                <option value="">-- Selecciona edificio --</option>
                               </select>
                             </div>
 
                             <div class="mb-3">
                               <label class="form-label">Tipo de vehículo *</label>
                               <div class="d-flex gap-2 tipo-vehiculo-selector">
-                                <button type="button" class="btn btn-outline-secondary w-100 active">🚗
-                                  Vehículos</button>
-                                <button type="button" class="btn btn-outline-secondary w-100">🚜 Maquinaria</button>
-                                <button type="button" class="btn btn-outline-secondary w-100">✈️ Larga
-                                  distancia</button>
+                                <button type="button" class="btn btn-outline-secondary w-100 active" onclick="document.getElementById('v_tipo').value='Vehículos'">🚗 Vehículos</button>
+                                <button type="button" class="btn btn-outline-secondary w-100" onclick="document.getElementById('v_tipo').value='Maquinaria'">🚜 Maquinaria</button>
+                                <button type="button" class="btn btn-outline-secondary w-100" onclick="document.getElementById('v_tipo').value='Larga distancia'">✈️ Larga distancia</button>
                               </div>
-
+                              <input type="hidden" id="v_tipo" value="Vehículos">
                             </div>
 
                             <div class="row mb-2">
                               <div class="col">
                                 <label class="form-label">Categoría *</label>
-                                <select class="form-select">
-                                  <option>Turismos</option>
+                                <select class="form-select" id="v_categoria" required>
+                                  <option value="Turismos">Turismos</option>
+                                  <option value="Furgoneta">Furgoneta</option>
+                                  <option value="Camión">Camión</option>
+                                  <option value="Motocicleta">Motocicleta</option>
                                 </select>
                               </div>
                               <div class="col">
                                 <label class="form-label">Tipo de motor *</label>
-                                <select class="form-select">
-                                  <option>--</option>
+                                <select class="form-select" id="v_motor" required>
+                                  <option value="">--</option>
+                                  <option value="Combustión">Combustión</option>
+                                  <option value="Híbrido Enchufable">Híbrido Enchufable</option>
+                                  <option value="Eléctrico">Eléctrico</option>
                                 </select>
                               </div>
                             </div>
 
                             <div class="mb-2">
                               <label class="form-label">Combustible por defecto *</label>
-                              <select class="form-select">
-                                <option>--</option>
+                              <select class="form-select" id="v_combustible" required>
+                                <option value="">--</option>
+                                <option value="Gasolina">Gasolina</option>
+                                <option value="Diésel">Diésel</option>
+                                <option value="Electricidad">Electricidad</option>
+                                <option value="GLP">GLP</option>
                               </select>
                             </div>
 
                             <div class="mb-2">
                               <label class="form-label">Matrícula o identificador del vehículo *</label>
-                              <input class="form-control" placeholder="0000AAA">
+                              <input class="form-control" id="v_matricula" placeholder="0000AAA" required>
                             </div>
 
                             <div class="row mb-2">
-                              <div class="col"><label class="form-label">Marca</label><input class="form-control"
-                                  value="Honda"></div>
-                              <div class="col"><label class="form-label">Modelo</label><input class="form-control"
-                                  value="Civic"></div>
-                              <div class="col"><label class="form-label">Clase</label><input class="form-control"
-                                  value="Compact"></div>
+                              <div class="col"><label class="form-label">Marca</label><input class="form-control" id="v_marca" placeholder="Ej. Honda"></div>
+                              <div class="col"><label class="form-label">Modelo</label><input class="form-control" id="v_modelo" placeholder="Ej. Civic"></div>
+                              <div class="col"><label class="form-label">Clase</label><input class="form-control" id="v_clase" placeholder="Ej. Compact"></div>
                             </div>
+                            
+                            <!-- Hidden submit trigger -->
+                            <button type="submit" id="btnRealGuardarVehiculo" class="d-none">Guardar</button>
+                            </form>
                           </div>
-
                           <!-- Vehículo genérico -->
                           <div class="tab-pane fade" id="vehiculo-generico" role="tabpanel">
                             <div class="mb-2">
                               <label class="form-label">Edificio *</label>
-                              <select class="form-select">
-                                <option>--</option>
+                              <select class="form-select select-edificio-dinamico" required>
+                                <option value="">-- Selecciona edificio --</option>
                               </select>
                             </div>
 
@@ -758,12 +733,11 @@
 
                   <!-- Botón Guardar -->
                   <div class="modal-footer border-0">
-                    <button class="btn btn-primary w-100">Guardar</button>
+                    <button class="btn btn-primary w-100" onclick="document.getElementById('btnRealGuardarVehiculo').click()">Guardar Vehículo</button>
                   </div>
                 </div>
               </div>
             </div>
-
             <!-- ✅ MODAL: Crear empleado -->
             <div class="modal fade" id="modalCrearEmpleado" tabindex="-1" aria-hidden="true">
               <div class="modal-dialog modal-dialog-centered modal-lg">
@@ -819,8 +793,8 @@
                       <div class="row mb-3">
                         <div class="col-md-6">
                           <label class="form-label">Edificio <i class="bi bi-info-circle small ms-1"></i></label>
-                          <select class="form-select">
-                            <option>--</option>
+                          <select class="form-select select-edificio-dinamico">
+                            <option value="">-- Selecciona edificio --</option>
                           </select>
                         </div>
                         <div class="col-md-6">
@@ -940,6 +914,57 @@
                   }
                 });
               });
+
+              // REAL SAVE: ENVIAR EDIFICIO A BBDD
+              const btnEdificio = document.getElementById('btnGuardarEdificio');
+              const formEdificio = btnEdificio ? btnEdificio.closest('.modal-content').querySelector('form') : null;
+
+              if (btnEdificio) {
+                  btnEdificio.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    if (formEdificio && !formEdificio.checkValidity()) {
+                        formEdificio.reportValidity();
+                        return;
+                    }
+
+                    const nombre = document.getElementById('nombreNuevoEdificio').value;
+                    const payload = {
+                        name: nombre,
+                        property_type: document.getElementById('tipoNuevoEdificio').value,
+                        address: document.getElementById('direccionNuevoEdificio').value,
+                        municipio: document.getElementById('municipioNuevoEdificio').value,
+                        ciudad: document.getElementById('ciudadNuevoEdificio').value,
+                        codigo_postal: document.getElementById('codigoPostalNuevoEdificio').value,
+                        pais: document.getElementById('paisNuevoEdificio').value,
+                        superficie: document.getElementById('superficieNuevoEdificio').value || null
+                    };
+
+                    fetch('/api/add-building', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        credentials: 'include',
+                        body: JSON.stringify(payload)
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        if(data.success) {
+                            const modal = bootstrap.Modal.getInstance(document.getElementById('modalCrearEdificio'));
+                            modal.hide();
+                            formEdificio.reset(); // clean
+                            const toast = new bootstrap.Toast(document.getElementById('successToast'));
+                            toast.show();
+                            setTimeout(() => location.reload(), 800);
+                        } else {
+                            alert('Error al crear edificio: ' + data.message);
+                        }
+                    })
+                    .catch(err => {
+                        console.error('Error in fetching building API', err);
+                        alert('Error del servidor');
+                    });
+                  });
+              }
 
               // REAL SAVE: ENVIAR EDIFICIO A BBDD
               const btnEdificio = document.getElementById('btnGuardarEdificio');
@@ -1064,5 +1089,153 @@
 
 
 
+
+            
+            <script>
+              document.addEventListener("DOMContentLoaded", function () {
+                  
+                  // 🚗 FETCH VEHICLES 
+                  fetch('/api/get-user-vehicles', { credentials: 'include' })
+                      .then(res => res.json())
+                      .then(data => {
+                          if (data.success && data.vehicles) {
+                              const tbody = document.getElementById('tbody-vehiculos');
+                              if(tbody) {
+                                  tbody.innerHTML = '';
+                                  data.vehicles.forEach(v => {
+                                      const tr = document.createElement('tr');
+                                      tr.innerHTML = `
+                                        <td><input type="checkbox"></td>
+                                        <td><span class="badge bg-light border text-dark">${v.tipo_vehiculo || 'Vehículos'}</span></td>
+                                        <td>${v.categoria || '--'}</td>
+                                        <td>${v.identificador || '--'}</td>
+                                        <td>${v.fecha_inicio ? new Date(v.fecha_inicio).toLocaleDateString() : '--'}</td>
+                                        <td>--</td>
+                                        <td>${v.marca || ''} ${v.modelo || ''}</td>
+                                        <td>${v.nombre_edificio || '--'}</td>
+                                        <td><button class="btn btn-outline-danger btn-sm" onclick="eliminarVehiculo(${v.id})"><i class="bi bi-trash"></i></button></td>
+                                      `;
+                                      tbody.appendChild(tr);
+                                  });
+                              }
+                          }
+                      })
+                      .catch(err => console.error('Error fetching vehicles:', err));
+
+                  // 🚗 HANDLE VEHICLE FORM SUBMISSION
+                  const formVehiculo = document.getElementById('formCrearVehiculo');
+                  if (formVehiculo) {
+                      formVehiculo.addEventListener('submit', function(e) {
+                          e.preventDefault();
+                          const data = {
+                              building_name: document.getElementById('v_edificio').value,
+                              tipo_vehiculo: document.getElementById('v_tipo').value,
+                              categoria: document.getElementById('v_categoria').value,
+                              tipo_motor: document.getElementById('v_motor').value,
+                              combustible: document.getElementById('v_combustible').value,
+                              identificador: document.getElementById('v_matricula').value,
+                              marca: document.getElementById('v_marca').value,
+                              modelo: document.getElementById('v_modelo').value,
+                              clase: document.getElementById('v_clase').value,
+                              propiedad_alquiler: 'Propiedad', // Hardcoded for now based on UI simplicity
+                              control_operacional: 'Sí', 
+                              activo: true, 
+                              fecha_inicio: null
+                          };
+
+                          fetch('/api/add-vehicle', {
+                              method: 'POST',
+                              headers: { 'Content-Type': 'application/json' },
+                              credentials: 'include',
+                              body: JSON.stringify(data)
+                          })
+                          .then(res => res.json())
+                          .then(res => {
+                              if(res.success) {
+                                  const modal = bootstrap.Modal.getInstance(document.getElementById('modalCrearVehiculo'));
+                                  modal.hide();
+                                  formVehiculo.reset();
+                                  alert('Vehículo guardado correctamente.');
+                                  location.reload();
+                              } else {
+                                  alert('Error: ' + res.message);
+                              }
+                          })
+                          .catch(err => alert('Error del servidor: ' + err.message));
+                      });
+                  }
+
+                  // globally accessible delete for vehicles
+                  window.eliminarVehiculo = function(id) {
+                      if(!confirm('¿Estás seguro de que deseas eliminar este vehículo?')) return;
+                      fetch(`/api/delete-vehicle/${id}`, { method: 'DELETE', credentials: 'include' })
+                      .then(res => res.json())
+                      .then(data => {
+                          if(data.success) { alert('Vehículo eliminado.'); location.reload(); }
+                          else { alert('Error: ' + data.error); }
+                      }).catch(err => console.error(err));
+                  };
+
+                  // Fetch and populate Buildings (Edificios)
+                  fetch('/api/get-user-buildings', { credentials: 'include' })
+                      .then(res => res.json())
+                      .then(data => {
+                          if (data.success && data.buildings) {
+                              const tbody = document.getElementById('tbody-edificios');
+                              if(tbody) tbody.innerHTML = ''; // Ensure it's empty
+
+                              const dropdowns = document.querySelectorAll('.select-edificio-dinamico');
+                              dropdowns.forEach(select => {
+                                  select.innerHTML = '<option value="">-- Selecciona edificio --</option>';
+                              });
+
+                              data.buildings.forEach(b => {
+                                  // Populate table
+                                  if(tbody) {
+                                      const tr = document.createElement('tr');
+                                      tr.innerHTML = `
+                                        <td><input type="checkbox"></td>
+                                        <td>${b.nombre}</td>
+                                        <td>${b.pais || '--'}</td>
+                                        <td>${b.codigo_postal || '--'}</td>
+                                        <td>${b.direccion || '--'} ${b.municipio ? ', ' + b.municipio : ''} ${b.ciudad ? '(' + b.ciudad + ')' : ''}</td>
+                                        <td>${b.superficie || '--'} m²</td>
+                                        <td><button class="btn btn-outline-danger btn-sm" onclick="eliminarEdificio(${b.id})"><i class="bi bi-trash"></i></button></td>
+                                      `;
+                                      tbody.appendChild(tr);
+                                  }
+
+                                  // Populate all select dropdowns
+                                  dropdowns.forEach(select => {
+                                      const option = document.createElement('option');
+                                      option.value = b.nombre;
+                                      option.textContent = b.nombre;
+                                      select.appendChild(option);
+                                  });
+                              });
+                          }
+                      })
+                      .catch(err => console.error('Error fetching buildings:', err));
+              });
+
+              // Add globally-accessible delete function
+              window.eliminarEdificio = function(id) {
+                  if(!confirm('¿Estás seguro de que deseas eliminar este edificio?')) return;
+                  fetch(`/api/delete-building/${id}`, {
+                      method: 'DELETE',
+                      credentials: 'include'
+                  })
+                  .then(res => res.json())
+                  .then(data => {
+                      if(data.success) {
+                          alert('Edificio eliminado.');
+                          location.reload();
+                      } else {
+                          alert('Error al eliminar: ' + data.error);
+                      }
+                  })
+                  .catch(err => console.error(err));
+              };
+            </script>
 
             {% endblock %}

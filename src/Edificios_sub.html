@@ -851,17 +851,62 @@
 
     </div>
 
-    <!-- Gráfico de barras / líneas V2 -->
-    <div class="card mb-5 w-100"
-        style="border: 1px solid #e5e7eb; border-radius: 8px; box-shadow: none; overflow: hidden;">
-        <div class="card-body" style="padding: 15px 0 0 0;">
-            <div class="d-flex align-items-center mb-3 px-4">
-                <h6 class="card-title mb-0" style="font-size: 15px; font-weight: 600; color: #1f2937;">Evolución
-                    vs periodo anterior</h6>
-                <i class="bi bi-info-circle ms-2" style="color: #9ca3af; font-size: 13px; cursor: help;"
-                    title="Comparativa de consumo"></i>
+    
+    <!-- Filtros de la Gráfica -->
+    <div class="d-flex align-items-center gap-2 mb-3">
+        <button class="btn btn-sm btn-outline-secondary d-flex align-items-center gap-1">
+            <i class="bi bi-plus"></i> Añadir filtro
+        </button>
+        <div class="badge bg-light text-dark border d-flex align-items-center gap-2 px-3 py-2 fw-normal" style="font-size: 0.85rem;">
+            <i class="bi bi-calendar"></i> Año <span class="ms-1 fw-bold">2023</span> <i class="bi bi-chevron-down ms-1"></i>
+        </div>
+        <div class="badge bg-light text-dark border d-flex align-items-center gap-2 px-3 py-2 fw-normal" style="font-size: 0.85rem;">
+            <i class="bi bi-lightning-charge"></i> Tipo <span class="text-muted mx-1">es</span> <span class="fw-bold">Electricidad</span> <i class="bi bi-chevron-down ms-1"></i>
+            <button class="btn-close btn-close-sm ms-2" style="font-size: 0.6rem;"></button>
+        </div>
+    </div>
+
+    <!-- Gráfico de barras / líneas V2 Interactivo -->
+    <div class="card mb-5 w-100" style="border: 1px solid #e5e7eb; border-radius: 8px; box-shadow: none; overflow: hidden;">
+        
+        <!-- Tabs Superiores de la Gráfica -->
+        <div class="d-flex border-bottom bg-white">
+            <div class="p-3" style="width: 50%; border-right: 1px solid #e5e7eb; cursor: pointer;">
+                <div class="d-flex align-items-center gap-2 mb-1">
+                    <div style="width: 12px; height: 12px; background-color: #10b981; border-radius: 2px;"></div>
+                    <span class="fw-semibold text-dark" style="font-size: 0.95rem;">Todos</span>
+                </div>
+                <div class="text-muted" style="font-size: 1.1rem;">
+                    <span class="fw-bold text-dark fs-5" id="chartTotalConsumos">2</span> consumos
+                </div>
             </div>
-            <div class="chart-container" style="padding: 0; margin-top: 0;">
+            
+            <div class="p-3" style="width: 50%; cursor: pointer; border-bottom: 3px solid #0f766e; background-color: #f8fafc;">
+                <div class="d-flex align-items-center gap-2 mb-1">
+                    <div style="width: 12px; height: 12px; background-color: #fcd34d; border-radius: 2px;"></div>
+                    <span class="fw-semibold text-dark" style="font-size: 0.95rem;">Electricidad</span>
+                </div>
+                <div class="text-muted" style="font-size: 1.1rem;">
+                    <span class="fw-bold text-dark fs-5" id="chartElecConsumos">2</span> consumos <i class="bi bi-info-circle ms-1 small text-muted"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-body" style="padding: 20px;">
+            <!-- Controles Internos de la Gráfica -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h6 class="text-muted fw-normal mb-1">Días con consumo</h6>
+                    <h4 class="fw-bold mb-0 text-dark"><span id="chartLabelConsumos">2</span> consumos</h4>
+                </div>
+                <div class="btn-group border rounded" style="background: #fff;">
+                    <button class="btn btn-sm px-3 fw-semibold text-dark" style="background-color: #f8fafc; border: 1px solid #e5e7eb; border-radius: 12px; margin: 2px;">Días con consumo</button>
+                    <button class="btn btn-sm px-3 text-muted fw-normal" style="border: none; margin: 2px; background: transparent;">Kilovatio hora (kWh)</button>
+                </div>
+            </div>
+
+            <!-- Contenedor del Canvas -->
+            <div class="chart-container" style="padding: 0; margin-top: 0; height: 300px;">
                 <canvas id="consumoChart"></canvas>
             </div>
         </div>
@@ -923,7 +968,7 @@
                         </div>
 
                         <!-- Parte derecha: formulario dinámico V2 -->
-                        <div class="col-lg-6 v2-form-col">
+                        <div class="col-lg-6 v2-form-col" style="min-height: 750px;">
 
                             <!-- Tipo Selection (Global) -->
                             <div class="v2-form-group">
@@ -958,9 +1003,7 @@
                                     <label class="v2-label" for="edificioElectricidad">Edificio / Punto de suministro
                                         <span class="text-danger">*</span></label>
                                     <select id="edificioElectricidad" class="v2-select">
-                                        <option>--</option>
-                                        <option>Edificio A</option>
-                                        <option>Edificio B</option>
+                                        <option value="">-- Selecciona un edificio --</option>
                                     </select>
                                 </div>
                                 <div class="v2-form-group">
@@ -997,6 +1040,18 @@
                                             <option value="EUR">EUR (€)</option>
                                             <option value="USD">USD ($)</option>
                                             <option value="GBP">GBP (£)</option>
+                                            <option value="JPY">JPY (¥)</option>
+                                            <option value="CNY">CNY (¥)</option>
+                                            <option value="MXN">MXN ($)</option>
+                                            <option value="BRL">BRL (R$)</option>
+                                            <option value="ARS">ARS ($)</option>
+                                            <option value="COP">COP ($)</option>
+                                            <option value="CLP">CLP ($)</option>
+                                            <option value="PEN">PEN (S/)</option>
+                                            <option value="CAD">CAD ($)</option>
+                                            <option value="AUD">AUD ($)</option>
+                                            <option value="CHF">CHF (CHF)</option>
+                                            <option value="INR">INR (₹)</option>
                                         </select>
                                     </div>
                                 </div>
@@ -1056,9 +1111,7 @@
                                     <label class="v2-label" for="edificioCombustible">Edificio / Punto de suministro
                                         <span class="text-danger">*</span></label>
                                     <select id="edificioCombustible" class="v2-select">
-                                        <option>--</option>
-                                        <option>Edificio A</option>
-                                        <option>Edificio B</option>
+                                        <option value="">-- Selecciona un edificio --</option>
                                     </select>
                                 </div>
                                 <div class="v2-form-group">
@@ -1095,6 +1148,18 @@
                                             <option value="EUR">EUR (€)</option>
                                             <option value="USD">USD ($)</option>
                                             <option value="GBP">GBP (£)</option>
+                                            <option value="JPY">JPY (¥)</option>
+                                            <option value="CNY">CNY (¥)</option>
+                                            <option value="MXN">MXN ($)</option>
+                                            <option value="BRL">BRL (R$)</option>
+                                            <option value="ARS">ARS ($)</option>
+                                            <option value="COP">COP ($)</option>
+                                            <option value="CLP">CLP ($)</option>
+                                            <option value="PEN">PEN (S/)</option>
+                                            <option value="CAD">CAD ($)</option>
+                                            <option value="AUD">AUD ($)</option>
+                                            <option value="CHF">CHF (CHF)</option>
+                                            <option value="INR">INR (₹)</option>
                                         </select>
                                     </div>
                                 </div>
@@ -1116,9 +1181,7 @@
                                     <label class="v2-label" for="edificioRecargaGas">Edificio / Punto de suministro
                                         <span class="text-danger">*</span></label>
                                     <select id="edificioRecargaGas" class="v2-select">
-                                        <option>--</option>
-                                        <option>Edificio A</option>
-                                        <option>Edificio B</option>
+                                        <option value="">-- Selecciona un edificio --</option>
                                     </select>
                                 </div>
                                 <div class="v2-form-group">
@@ -1247,7 +1310,7 @@
                             select.innerHTML = '<option value="">-- Selecciona un edificio --</option>';
                             data.buildings.forEach(b => {
                                 const option = document.createElement('option');
-                                option.value = b.nombre;
+                                option.value = b.nombre; // We use nombre as value so the fetch works perfectly
                                 option.textContent = b.nombre;
                                 select.appendChild(option);
                             });
@@ -1507,6 +1570,53 @@
             }
         }
     });
+
+    
+    const updateStatsBoxes = (dataPorMes, type) => {
+        const total = dataPorMes.reduce((a, b) => a + (b > 0 ? 1 : 0), 0); // Count months with consumption
+        document.getElementById('chartLabelConsumos').textContent = total;
+        
+        // Very basic stats logic
+        if(type === 'none') {
+            document.getElementById('chartTotalConsumos').textContent = total;
+        } else {
+            document.getElementById('chartElecConsumos').textContent = total;
+        }
+    };
+    
+    // Bind interaction triggers (Mockup for actual functioning)
+    document.addEventListener("DOMContentLoaded", function () {
+        const typeTabAll = document.querySelector('div.p-3[style*="border-right"]');
+        const typeTabElec = document.querySelector('div.p-3[style*="border-bottom"]');
+        
+        let currentChartType = 'bar'; // or kWh vs days
+
+        if(typeTabAll) {
+           typeTabAll.addEventListener('click', () => {
+               // Update UI styling
+               typeTabAll.style.backgroundColor = '#f8fafc';
+               typeTabAll.style.borderBottom = '3px solid #0f766e';
+               if(typeTabElec) {
+                   typeTabElec.style.backgroundColor = 'white';
+                   typeTabElec.style.borderBottom = 'none';
+               }
+               // Reload generic chart
+               actualizarGrafico(); 
+           });
+        }
+    });
+
+    // We augment actualizarGrafico to trigger stats box
+    const oldActualizarGrafico = actualizarGrafico;
+    actualizarGrafico = function() {
+        oldActualizarGrafico();
+        
+        const data = consumoChart.data.datasets[0].data;
+        document.getElementById('chartLabelConsumos').textContent = data.reduce((a, b) => a + (b > 0 ? 1 : 0), 0) + ' consumos';
+        
+        document.getElementById('chartTotalConsumos').textContent = document.querySelectorAll('tbody tr').length;
+        document.getElementById('chartElecConsumos').textContent = Array.from(document.querySelectorAll('tbody tr')).filter(tr => tr.innerText.includes('Electricidad')).length;
+    };
 
     function actualizarGrafico() {
         // Obtenemos los datos calculados de la tabla para rellenar la gráfica principal

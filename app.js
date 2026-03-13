@@ -201,7 +201,7 @@ app.post('/api/save-calculation', async (req, res) => {
 app.get('/api/get-user-buildings', checkSession, async (req, res) => {
     try {
         const userId = req.session.userId;
-        const [buildings] = await pool.query('SELECT * FROM buildings WHERE user_id = ? OR user_id IS NULL ORDER BY name ASC', [userId]);
+        const [buildings] = await pool.query('SELECT * FROM buildings WHERE user_id = ? OR user_id IS NULL ORDER BY nombre ASC', [userId]);
         res.json({ success: true, buildings });
     } catch (err) {
         console.error('Error fetching buildings:', err);
@@ -210,22 +210,93 @@ app.get('/api/get-user-buildings', checkSession, async (req, res) => {
 });
 
 app.post('/api/add-building', checkSession, async (req, res) => {
-    const { name, property_type, address } = req.body;
+    const { name, property_type, address, municipio, ciudad, codigo_postal, pais, superficie } = req.body;
     const userId = req.session.userId;
 
-    if (!name) {
-        return res.status(400).json({ success: false, message: 'El nombre del edificio es obligatorio.' });
+    if (!name || !property_type || !address || !municipio || !ciudad || !codigo_postal || !pais) {
+        return res.status(400).json({ success: false, message: 'Faltan campos obligatorios en el formulario (Calle, Municipio, Ciudad, C.P., País).' });
     }
 
     try {
         const [result] = await pool.query(
-            'INSERT INTO buildings (user_id, nombre, tipo_edificio, direccion) VALUES (?, ?, ?, ?)',
-            [userId, name, property_type || '', address || '']
+            'INSERT INTO buildings (user_id, nombre, tipo_edificio, direccion, municipio, codigo_postal, ciudad, pais, superficie) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
+            [userId, name, property_type, address, municipio, codigo_postal, ciudad, pais, superficie || null]
         );
         res.json({ success: true, newId: result.insertId, message: 'Edificio guardado.' });
     } catch (err) {
         console.error('Error añadiendo edificio en MySQL:', err);
-        res.status(500).json({ success: false, message: 'La base de datos rechazó el registro.' });
+        res.status(500).json({ success: false, message: 'La base de datos rechazó el registro: ' + err.message });
+    }
+});
+
+app.delete('/api/delete-building/:id', checkSession, async (req, res) => {
+    try {
+        const userId = req.session.userId;
+        const buildingId = req.params.id;
+        await pool.query('DELETE FROM buildings WHERE id = ? AND user_id = ?', [buildingId, userId]);
+        res.json({ success: true });
+    } catch (err) {
+        console.error('Error eliminando edificio:', err);
+        res.status(500).json({ success: false, error: 'Error interno del servidor.' });
+    }
+});
+
+app.get('/api/get-user-vehicles', checkSession, async (req, res) => {
+    try {
+        const userId = req.session.userId;
+        const [vehicles] = await pool.query(
+            `SELECT v.*, b.nombre as nombre_edificio 
+             FROM vehicles v 
+             LEFT JOIN buildings b ON v.building_id = b.id 
+             WHERE v.user_id = ? 
+             ORDER BY v.id DESC`, 
+            [userId]
+        );
+        res.json({ success: true, vehicles });
+    } catch (err) {
+        console.error('Error fetching vehicles:', err);
+        res.status(500).json({ success: false, error: 'Error del servidor' });
+    }
+});
+
+app.post('/api/add-vehicle', checkSession, async (req, res) => {
+    const userId = req.session.userId;
+    const { 
+        building_name, tipo_vehiculo, categoria, tipo_motor, combustible,
+        identificador, marca, modelo, clase, 
+        propiedad_alquiler, control_operacional, activo, fecha_inicio 
+    } = req.body;
+
+    if (!building_name || !tipo_vehiculo || !identificador) {
+        return res.status(400).json({ success: false, message: 'Faltan campos obligatorios (Edificio, Tipo, Matrícula/Identificador).' });
+    }
+
+    try {
+        // Encontrar el ID del edificio a partir del nombre
+        const [buildings] = await pool.query('SELECT id FROM buildings WHERE nombre = ? AND (user_id = ? OR user_id IS NULL) LIMIT 1', [building_name, userId]);
+        const building_id = buildings.length > 0 ? buildings[0].id : null;
+
+        const [result] = await pool.query(
+            `INSERT INTO vehicles 
+            (user_id, building_id, tipo_vehiculo, categoria, tipo_motor, combustible, identificador, marca, modelo, clase, propiedad_alquiler, control_operacional, activo, fecha_inicio) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            [userId, building_id, tipo_vehiculo, categoria, tipo_motor, combustible, identificador, marca, modelo, clase, propiedad_alquiler, control_operacional, activo === false ? 0 : 1, fecha_inicio || null]
+        );
+        res.json({ success: true, newId: result.insertId, message: 'Vehículo guardado.' });
+    } catch (err) {
+        console.error('Error añadiendo vehículo:', err);
+        res.status(500).json({ success: false, message: 'Error de base de datos: ' + err.message });
+    }
+});
+
+app.delete('/api/delete-vehicle/:id', checkSession, async (req, res) => {
+    try {
+        const userId = req.session.userId;
+        await pool.query('DELETE FROM vehicles WHERE id = ? AND user_id = ?', [req.params.id, userId]);
+        res.json({ success: true });
+    } catch (err) {
+        console.error('Error eliminando vehículo:', err);
+        res.status(500).json({ success: false, error: 'Error del servidor.' });
     }
 });
 
