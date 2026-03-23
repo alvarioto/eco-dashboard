@@ -11,9 +11,10 @@
 <!-- Contenedor que oculta todo hasta verificar la sesión -->
 <div id="contenidoPrincipal" style="display:none;">
     <div class="page-heading">
-        <h3>Profile Statistics</h3>
+        <h3>Resumen de Emisiones</h3>
     </div>
     <div class="page-content">
+        <!-- KPIs -->
         <section class="row">
             <div class="col-12 col-lg-9">
                 <div class="row">
@@ -21,14 +22,14 @@
                         <div class="card">
                             <div class="card-body px-4 py-4-5">
                                 <div class="row">
-                                    <div class="col-md-4 col-lg-12 col-xl-12 col-xxl-5 d-flex justify-content-start ">
+                                    <div class="col-md-4 col-lg-12 col-xl-12 col-xxl-5 d-flex justify-content-start">
                                         <div class="stats-icon purple mb-2">
-                                            <i class="iconly-boldShow"></i>
+                                            <i class="bi bi-building"></i>
                                         </div>
                                     </div>
                                     <div class="col-md-8 col-lg-12 col-xl-12 col-xxl-7">
-                                        <h6 class="text-muted font-semibold">Profile Views</h6>
-                                        <h6 class="font-extrabold mb-0">1.1M</h6>
+                                        <h6 class="text-muted font-semibold">Edificios</h6>
+                                        <h6 class="font-extrabold mb-0" id="kpi-edificios">0</h6>
                                     </div>
                                 </div>
                             </div>
@@ -38,14 +39,14 @@
                         <div class="card">
                             <div class="card-body px-4 py-4-5">
                                 <div class="row">
-                                    <div class="col-md-4 col-lg-12 col-xl-12 col-xxl-5 d-flex justify-content-start ">
+                                    <div class="col-md-4 col-lg-12 col-xl-12 col-xxl-5 d-flex justify-content-start">
                                         <div class="stats-icon blue mb-2">
-                                            <i class="iconly-boldProfile"></i>
+                                            <i class="bi bi-car-front"></i>
                                         </div>
                                     </div>
                                     <div class="col-md-8 col-lg-12 col-xl-12 col-xxl-7">
-                                        <h6 class="text-muted font-semibold">Followers</h6>
-                                        <h6 class="font-extrabold mb-0">183.000</h6>
+                                        <h6 class="text-muted font-semibold">Vehículos</h6>
+                                        <h6 class="font-extrabold mb-0" id="kpi-vehiculos">0</h6>
                                     </div>
                                 </div>
                             </div>
@@ -55,14 +56,14 @@
                         <div class="card">
                             <div class="card-body px-4 py-4-5">
                                 <div class="row">
-                                    <div class="col-md-4 col-lg-12 col-xl-12 col-xxl-5 d-flex justify-content-start ">
+                                    <div class="col-md-4 col-lg-12 col-xl-12 col-xxl-5 d-flex justify-content-start">
                                         <div class="stats-icon green mb-2">
-                                            <i class="iconly-boldAdd-User"></i>
+                                            <i class="bi bi-calculator"></i>
                                         </div>
                                     </div>
                                     <div class="col-md-8 col-lg-12 col-xl-12 col-xxl-7">
-                                        <h6 class="text-muted font-semibold">Following</h6>
-                                        <h6 class="font-extrabold mb-0">80.000</h6>
+                                        <h6 class="text-muted font-semibold">Cálculos</h6>
+                                        <h6 class="font-extrabold mb-0" id="kpi-calculos">0</h6>
                                     </div>
                                 </div>
                             </div>
@@ -72,185 +73,65 @@
                         <div class="card">
                             <div class="card-body px-4 py-4-5">
                                 <div class="row">
-                                    <div class="col-md-4 col-lg-12 col-xl-12 col-xxl-5 d-flex justify-content-start ">
+                                    <div class="col-md-4 col-lg-12 col-xl-12 col-xxl-5 d-flex justify-content-start">
                                         <div class="stats-icon red mb-2">
-                                            <i class="iconly-boldBookmark"></i>
+                                            <i class="bi bi-cloud-fog"></i>
                                         </div>
                                     </div>
                                     <div class="col-md-8 col-lg-12 col-xl-12 col-xxl-7">
-                                        <h6 class="text-muted font-semibold">Saved Post</h6>
-                                        <h6 class="font-extrabold mb-0">112</h6>
+                                        <h6 class="text-muted font-semibold">Emisiones (kg CO₂)</h6>
+                                        <h6 class="font-extrabold mb-0" id="kpi-emisiones">0</h6>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
+
+                <!-- Gráfico principal -->
                 <div class="row">
                     <div class="col-12">
                         <div class="card">
                             <div class="card-header">
-                                <h4>Profile Visit</h4>
+                                <h4>Emisiones por Alcance</h4>
                             </div>
                             <div class="card-body">
-                                <div id="chart-profile-visit"></div>
+                                <div id="chart-emisiones-alcance"></div>
                             </div>
                         </div>
                     </div>
                 </div>
+
+                <!-- Gráfico secundario -->
                 <div class="row">
-                    <div class="col-12 col-xl-4">
+                    <div class="col-12 col-md-6">
                         <div class="card">
                             <div class="card-header">
-                                <h4>Profile Visit</h4>
+                                <h4>Emisiones por Tipo</h4>
                             </div>
                             <div class="card-body">
-                                <div class="row">
-                                    <div class="col-7">
-                                        <div class="d-flex align-items-center">
-                                            <svg class="bi text-primary" width="32" height="32" fill="blue"
-                                                style="width:10px">
-                                                <use
-                                                    xlink:href="assets/static/images/bootstrap-icons.svg#circle-fill" />
-                                            </svg>
-                                            <h5 class="mb-0 ms-3">Europe</h5>
-                                        </div>
-                                    </div>
-                                    <div class="col-5">
-                                        <h5 class="mb-0 text-end">862</h5>
-                                    </div>
-                                    <div class="col-12">
-                                        <div id="chart-europe"></div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-7">
-                                        <div class="d-flex align-items-center">
-                                            <svg class="bi text-success" width="32" height="32" fill="blue"
-                                                style="width:10px">
-                                                <use
-                                                    xlink:href="assets/static/images/bootstrap-icons.svg#circle-fill" />
-                                            </svg>
-                                            <h5 class="mb-0 ms-3">America</h5>
-                                        </div>
-                                    </div>
-                                    <div class="col-5">
-                                        <h5 class="mb-0 text-end">375</h5>
-                                    </div>
-                                    <div class="col-12">
-                                        <div id="chart-america"></div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-7">
-                                        <div class="d-flex align-items-center">
-                                            <svg class="bi text-success" width="32" height="32" fill="blue"
-                                                style="width:10px">
-                                                <use
-                                                    xlink:href="assets/static/images/bootstrap-icons.svg#circle-fill" />
-                                            </svg>
-                                            <h5 class="mb-0 ms-3">India</h5>
-                                        </div>
-                                    </div>
-                                    <div class="col-5">
-                                        <h5 class="mb-0 text-end">625</h5>
-                                    </div>
-                                    <div class="col-12">
-                                        <div id="chart-india"></div>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-7">
-                                        <div class="d-flex align-items-center">
-                                            <svg class="bi text-danger" width="32" height="32" fill="blue"
-                                                style="width:10px">
-                                                <use
-                                                    xlink:href="assets/static/images/bootstrap-icons.svg#circle-fill" />
-                                            </svg>
-                                            <h5 class="mb-0 ms-3">Indonesia</h5>
-                                        </div>
-                                    </div>
-                                    <div class="col-5">
-                                        <h5 class="mb-0 text-end">1025</h5>
-                                    </div>
-                                    <div class="col-12">
-                                        <div id="chart-indonesia"></div>
-                                    </div>
-                                </div>
+                                <div id="chart-emisiones-tipo"></div>
                             </div>
                         </div>
                     </div>
-                    <div class="col-12 col-xl-8">
+                    <div class="col-12 col-md-6">
                         <div class="card">
                             <div class="card-header">
-                                <h4>Latest Comments</h4>
+                                <h4>Cálculos Recientes</h4>
                             </div>
                             <div class="card-body">
                                 <div class="table-responsive">
-                                    <table class="table table-hover table-lg">
+                                    <table class="table table-hover" id="tabla-calculos-recientes">
                                         <thead>
                                             <tr>
-                                                <th>Name</th>
-                                                <th>Comment</th>
+                                                <th>Fecha</th>
+                                                <th>Tipo</th>
+                                                <th>Concepto</th>
+                                                <th>Emisiones (kg)</th>
                                             </tr>
                                         </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td class="col-3">
-                                                    <div class="d-flex align-items-center">
-                                                        <div class="avatar avatar-md">
-                                                            <img src="assets/static/images/faces/5.jpg">
-                                                        </div>
-                                                        <p class="font-bold ms-3 mb-0">Si Cantik</p>
-                                                    </div>
-                                                </td>
-                                                <td class="col-auto">
-                                                    <p class=" mb-0">Congratulations on your graduation!</p>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td class="col-3">
-                                                    <div class="d-flex align-items-center">
-                                                        <div class="avatar avatar-md">
-                                                            <img src="assets/static/images/faces/2.jpg">
-                                                        </div>
-                                                        <p class="font-bold ms-3 mb-0">Si Ganteng</p>
-                                                    </div>
-                                                </td>
-                                                <td class="col-auto">
-                                                    <p class=" mb-0">Wow amazing design! Can you make another tutorial
-                                                        for
-                                                        this design?</p>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td class="col-3">
-                                                    <div class="d-flex align-items-center">
-                                                        <div class="avatar avatar-md">
-                                                            <img src="assets/static/images/faces/8.jpg">
-                                                        </div>
-                                                        <p class="font-bold ms-3 mb-0">Singh Eknoor</p>
-                                                    </div>
-                                                </td>
-                                                <td class="col-auto">
-                                                    <p class=" mb-0">What a stunning design! You are so talented and
-                                                        creative!</p>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td class="col-3">
-                                                    <div class="d-flex align-items-center">
-                                                        <div class="avatar avatar-md">
-                                                            <img src="assets/static/images/faces/3.jpg">
-                                                        </div>
-                                                        <p class="font-bold ms-3 mb-0">Rani Jhadav</p>
-                                                    </div>
-                                                </td>
-                                                <td class="col-auto">
-                                                    <p class=" mb-0">I love your design! It’s so beautiful and unique!
-                                                        How did you learn to do this?</p>
-                                                </td>
-                                            </tr>
+                                        <tbody id="tbody-calculos">
+                                            <!-- Se填充 con JS -->
                                         </tbody>
                                     </table>
                                 </div>
@@ -259,97 +140,134 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Sidebar -->
             <div class="col-12 col-lg-3">
                 <div class="card">
-                    <div class="card-body py-4 px-4">
-                        <div class="d-flex align-items-center">
-                            <div class="avatar avatar-xl">
-                                <img src="assets/static/images/faces/1.jpg" alt="Face 1">
-                            </div>
-                            <div class="ms-3 name">
-                                <h5 class="font-bold">John Duck</h5>
-                                <h6 class="text-muted mb-0">@johnducky</h6>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="card">
                     <div class="card-header">
-                        <h4>Recent Messages</h4>
-                    </div>
-                    <div class="card-content pb-4">
-                        <div class="recent-message d-flex px-4 py-3">
-                            <div class="avatar avatar-lg">
-                                <img src="assets/static/images/faces/4.jpg">
-                            </div>
-                            <div class="name ms-4">
-                                <h5 class="mb-1">Hank Schrader</h5>
-                                <h6 class="text-muted mb-0">@johnducky</h6>
-                            </div>
-                        </div>
-                        <div class="recent-message d-flex px-4 py-3">
-                            <div class="avatar avatar-lg">
-                                <img src="assets/static/images/faces/5.jpg">
-                            </div>
-                            <div class="name ms-4">
-                                <h5 class="mb-1">Dean Winchester</h5>
-                                <h6 class="text-muted mb-0">@imdean</h6>
-                            </div>
-                        </div>
-                        <div class="recent-message d-flex px-4 py-3">
-                            <div class="avatar avatar-lg">
-                                <img src="assets/static/images/faces/1.jpg">
-                            </div>
-                            <div class="name ms-4">
-                                <h5 class="mb-1">John Dodol</h5>
-                                <h6 class="text-muted mb-0">@dodoljohn</h6>
-                            </div>
-                        </div>
-                        <div class="px-4">
-                            <button class='btn btn-block btn-xl btn-outline-primary font-bold mt-3'>Start
-                                Conversation</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="card">
-                    <div class="card-header">
-                        <h4>Visitors Profile</h4>
+                        <h4>Alcances</h4>
                     </div>
                     <div class="card-body">
-                        <div id="chart-visitors-profile"></div>
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="stats-icon me-3" style="background: #435ebe;">
+                                <i class="bi bi-1-circle"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-0">Alcance 1</h6>
+                                <small class="text-muted">Combustión directa</small>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center mb-3">
+                            <div class="stats-icon me-3" style="background: #00b894;">
+                                <i class="bi bi-2-circle"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-0">Alcance 2</h6>
+                                <small class="text-muted">Electricidad</small>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <div class="stats-icon me-3" style="background: #e17055;">
+                                <i class="bi bi-3-circle"></i>
+                            </div>
+                            <div>
+                                <h6 class="mb-0">Alcance 3</h6>
+                                <small class="text-muted">Emisiones indirectas</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card mt-3">
+                    <div class="card-header">
+                        <h4>Guía de Cálculo</h4>
+                    </div>
+                    <div class="card-body">
+                        <p class="small text-muted mb-2">Aprende a calcular tu huella de carbono:</p>
+                        <ul class="list-unstyled small">
+                            <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i>Alcance 1: Combustibles en instalaciones fijas</li>
+                            <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i>Alcance 2: Consumo eléctrico</li>
+                            <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i>Alcance 3: Fugitivas y otros</li>
+                        </ul>
+                        <a href="/emisiones.html" class="btn btn-primary btn-sm w-100">Ir a Cálculos</a>
                     </div>
                 </div>
             </div>
         </section>
     </div>
 </div>
-{% endblock %}
 
-{% block js %}
-<!-- Script que se ejecuta justo después de cargar el HTML, antes de dashboard.js -->
 <script>
-    // Al cargar la página, verificamos si hay sesión
-    fetch('/api/session-check', {
-        credentials: 'include'
-    })
-        .then((res) => res.json())
-        .then((data) => {
-            if (!data.loggedIn) {
-                // No hay sesión -> redirigir al login
-                window.location.href = '/auth-login.html';
-            } else {
-                // Hay sesión -> mostrar el contenido
-                document.getElementById('contenidoPrincipal').style.display = 'block';
-            }
-        })
-        .catch((err) => {
-            console.error('Error al verificar la sesión:', err);
-            // Opcional: podrías redirigir al login o mostrar un error
-            window.location.href = '/auth-login.html';
-        });
-</script>
+    // Cargar datos para el dashboard
+    async function cargarDashboard() {
+        try {
+            // Cargar edificios
+            const responseEdificios = await fetch('/api/get-user-buildings', { credentials: 'include' });
+            const dataEdificios = await responseEdificios.json();
+            document.getElementById('kpi-edificios').textContent = dataEdificios.success ? dataEdificios.buildings.length : '0';
 
-<!-- Need: Apexcharts -->
-<script src="assets/extensions/apexcharts/apexcharts.min.js"></script>
-<script src="assets/static/js/pages/dashboard.js"></script>
+            // Cargar vehículos
+            const responseVehiculos = await fetch('/api/get-user-vehicles', { credentials: 'include' });
+            const dataVehiculos = await responseVehiculos.json();
+            document.getElementById('kpi-vehiculos').textContent = dataVehiculos.success ? dataVehiculos.vehicles.length : '0';
+
+            // Cargar cálculos
+            const responseCalculos = await fetch('/api/get-user-calculations', { credentials: 'include' });
+            const dataCalculos = await responseCalculos.json();
+            
+            if (dataCalculos.success && dataCalculos.calculations) {
+                document.getElementById('kpi-calculos').textContent = dataCalculos.calculations.length;
+                
+                // Calcular total emisiones
+                const totalEmisiones = dataCalculos.calculations.reduce((sum, calc) => sum + parseFloat(calc.emissions || 0), 0);
+                document.getElementById('kpi-emisiones').textContent = totalEmisiones.toLocaleString('es-ES', { maximumFractionDigits: 0 });
+                
+                // Llenar tabla de cálculos recientes
+                const tbody = document.getElementById('tbody-calculos');
+                const ultimos = dataCalculos.calculations.slice(0, 5);
+                ultimos.forEach(calc => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${calc.start_date || '-'}</td>
+                        <td><span class="badge bg-${calc.type === 'combustion' ? 'danger' : calc.type === 'electricidad' ? 'success' : 'warning'}">${calc.type}</span></td>
+                        <td>${calc.concept || '-'}</td>
+                        <td>${parseFloat(calc.emissions).toLocaleString('es-ES')}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+
+                // Gráfico por tipo
+                const emisionesPorTipo = {};
+                dataCalculos.calculations.forEach(calc => {
+                    const tipo = calc.type || 'otro';
+                    emisionesPorTipo[tipo] = (emisionesPorTipo[tipo] || 0) + parseFloat(calc.emissions || 0);
+                });
+
+                const chartTipo = {
+                    series: Object.values(emisionesPorTipo),
+                    labels: Object.keys(emisionesPorTipo).map(t => t.charAt(0).toUpperCase() + t.slice(1)),
+                    chart: { type: 'donut', height: 300 },
+                    colors: ['#435ebe', '#00b894', '#e17055'],
+                    legend: { position: 'bottom' }
+                };
+
+                if (typeof ApexCharts !== 'undefined') {
+                    new ApexCharts(document.querySelector("#chart-emisiones-tipo"), {
+                        series: chartTipo.series,
+                        chart: { type: 'donut', height: 280 },
+                        labels: chartTipo.labels,
+                        colors: chartTipo.colors,
+                        legend: { position: 'bottom' },
+                        dataLabels: { enabled: true }
+                    }).render();
+                }
+            }
+        } catch (err) {
+            console.error('Error cargando dashboard:', err);
+        }
+    }
+
+    // Inicializar al cargar
+    document.addEventListener('DOMContentLoaded', cargarDashboard);
+</script>
 {% endblock %}
