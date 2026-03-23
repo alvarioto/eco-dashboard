@@ -74,8 +74,8 @@ $danger-border-subtle-dark:         $red-700 !default;
 $light-border-subtle-dark:          $gray-700 !default;
 $dark-border-subtle-dark:           $gray-800 !default;
 
-$body-color-dark:                   $gray-500 !default;
-$body-bg-dark:                      $gray-900 !default;
+$body-color-dark:                   #b8b8c8 !default;
+$body-bg-dark:                      #1a1a2e !default;
 $body-emphasis-color-dark:          $gray-100 !default;
 $body-secondary-color-dark:         rgba($body-color-dark, .75) !default;
 $body-secondary-bg-dark:            $gray-800 !default;
@@ -110,18 +110,18 @@ $accordion-button-active-icon-dark:  url("data:image/svg+xml,<svg xmlns='http://
 // scss-docs-end sass-dark-mode-vars
 
 
-$sidebar-bg:                #1e1e2d;
-$sidebar-link-color:        #9899ac;
-$sidebar-link-hover-bg:         #282839;
-$sidebar-link-hover-color:      #fff;
-$sidebar-submenu-color:         $sidebar-link-color;
-$sidebar-submenu-hover-color:   $white;
+$sidebar-bg:                #16162a;
+$sidebar-link-color:        #b0b0c8;
+$sidebar-link-hover-bg:         #252542;
+$sidebar-link-hover-color:      #ffffff;
+$sidebar-submenu-color:         #9090a8;
+$sidebar-submenu-hover-color:   #ffffff;
 
-$card-box-shadow:                   -8px 12px 18px 0 rgba(25,42,70,.13);
+$card-box-shadow:                   -8px 12px 18px 0 rgba(0,0,0,.4);
 
 // Body
-$body-bg:                   #151521;
-$body-color:                #c2c2d9;
+$body-bg:                   #12121c;
+$body-color:                #d8d8ec;
 
 // Pages
 $page-auth-bg:          #151521;
@@ -136,18 +136,18 @@ $link-hover-color:                        shift-color($link-color, $link-shade-p
 $component-active-color:      #9899ac;
 $component-active-bg:         $primary;
 
-$headings-color:              #fff;
-$text-muted:                  #7c8db5;
+$headings-color:              #ffffff;
+$text-muted:                  #a0a0b8;
 $mark-bg:                     #fcf8e3;
 
-$table-color:                 $body-color;
-$table-border-color:          rgb(63, 63, 63);
-$table-striped-bg:            rgba(170, 168, 168, 0.05);
-$table-striped-color:            #c2c2d9;
-$table-active-bg:             rgba($black, $table-active-bg-factor);
-$table-hover-color:           $white;
-$table-hover-bg:              rgba($white, $table-hover-bg-factor);
-$table-group-separator-color: #707070;
+$table-color:                 #d0d0e0;
+$table-border-color:          #3a3a4d;
+$table-striped-bg:            rgba(255, 255, 255, 0.03);
+$table-striped-color:            #d0d0e0;
+$table-active-bg:             rgba($primary, 0.15);
+$table-hover-color:           #ffffff;
+$table-hover-bg:              rgba(255, 255, 255, 0.08);
+$table-group-separator-color: #4a4a5e;
 $table-variants: (
   "primary":    shift-color($primary, $table-bg-scale),
   "secondary":  shift-color($secondary, $table-bg-scale),

@@ -917,57 +917,6 @@
 
               // REAL SAVE: ENVIAR EDIFICIO A BBDD
               const btnEdificio = document.getElementById('btnGuardarEdificio');
-              const formEdificio = btnEdificio ? btnEdificio.closest('.modal-content').querySelector('form') : null;
-
-              if (btnEdificio) {
-                  btnEdificio.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    
-                    if (formEdificio && !formEdificio.checkValidity()) {
-                        formEdificio.reportValidity();
-                        return;
-                    }
-
-                    const nombre = document.getElementById('nombreNuevoEdificio').value;
-                    const payload = {
-                        name: nombre,
-                        property_type: document.getElementById('tipoNuevoEdificio').value,
-                        address: document.getElementById('direccionNuevoEdificio').value,
-                        municipio: document.getElementById('municipioNuevoEdificio').value,
-                        ciudad: document.getElementById('ciudadNuevoEdificio').value,
-                        codigo_postal: document.getElementById('codigoPostalNuevoEdificio').value,
-                        pais: document.getElementById('paisNuevoEdificio').value,
-                        superficie: document.getElementById('superficieNuevoEdificio').value || null
-                    };
-
-                    fetch('/api/add-building', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        credentials: 'include',
-                        body: JSON.stringify(payload)
-                    })
-                    .then(res => res.json())
-                    .then(data => {
-                        if(data.success) {
-                            const modal = bootstrap.Modal.getInstance(document.getElementById('modalCrearEdificio'));
-                            modal.hide();
-                            formEdificio.reset(); // clean
-                            const toast = new bootstrap.Toast(document.getElementById('successToast'));
-                            toast.show();
-                            setTimeout(() => location.reload(), 800);
-                        } else {
-                            alert('Error al crear edificio: ' + data.message);
-                        }
-                    })
-                    .catch(err => {
-                        console.error('Error in fetching building API', err);
-                        alert('Error del servidor');
-                    });
-                  });
-              }
-
-              // REAL SAVE: ENVIAR EDIFICIO A BBDD
-              const btnEdificio = document.getElementById('btnGuardarEdificio');
               if (btnEdificio) {
                   btnEdificio.addEventListener('click', function(e) {
                     e.preventDefault();

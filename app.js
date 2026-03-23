@@ -7,6 +7,121 @@ import session from 'express-session';
 import mysql from 'mysql2/promise';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import rateLimit from 'express-rate-limit';
+import Joi from 'joi';
+
+const RATE_LIMIT_WINDOW_MS = 15 * 60 * 1000;
+const RATE_LIMIT_MAX_REQUESTS = 100;
+
+const generalLimiter = rateLimit({
+    windowMs: RATE_LIMIT_WINDOW_MS,
+    max: RATE_LIMIT_MAX_REQUESTS,
+    message: { success: false, message: 'Demasiadas solicitudes, intenta más tarde.' },
+    standardHeaders: true,
+    legacyHeaders: false,
+});
+
+const authLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 5,
+    message: { success: false, message: 'Demasiados intentos de login, intenta en 15 minutos.' },
+    standardHeaders: true,
+    legacyHeaders: false,
+});
+
+const sanitizeInput = (input) => {
+    if (typeof input !== 'string') return input;
+    return input.replace(/[<>'"]/g, '');
+};
+
+const validateBody = (schema) => {
+    return (req, res, next) => {
+        const { error } = schema.validate(req.body, { abortEarly: false });
+        if (error) {
+            const messages = error.details.map(d => d.message).join(', ');
+            return res.status(400).json({ success: false, message: `Validation error: ${messages}` });
+        }
+        req.body = sanitizeObject(req.body);
+        next();
+    };
+};
+
+const sanitizeObject = (obj) => {
+    if (typeof obj !== 'object' || obj === null) return obj;
+    const sanitized = {};
+    for (const [key, value] of Object.entries(obj)) {
+        sanitized[key] = sanitizeInput(value);
+    }
+    return sanitized;
+};
+
+const schemas = {
+    register: Joi.object({
+        email: Joi.string().email().required().max(100),
+        username: Joi.string().alphanum().min(3).max(50).required(),
+        password: Joi.string().min(6).required()
+    }),
+    login: Joi.object({
+        username: Joi.string().required(),
+        password: Joi.string().required()
+    }),
+    saveCalculation: Joi.object({
+        type: Joi.string().valid('combustion', 'electricidad', 'recargaGas', 'combustible').required(),
+        concept: Joi.string().max(255),
+        building: Joi.string().max(255),
+        start_date: Joi.string().pattern(/^\d{2}\/\d{2}\/\d{4}$/),
+        end_date: Joi.string().pattern(/^\d{2}\/\d{2}\/\d{4}$/),
+        consumption: Joi.number().positive(),
+        emissions: Joi.number().required()
+    }),
+    addBuilding: Joi.object({
+        name: Joi.string().max(100).required(),
+        property_type: Joi.string().max(100).allow(''),
+        address: Joi.string().max(255).allow(''),
+        ciudad: Joi.string().max(100).allow(''),
+        provincia: Joi.string().max(100).allow(''),
+        pais: Joi.string().max(100).allow(''),
+        superficie: Joi.number().positive().allow(null)
+    }),
+    addVehicle: Joi.object({
+        building_name: Joi.string().required(),
+        tipo_vehiculo: Joi.string().required(),
+        identificador: Joi.string().max(50).required(),
+        categoria: Joi.string().max(100),
+        tipo_motor: Joi.string().max(100),
+        combustible: Joi.string().max(100),
+        marca: Joi.string().max(100),
+        modelo: Joi.string().max(100),
+        clase: Joi.string().max(100),
+        propiedad_alquiler: Joi.string().max(50),
+        control_operacional: Joi.string().max(50),
+        activo: Joi.boolean(),
+        fecha_inicio: Joi.date()
+    }),
+    updateProfile: Joi.object({
+        email: Joi.string().email().max(100),
+        fullName: Joi.string().max(255),
+        phone: Joi.string().max(50),
+        newPassword: Joi.string().min(6).allow('', null)
+    }),
+    companyProfile: Joi.object({
+        cif: Joi.string().max(20),
+        nombre_empresa: Joi.string().max(100),
+        razon_social: Joi.string().max(255),
+        sector: Joi.string().max(100),
+        actividad: Joi.string().max(255),
+        direccion: Joi.string().max(255),
+        ciudad: Joi.string().max(100),
+        municipio: Joi.string().max(100),
+        codigo_postal: Joi.string().max(10),
+        empleados: Joi.number().integer().positive(),
+        facturacion: Joi.number().positive(),
+        cantidad: Joi.string().max(50),
+        tipo_actividad: Joi.string().max(100)
+    })
+};
+
+
 
 dotenv.config();
 
@@ -15,6 +130,19 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
+
+// Configurar sesiones PRIMERO
+app.use(session({
+    secret: process.env.SESSION_SECRET || 'clave-secreta',
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+        secure: false,
+        httpOnly: true,
+        sameSite: 'lax',
+        maxAge: 24 * 60 * 60 * 1000
+    }
+}));
 
 // Configurar CORS
 const allowedOrigins = [
@@ -34,18 +162,72 @@ app.use(cors({
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-// Configurar sesiones
-app.use(session({
-    secret: process.env.SESSION_SECRET || 'clave-secreta',
-    resave: false,
-    saveUninitialized: false, // Changed to false to prevent empty sessions
-    cookie: {
-        secure: false, // false for local HTTP
-        httpOnly: true,
-        sameSite: 'lax', // allow cross-navigate
-        maxAge: 24 * 60 * 60 * 1000 // 24 hours
+// Aplicar rate limiting global
+app.use('/api', generalLimiter);
+
+// Aplicar rate limiting específico para auth
+app.post('/api/login', authLimiter, async (req, res) => {
+    const { username, password } = req.body;
+
+    if (!username || !password) {
+        return res.status(400).send('Por favor, ingrese usuario y contraseña.');
     }
-}));
+
+    try {
+        const query = 'SELECT id, username, password FROM users WHERE username = ?';
+        const [results] = await pool.query(query, [username]);
+
+        if (results.length > 0) {
+            const user = results[0];
+            const match = await bcrypt.compare(password, user.password);
+
+            if (match) {
+                req.session.loggedin = true;
+                req.session.userId = user.id;
+                req.session.username = user.username;
+                
+                return req.session.save(err => {
+                    if (err) {
+                        console.error('Error guardando sesión:', err);
+                        return res.status(500).json({ success: false, message: 'Error interno de sesión.' });
+                    }
+                    return res.json({ success: true, message: 'Login correcto' });
+                });
+            }
+        }
+
+        return res.status(401).json({ success: false, message: 'Usuario o contraseña incorrectos.' });
+
+    } catch (err) {
+        console.error('Error al iniciar sesión:', err.message);
+        return res.status(500).send('Error del servidor.');
+    }
+});
+
+app.post('/api/login-bypass', async (req, res) => {
+    res.status(410).json({ success: false, message: 'Endpoint eliminado por seguridad.' });
+});
+
+app.get('/api/session-check', (req, res) => {
+    if (req.session.loggedin) {
+        res.json({ loggedIn: true, username: req.session.username });
+    } else {
+        res.json({ loggedIn: false });
+    }
+});
+
+app.get('/api/logout', (req, res) => {
+    req.session.destroy((err) => {
+        if (err) {
+            console.error('Error al cerrar sesión:', err);
+            res.status(500).send('No se pudo cerrar la sesión.');
+        } else {
+            res.redirect('/login');
+        }
+    });
+});
+
+app.use('/api', generalLimiter);
 
 
 // Middleware para proteger rutas
@@ -88,14 +270,8 @@ app.get('/', checkSession, (req, res) => {
     res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 });
 
-app.post('/api/register', async (req, res) => {
-    console.log('📩 Datos recibidos en /api/register:', req.body);
+app.post('/api/register', validateBody(schemas.register), async (req, res) => {
     const { email, username, password } = req.body;
-
-    if (!email || !username || !password) {
-        console.log('❌ Faltan campos');
-        return res.status(400).json({ success: false, message: 'Faltan campos obligatorios.' });
-    }
 
     try {
         const checkQuery = 'SELECT id FROM users WHERE username = ? OR email = ?';
@@ -123,48 +299,11 @@ app.get('/login', (req, res) => {
     res.sendFile(path.join(__dirname, 'dist', 'auth-login.html'));
 });
 
-app.post('/api/login', async (req, res) => {
-    const { username, password } = req.body;
-
-    if (!username || !password) {
-        return res.status(400).send('Por favor, ingrese usuario y contraseña.');
+app.post('/api/save-calculation', validateBody(schemas.saveCalculation), async (req, res) => {
+    if (!req.session.loggedin) {
+        return res.status(401).json({ error: 'Usuario no autenticado.' });
     }
 
-    try {
-        const query = 'SELECT id, username, password FROM users WHERE username = ?';
-        const [results] = await pool.query(query, [username]);
-
-        if (results.length > 0) {
-            const user = results[0];
-
-            // Verificamos si la contraseña coincide (vía hash, o directamente si estaba en plano antes)
-            const match = await bcrypt.compare(password, user.password).catch(() => false);
-            const isPlaintextMatch = (password === user.password);
-
-            if (match || isPlaintextMatch) {
-                req.session.loggedin = true;
-                req.session.userId = user.id;
-                req.session.username = user.username;
-                
-                return req.session.save(err => {
-                    if (err) {
-                        console.error('Error guardando sesión:', err);
-                        return res.status(500).json({ success: false, message: 'Error interno de sesión.' });
-                    }
-                    return res.json({ success: true, message: 'Login correcto' });
-                });
-            }
-        }
-
-        return res.status(401).json({ success: false, message: 'Usuario o contraseña incorrectos.' });
-
-    } catch (err) {
-        console.error('Error al iniciar sesión:', err.message);
-        return res.status(500).send('Error del servidor.');
-    }
-});
-
-app.post('/api/save-calculation', async (req, res) => {
     const { type, concept, building, start_date, end_date, consumption, emissions } = req.body;
 
     function toSQLDateFormat(d) {
@@ -174,14 +313,6 @@ app.post('/api/save-calculation', async (req, res) => {
     }
     const sqlStart = toSQLDateFormat(start_date);
     const sqlEnd = toSQLDateFormat(end_date);
-
-    if (!req.session.loggedin) {
-        return res.status(401).json({ error: 'Usuario no autenticado.' });
-    }
-
-    if (!type || !sqlStart || !sqlEnd || !consumption || !emissions) {
-        return res.status(400).json({ error: 'Faltan datos obligatorios.' });
-    }
 
     const userId = req.session.userId;
     const query = `
@@ -209,18 +340,14 @@ app.get('/api/get-user-buildings', checkSession, async (req, res) => {
     }
 });
 
-app.post('/api/add-building', checkSession, async (req, res) => {
-    const { name, property_type, address, municipio, ciudad, codigo_postal, pais, superficie } = req.body;
+app.post('/api/add-building', checkSession, validateBody(schemas.addBuilding), async (req, res) => {
+    const { name, property_type, address, ciudad, provincia, pais, superficie } = req.body;
     const userId = req.session.userId;
-
-    if (!name || !property_type || !address || !municipio || !ciudad || !codigo_postal || !pais) {
-        return res.status(400).json({ success: false, message: 'Faltan campos obligatorios en el formulario (Calle, Municipio, Ciudad, C.P., País).' });
-    }
 
     try {
         const [result] = await pool.query(
-            'INSERT INTO buildings (user_id, nombre, tipo_edificio, direccion, municipio, codigo_postal, ciudad, pais, superficie) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
-            [userId, name, property_type, address, municipio, codigo_postal, ciudad, pais, superficie || null]
+            'INSERT INTO buildings (user_id, nombre, tipo_edificio, direccion, provincia, ciudad, pais, superficie) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+            [userId, name, property_type, address, provincia, ciudad, pais, superficie || null]
         );
         res.json({ success: true, newId: result.insertId, message: 'Edificio guardado.' });
     } catch (err) {
@@ -259,17 +386,13 @@ app.get('/api/get-user-vehicles', checkSession, async (req, res) => {
     }
 });
 
-app.post('/api/add-vehicle', checkSession, async (req, res) => {
+app.post('/api/add-vehicle', checkSession, validateBody(schemas.addVehicle), async (req, res) => {
     const userId = req.session.userId;
     const { 
         building_name, tipo_vehiculo, categoria, tipo_motor, combustible,
         identificador, marca, modelo, clase, 
         propiedad_alquiler, control_operacional, activo, fecha_inicio 
     } = req.body;
-
-    if (!building_name || !tipo_vehiculo || !identificador) {
-        return res.status(400).json({ success: false, message: 'Faltan campos obligatorios (Edificio, Tipo, Matrícula/Identificador).' });
-    }
 
     try {
         // Encontrar el ID del edificio a partir del nombre
@@ -381,20 +504,8 @@ app.get('/api/logout', (req, res) => {
 });
 
 app.get('/api/get-user-profile', async (req, res) => {
-    // DIAGNOSTIC FALLBACK: If session is completely missing, return a dummy user instead of 401
     if (!req.session || !req.session.loggedin || !req.session.userId) {
-        console.warn("⚠️ [api/get-user-profile] SESIÓN NO ENCONTRADA O CADUCADA. Devolviendo usuario temporal.");
-        return res.json({
-            success: true,
-            user: {
-                id: 999,
-                username: 'Usuario (Sin Sesión)',
-                email: 'sesion@perdida',
-                fullName: 'La cookie se borró o no llegó',
-                phone: 'Revisa consola'
-            },
-            stats: { totalCalculos: 0, ultimoCalculo: null }
-        });
+        return res.status(401).json({ success: false, message: 'Sesión no válida o expirada.' });
     }
 
     const userId = req.session.userId;
@@ -427,7 +538,7 @@ app.get('/api/get-user-profile', async (req, res) => {
     }
 });
 
-app.post('/api/update-user-profile', async (req, res) => {
+app.post('/api/update-user-profile', validateBody(schemas.updateProfile), async (req, res) => {
     if (!req.session.loggedin) {
         return res.status(401).json({ success: false, message: 'No autenticado.' });
     }
@@ -491,7 +602,7 @@ app.get('/api/detalles-recarga-gas', async (req, res) => {
     }
 });
 
-app.post('/api/company-profile', async (req, res) => {
+app.post('/api/company-profile', validateBody(schemas.companyProfile), async (req, res) => {
     if (!req.session.loggedin) {
         return res.status(401).json({ success: false, message: 'Usuario no autenticado.' });
     }

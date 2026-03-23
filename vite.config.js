@@ -167,7 +167,8 @@ export default defineConfig((env) => ({
         },
     },
     server: {
-        open: '/auth-login.html', // Especifica el archivo HTML para abrir automáticamente
+        port: 3000,
+        open: false,
         proxy: {
             '/api': {
                 target: 'http://localhost:3000',

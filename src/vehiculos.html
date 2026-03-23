@@ -403,130 +403,6 @@
         opacity: 1;
     }
 
-    /* MODAL AÑADIR CONSUMO */
-    .custom-modal {
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%) scale(0.95);
-        background: white;
-        border-radius: 12px;
-        width: 100%;
-        max-width: 500px;
-        z-index: 1050;
-        display: none;
-        opacity: 0;
-        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-        transition: all 0.3s;
-    }
-
-    .custom-modal.show {
-        display: block;
-        opacity: 1;
-        transform: translate(-50%, -50%) scale(1);
-    }
-
-    .modal-header {
-        padding: 24px 24px 16px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-
-    .modal-title {
-        font-size: 1.25rem;
-        font-weight: 600;
-        color: #1f2937;
-        margin: 0;
-    }
-
-    .btn-close-custom {
-        background: none;
-        border: none;
-        font-size: 1.25rem;
-        color: #9ca3af;
-        cursor: pointer;
-        padding: 0;
-        line-height: 1;
-    }
-
-    .btn-close-custom:hover {
-        color: #374151;
-    }
-
-    .modal-tabs {
-        display: flex;
-        position: relative;
-        padding: 0 24px;
-    }
-
-    .modal-tabs::after {
-        content: '';
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        height: 1px;
-        background-color: #e5e7eb;
-        z-index: 1;
-    }
-
-    .modal-tab {
-        padding: 12px 16px;
-        color: #9ca3af;
-        cursor: pointer;
-        font-weight: 500;
-        font-size: 0.95rem;
-        border-bottom: 2px solid transparent;
-        position: relative;
-        z-index: 2;
-    }
-
-    .modal-tab.active {
-        color: #1f2937;
-        border-bottom-color: #1f2937;
-    }
-
-    .modal-body {
-        padding: 24px;
-        min-height: 600px; /* Fixed height to prevent size jumps */
-    }
-
-    .tab-content {
-        display: none;
-    }
-
-    .tab-content.active {
-        display: block;
-    }
-
-    .modal-footer {
-        padding: 20px 24px;
-        border-top: 1px solid #e5e7eb;
-    }
-
-    .btn-save-custom {
-        background-color: #1f2937;
-        color: white;
-        border: none;
-        padding: 12px 20px;
-        border-radius: 6px;
-        font-weight: 600;
-        font-size: 0.95rem;
-        cursor: pointer;
-        width: 100%;
-        transition: background-color 0.2s;
-    }
-
-    .btn-save-custom:hover {
-        background-color: #111827;
-    }
-
-    .btn-save-custom:disabled {
-        background-color: #9ca3af;
-        cursor: not-allowed;
-    }
-
     /* DRAWER FILTROS */
     .custom-drawer {
         position: fixed;
@@ -544,6 +420,26 @@
 
     .custom-drawer.show {
         right: 0;
+    }
+
+    /* DARK MODE DRAWER */
+    html[data-bs-theme="dark"] .custom-drawer {
+        background: #1a1a2e;
+    }
+    html[data-bs-theme="dark"] .drawer-header {
+        border-bottom-color: #3a3a50;
+    }
+    html[data-bs-theme="dark"] .drawer-title {
+        color: #ffffff;
+    }
+    html[data-bs-theme="dark"] .drawer-close {
+        color: #6b7280;
+    }
+    html[data-bs-theme="dark"] .drawer-close:hover {
+        color: #ffffff;
+    }
+    html[data-bs-theme="dark"] .drawer-section-title {
+        color: #a0a0b8;
     }
 
     @media (max-width: 500px) {
@@ -1003,53 +899,48 @@
 
 </div> <!-- /page-content -->
 
-<!-- OVERLAY PARA DRAWER/MODAL -->
-<div class="custom-overlay" id="customOverlay" onclick="closeAllPanels()"></div>
+<!-- OVERLAY PARA MODAL -->
+<div id="modalOverlay" onclick="closeAddModal()" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999;"></div>
 
-<!-- MODAL: AÑADIR CONSUMO -->
-<div class="custom-modal" id="addConsumoModal">
-    <div class="modal-header">
-        <h4 class="modal-title">Añadir consumo</h4>
-        <button class="btn-close-custom" onclick="closeAddModal()"><i class="bi bi-x"></i></button>
+<!-- MODAL NUEVO -->
+<div id="addConsumoModal" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); width:90%; max-width:600px; max-height:90vh; overflow-y:auto; background:#fff; border-radius:10px; box-shadow:0 10px 40px rgba(0,0,0,0.3); z-index:10000; font-family:Arial,sans-serif;">
+    <div style="padding:20px; border-bottom:1px solid #ddd;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+            <h2 style="margin:0; font-size:20px; color:#333;">Añadir consumo</h2>
+            <button onclick="closeAddModal()" style="background:none; border:none; font-size:28px; cursor:pointer; color:#999;">&times;</button>
+        </div>
     </div>
-
-    <div class="modal-tabs">
-        <div class="modal-tab active" onclick="switchModalTab('datos')" id="tab-btn-datos">Datos</div>
-        <div class="modal-tab" onclick="switchModalTab('eficiencia')" id="tab-btn-eficiencia">Eficiencia</div>
-    </div>
-
-    <div class="modal-body">
-        <!-- Pestaña Datos -->
-        <div id="tab-content-datos" class="tab-content active">
-            <div class="mb-3">
-                <label class="form-label text-muted small fw-medium">Identificador único <i class="bi bi-info-circle text-muted ms-1"
-                        style="font-size: 0.8rem;"></i></label>
-                <input type="text" id="add-id" class="form-control shadow-sm" placeholder="Ej. L-001">
+    <div style="padding:20px;">
+        <!-- Tabs simples -->
+        <div style="margin-bottom:20px; border-bottom:1px solid #ddd;">
+            <button onclick="switchTab('datos')" id="tabBtnDatos" style="padding:10px 20px; background:none; border:none; border-bottom:2px solid #007bff; color:#007bff; cursor:pointer; font-weight:bold;">Datos</button>
+            <button onclick="switchTab('eficiencia')" id="tabBtnEficiencia" style="padding:10px 20px; background:none; border:none; border-bottom:2px solid transparent; color:#666; cursor:pointer;">Eficiencia</button>
+        </div>
+        
+        <!-- Datos -->
+        <div id="tabDatos" style="display:block;">
+            <div style="margin-bottom:15px;">
+                <label style="display:block; margin-bottom:5px; color:#555; font-weight:bold; font-size:14px;">Identificador único</label>
+                <input type="text" id="add-id" placeholder="Ej. L-001" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:5px; font-size:14px;">
             </div>
-
-            <div class="mb-3">
-                <label class="form-label text-muted small fw-medium">Fecha de inicio y fin <span class="text-danger">*</span></label>
-                <div class="input-group shadow-sm">
-                    <input type="text" id="add-fecha-inicio" class="form-control text-center date-input" placeholder="dd/mm/aaaa">
-                    <span class="input-group-text bg-white border-start-0 border-end-0 text-muted">&rarr;</span>
-                    <input type="text" id="add-fecha-fin" class="form-control text-center date-input" placeholder="dd/mm/aaaa">
-                    <span class="input-group-text bg-white text-muted"><i class="bi bi-calendar"></i></span>
+            <div style="margin-bottom:15px;">
+                <label style="display:block; margin-bottom:5px; color:#555; font-weight:bold; font-size:14px;">Fecha de inicio y fin *</label>
+                <div style="display:flex;">
+                    <input type="text" id="add-fecha-inicio" placeholder="dd/mm/aaaa" style="flex:1; padding:10px; border:1px solid #ccc; border-radius:5px 0 0 5px; font-size:14px;">
+                    <span style="background:#f5f5f5; padding:10px; border-top:1px solid #ccc; border-bottom:1px solid #ccc;">→</span>
+                    <input type="text" id="add-fecha-fin" placeholder="dd/mm/aaaa" style="flex:1; padding:10px; border:1px solid #ccc; border-radius:0 5px 5px 0; font-size:14px; border-left:none;">
                 </div>
-                <div class="error-msg" id="error-fechas"></div>
             </div>
-
-            <div class="mb-3">
-                <label class="form-label text-muted small fw-medium">Vehículo <span class="text-danger">*</span></label>
-                <select id="add-vehiculo" class="form-select shadow-sm text-muted select-vehiculo-dinamico">
-                    <option value="" disabled selected>-- Cargando vehículos --</option>
+            <div style="margin-bottom:15px;">
+                <label style="display:block; margin-bottom:5px; color:#555; font-weight:bold; font-size:14px;">Vehículo *</label>
+                <select id="add-vehiculo" class="select-vehiculo-dinamico" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:5px; font-size:14px;">
+                    <option value="">-- Seleccione un vehículo --</option>
                 </select>
-                <div class="error-msg" id="error-vehiculo"></div>
             </div>
-
-            <div class="mb-3">
-                <label class="form-label text-muted small fw-medium">Tipo de combustible <span class="text-danger">*</span></label>
-                <select id="add-combustible" class="form-select shadow-sm text-muted">
-                    <option value="" disabled selected>--</option>
+            <div style="margin-bottom:15px;">
+                <label style="display:block; margin-bottom:5px; color:#555; font-weight:bold; font-size:14px;">Tipo de combustible *</label>
+                <select id="add-combustible" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:5px; font-size:14px;">
+                    <option value="">--</option>
                     <option value="Diesel (B30)">Diésel (B30)</option>
                     <option value="Diesel (B7)">Diésel (B7)</option>
                     <option value="GLP">Gas licuado del petróleo (GLP)</option>
@@ -1059,14 +950,12 @@
                     <option value="Gasolina (E85)">Gasolina (E85)</option>
                     <option value="Otros">Otros</option>
                 </select>
-                <div class="error-msg" id="error-combustible"></div>
             </div>
-
-            <div class="mb-3">
-                <label class="form-label text-muted small fw-medium">Cantidad <span class="text-danger">*</span></label>
-                <div class="input-group shadow-sm">
-                    <input type="number" id="add-cantidad" class="form-control text-end" value="0" min="0" step="0.01">
-                    <select id="add-unidad" class="form-select" style="max-width: 170px;">
+            <div style="margin-bottom:15px;">
+                <label style="display:block; margin-bottom:5px; color:#555; font-weight:bold; font-size:14px;">Cantidad *</label>
+                <div style="display:flex;">
+                    <input type="number" id="add-cantidad" value="0" min="0" step="0.01" style="flex:1; padding:10px; border:1px solid #ccc; border-radius:5px 0 0 5px; font-size:14px; text-align:right;">
+                    <select id="add-unidad" style="padding:10px; border:1px solid #ccc; border-radius:0 5px 5px 0; font-size:14px; border-left:none; background:#f9f9f9;">
                         <option value="kg">Kilogramos (kg)</option>
                         <option value="km">Kilómetros (km)</option>
                         <option value="l" selected>Litros (l)</option>
@@ -1076,35 +965,33 @@
                         <option value="gal">Galones (gal)</option>
                     </select>
                 </div>
-                <div class="error-msg" id="error-cantidad"></div>
             </div>
-
-            <div class="mb-3">
-                <label class="form-label text-muted small fw-medium">Coste total <i class="bi bi-info-circle text-muted ms-1" style="font-size: 0.8rem;"></i></label>
-                <div class="input-group shadow-sm">
-                    <input type="number" id="add-coste" class="form-control text-end" placeholder="--" min="0" step="0.01">
-                    <select id="add-moneda" class="form-select" style="max-width: 110px;">
+            <div style="margin-bottom:15px;">
+                <label style="display:block; margin-bottom:5px; color:#555; font-weight:bold; font-size:14px;">Coste total</label>
+                <div style="display:flex;">
+                    <input type="number" id="add-coste" placeholder="--" min="0" step="0.01" style="flex:1; padding:10px; border:1px solid #ccc; border-radius:5px 0 0 5px; font-size:14px; text-align:right;">
+                    <select id="add-moneda" style="padding:10px; border:1px solid #ccc; border-radius:0 5px 5px 0; font-size:14px; border-left:none; background:#f9f9f9;">
                         <option value="EUR">EUR (€)</option>
                         <option value="USD">USD ($)</option>
                     </select>
                 </div>
             </div>
         </div>
-
-        <!-- Pestaña Eficiencia -->
-        <div id="tab-content-eficiencia" class="tab-content">
-            <div class="mb-3">
-                <label class="form-label text-muted small fw-medium">Distancia</label>
-                <div class="input-group shadow-sm">
-                    <input type="number" id="add-distancia" class="form-control text-end" value="0" min="0" step="0.1">
-                    <span class="input-group-text bg-white text-muted">Kilómetros (km)</span>
+        
+        <!-- Eficiencia -->
+        <div id="tabEficiencia" style="display:none;">
+            <div style="margin-bottom:15px;">
+                <label style="display:block; margin-bottom:5px; color:#555; font-weight:bold; font-size:14px;">Distancia</label>
+                <div style="display:flex;">
+                    <input type="number" id="add-distancia" value="0" min="0" step="0.1" style="flex:1; padding:10px; border:1px solid #ccc; border-radius:5px 0 0 5px; font-size:14px; text-align:right;">
+                    <span style="background:#f5f5f5; padding:10px; border:1px solid #ccc; border-radius:0 5px 5px 0; border-left:none; font-size:14px;">Kilómetros (km)</span>
                 </div>
             </div>
         </div>
     </div>
-
-    <div class="modal-footer">
-        <button class="btn-save-custom w-100" id="btn-save-consumo" onclick="saveConsumo()">Guardar</button>
+    <div style="padding:20px; border-top:1px solid #ddd; display:flex; justify-content:flex-end; gap:10px;">
+        <button onclick="closeAddModal()" style="padding:10px 25px; background:#6c757d; color:white; border:none; border-radius:5px; cursor:pointer; font-size:14px;">Cancelar</button>
+        <button onclick="saveConsumo()" style="padding:10px 25px; background:#007bff; color:white; border:none; border-radius:5px; cursor:pointer; font-size:14px;">Guardar</button>
     </div>
 </div>
 
@@ -1216,20 +1103,40 @@
         }
     }
 
-    // --- MANEJO DE OVERLAY, MODAL Y DRAWER ---
+    // --- MANEJO DE MODAL ---
     function openAddModal() {
-        console.log("Ejecutando openAddModal(). Modal ID:", document.getElementById('addConsumoModal'));
-        document.getElementById('customOverlay').classList.add('show');
-        document.getElementById('addConsumoModal').classList.add('show');
-
-        // Inicializar Flatpickr si no se ha hecho
+        document.getElementById('modalOverlay').style.display = 'block';
+        document.getElementById('addConsumoModal').style.display = 'block';
         initDatePickers();
     }
 
     function closeAddModal() {
-        document.getElementById('addConsumoModal').classList.remove('show');
-        checkOverlay();
+        document.getElementById('modalOverlay').style.display = 'none';
+        document.getElementById('addConsumoModal').style.display = 'none';
         resetForm();
+    }
+
+    function switchTab(tab) {
+        var btnDatos = document.getElementById('tabBtnDatos');
+        var btnEficiencia = document.getElementById('tabBtnEficiencia');
+        var tabDatos = document.getElementById('tabDatos');
+        var tabEficiencia = document.getElementById('tabEficiencia');
+        
+        if (tab === 'datos') {
+            btnDatos.style.borderBottom = '2px solid #007bff';
+            btnDatos.style.color = '#007bff';
+            btnEficiencia.style.borderBottom = '2px solid transparent';
+            btnEficiencia.style.color = '#666';
+            tabDatos.style.display = 'block';
+            tabEficiencia.style.display = 'none';
+        } else {
+            btnEficiencia.style.borderBottom = '2px solid #007bff';
+            btnEficiencia.style.color = '#007bff';
+            btnDatos.style.borderBottom = '2px solid transparent';
+            btnDatos.style.color = '#666';
+            tabEficiencia.style.display = 'block';
+            tabDatos.style.display = 'none';
+        }
     }
 
     function openFilters() {

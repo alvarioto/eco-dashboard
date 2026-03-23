@@ -148,6 +148,9 @@ class Sidebar {
   show() {
     this.sidebarEL.classList.add("active")
     this.sidebarEL.classList.remove("inactive")
+    this.sidebarEL.style.display = "block"
+    document.body.classList.add("sidebar-active")
+    document.body.classList.remove("sidebar-inactive")
     this.createBackdrop()
     this.toggleOverflowBody()
   }
@@ -158,6 +161,8 @@ class Sidebar {
   hide() {
     this.sidebarEL.classList.remove("active")
     this.sidebarEL.classList.add("inactive")
+    document.body.classList.remove("sidebar-active")
+    document.body.classList.add("sidebar-inactive")
     this.deleteBackdrop()
     this.toggleOverflowBody()
   }

@@ -17,6 +17,7 @@
 
 #sidebar {
     @include sidebar-inactive();
+    display: block;
     
     @media screen and (min-width: 1200px) {
         @include sidebar-active();
@@ -33,6 +34,22 @@
     }
     
 }
+
+.burger-btn {
+    z-index: 100 !important;
+    pointer-events: auto !important;
+    opacity: 1 !important;
+    position: relative !important;
+    display: block !important;
+}
+
+body.sidebar-active .burger-btn {
+    display: block !important;
+}
+
+body.sidebar-inactive .burger-btn {
+    display: block !important;
+}
 .sidebar-wrapper {
     width: 300px;
     height: 100vh;
@@ -42,7 +59,7 @@
     overflow-y: auto;
     background-color: $sidebar-bg;
     bottom: 0;
-    transition: left .7s cubic-bezier(0.22, 1, 0.36, 1);
+    transition: left 0s;
     .sidebar-header {
         padding: 2rem 2rem 1rem;
         font-size: 2rem;

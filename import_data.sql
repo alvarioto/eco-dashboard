@@ -360,7 +360,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (1,'testuser','123456','testuser@example.com','2025-01-02 23:51:05'),(2,'user1','password1','user1@example.com','2025-01-02 23:51:30'),(3,'user2','password2','user2@example.com','2025-01-02 23:51:30'),(4,'user3','password3','user3@example.com','2025-01-02 23:51:30'),(5,'qwerty','$2b$10$zHYi4GBjQnh.677IlykPkeP1YIJ.kVyoXke.UaCzNU578Ri2HTxxe','aldasd@gmail.com','2025-04-21 11:19:22');
+INSERT INTO `users` VALUES (1,'testuser','$2b$10$8.UnVuG9HHgFFUDAlkkx.uO9GdLG1pZ.AxJ5BHfYMznmP8z5H5Y9q','testuser@example.com','2025-01-02 23:51:05'),(2,'user1','$2b$10$hashed_password1_here','user1@example.com','2025-01-02 23:51:30'),(3,'user2','$2b$10$hashed_password2_here','user2@example.com','2025-01-02 23:51:30'),(4,'user3','$2b$10$hashed_password3_here','user3@example.com','2025-01-02 23:51:30'),(5,'qwerty','$2b$10$zHYi4GBjQnh.677IlykPkeP1YIJ.kVyoXke.UaCzNU578Ri2HTxxe','aldasd@gmail.com','2025-04-21 11:19:22');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 
